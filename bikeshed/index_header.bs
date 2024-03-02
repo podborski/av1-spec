@@ -1,0 +1,16 @@
+<pre class='metadata'>
+Title: AV1 Bitstream &amp; Decoding Process Specification (bikeshed experiment)
+Status: PD
+URL: https://aomediacodec.github.io/av1-spec/
+Shortname: av1-spec
+Editor: Peter de Rivaz, Argon Design Ltd  
+Editor: Jack Haughton, Argon Design Ltd
+Editor: Adrian Grange, Google LLC
+Editor: Lou Quillio, Google LLC
+Abstract: This document defines the bitstream formats and decoding process for the <a href="https://aomedia.org">Alliance for Open Media</a> AV1 video codec.
+Date: 2024-03-01
+Repository: AOMediaCodec/av1-spec
+Group: AOM
+!Latest approved version: <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">https://aomediacodec.github.io/av1-spec/av1-spec.pdf</a>
+Metadata Order: This version, !*, *
+</pre>
