@@ -42,6 +42,39 @@ def process_markdown_to_bikeshed(md_content, filename=None):
             return f'<h1>{header_text}</h1>'
         return f'{"#"*level} {header_text} {"#"*level} {{#{header_id}}}'
 
+    def convert_table(markdown_table):
+        """
+        Converts GitHub flavored markdown text containing zero or more tables to Bikeshed formatted text.
+        """
+        lines = markdown_table.strip().split('\n')
+        headers = []
+        alignments = []
+        rows = []
+
+        if lines:
+            headers = [header.strip() for header in lines[0].split('|') if header.strip()]
+        if len(lines) > 1:
+            raw_alignments = [align.strip() for align in lines[1].split('|') if align.strip()]
+            for align in raw_alignments:
+                if align.startswith(':') and align.endswith(':'):
+                    alignments.append('{:^}')
+                elif align.endswith(':'):
+                    alignments.append('{:>}')
+                else:
+                    alignments.append('{:<}')
+        for line in lines[2:]:
+            rows.append([cell.strip() for cell in line.split('|') if cell.strip()])
+
+        # TODO: get table header
+        bikeshed_table = 'Table: TBD\n'
+        if headers:
+            bikeshed_table += '    ' + ' | '.join(headers) + '\n'
+        bikeshed_table += '    ' + '--|' * len(headers) + '\n'
+        for row in rows:
+            bikeshed_table += '    ' + ' | '.join(row) + '\n'
+
+        return bikeshed_table
+
     # Deal with definitions
     if '02.terms' in filename:
         md_content = re.sub(r'\n\s\s', ' ', md_content) # fix indentation
@@ -56,7 +89,17 @@ def process_markdown_to_bikeshed(md_content, filename=None):
         # Convert Markdown headers to Bikeshed-compatible format with manually-specified ID
         processed_content = re.sub(r'^(#{1,5})\s+(.+)$', replace_headers, md_content, flags=re.MULTILINE)
 
-    return processed_content
+    # Split markdown text by identifying potential table start and end markers
+    parts = processed_content.split('\n\n')
+    bikeshed_text = ""
+    for part in parts:
+        # Check if the part is a table by looking for at least two lines with pipe characters
+        if part.count('|') > 1 and '\n' in part:
+            bikeshed_text += convert_table(part) + '\n\n'
+        else:
+            bikeshed_text += part + '\n\n'
+
+    return bikeshed_text
 
 
 def generate_spec(header_path, markdown_files, output_bs_path='index.bs'):
@@ -99,7 +142,7 @@ if __name__ == '__main__':
     markdown_files = ['../01.scope.md',
                       '../02.terms.md',
                       '../03.symbols.md',
-                      '../04.conventions.md',
-                      '../06.bitstream.syntax.md',
-                      '../07.bitstream.semantics.md']
+                      '../04.conventions.md',]
+                      # '../06.bitstream.syntax.md',
+                      # '../07.bitstream.semantics.md']
     generate_spec(header_path, markdown_files)
