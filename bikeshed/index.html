@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
   <link href="https://aomediacodec.github.io/av1-spec/" rel="canonical">
-  <meta content="37382d248b8aa7d3838d148347644249c34f998d" name="document-revision">
+  <meta content="db7bdda950369c626373f5d714d58c50d1b6f04b" name="document-revision">
 <style>/* style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -1771,6 +1771,65 @@ a.self-link::before            { content: "¶"; }
 .heading > a.self-link::before { content: "§"; }
 dfn > a.self-link::before      { content: "#"; }
 </style>
+<style>/* style-syntax-highlighting */
+
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+</style>
 <style>/* style-darkmode */
 
 @media (prefers-color-scheme: dark) {
@@ -1891,6 +1950,69 @@ dfn > a.self-link::before      { content: "#"; }
         --selflink-bg: silver;
         --selflink-hover-text: white;
     }
+}
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
 }
 </style>
  <body class="h-entry">
@@ -3054,7 +3176,84 @@ relate to the semantics of a particular syntax element are defined in
    </table>
    <h3 class="heading settled" data-level="4.7" id="#conventions-mathematical-functions"><span class="secno">4.7. </span><span class="content">Mathematical functions</span><a class="self-link" href="#%23conventions-mathematical-functions"></a></h3>
    <p>The following mathematical functions (Abs, Clip3, Clip1, Min, Max, Round2 and Round2Signed) are defined as follows:</p>
-   <p>TBD</p>
+   <p>\[
+\text{Abs}(x) =
+\begin{cases}
+x; &amp; x \geq 0\\
+-x; &amp; x &lt; 0
+\end{cases}
+\]</p>
+   <p>\[
+  \text{Clip1}(x) = \text{Clip3}(0, 2^{BitDepth}-1, x)
+\]</p>
+   <p>\[
+\text{Clip3}(x,y,z) =
+\begin{cases}
+x; &amp; z &lt; x \\
+y; &amp; z > y \\
+z; &amp; \text{otherwise}
+\end{cases}
+\]</p>
+   <p>\[
+\text{Min}(x, y) =
+\begin{cases}
+x; &amp; x \leq y \\
+y; &amp; x > y
+\end{cases}
+\]</p>
+   <p>\[
+\text{Max}(x, y) =
+\begin{cases}
+x; &amp; x \geq y \\
+y; &amp; x &lt; y
+\end{cases}
+\]</p>
+   <p>\[
+  \text{Round2}(x,n) = \left\lfloor \frac{x+2^{n-1}}{2^n} \right\rfloor
+\]</p>
+   <p>\[
+  \text{Round2Signed}(x,n) =
+\begin{cases}
+\text{Round2}(x,n); &amp; x \geq 0\\
+-\text{Round2}(-x,n); &amp; x &lt; 0
+\end{cases}
+\]</p>
+   <p>The definition of Round2 uses standard mathematical power and division operations, not integer operations. An equivalent definition using integer operations is:</p>
+<pre class="language-cpp highlight"><c- n>Round2</c-><c- p>(</c-> <c- n>x</c-><c- p>,</c-> <c- n>n</c-> <c- p>)</c-> <c- p>{</c->
+  <c- k>if</c-> <c- p>(</c-> <c- n>n</c-> <c- o>==</c-> <c- mi>0</c-> <c- p>)</c->
+    <c- k>return</c-> <c- n>x</c-><c- p>;</c->
+  <c- k>return</c-> <c- p>(</c-><c- n>x</c-> <c- o>+</c-> <c- p>(</c-><c- mi>1</c-> <c- o>&lt;&lt;</c-> <c- p>(</c-><c- n>n</c-> <c- o>-</c-> <c- mi>1</c-><c- p>))</c-> <c- p>)</c-> <c- o>></c-> <c- o>></c-> <c- n>n</c-><c- p>;</c->
+<c- p>}</c->
+</pre>
+   <p>The <code>FloorLog2(x)</code> function is defined to be the floor of the base 2 logarithm of the input x.</p>
+   <p>The input x will always be an integer, and will always be greater than or equal to 1.</p>
+   <p>This function extracts the location of the most significant bit in x.</p>
+   <p>An equivalent definition (using the pseudo-code notation introduced in the following section) is:</p>
+<pre class="language-cpp highlight"><c- n>FloorLog2</c-><c- p>(</c-> <c- n>x</c-> <c- p>)</c-> <c- p>{</c->
+  <c- n>s</c-> <c- o>=</c-> <c- mi>0</c->
+  <c- k>while</c-> <c- p>(</c-> <c- n>x</c-> <c- o>!=</c-> <c- mi>0</c-> <c- p>)</c-> <c- p>{</c->
+    <c- n>x</c-> <c- o>=</c-> <c- n>x</c-> <c- o>>></c-> <c- mi>1</c->
+    <c- n>s</c-><c- o>++</c->
+  <c- p>}</c->
+  <c- k>return</c-> <c- n>s</c-> <c- o>-</c-> <c- mi>1</c->
+<c- p>}</c->
+</pre>
+   <p>The <code>CeilLog2(x)</code> function is defined to be the ceiling of the base 2 logarithm of the input x (when x is 0, it is defined to return 0).</p>
+   <p>The input x will always be an integer, and will always be greater than or equal to 0.</p>
+   <p>This function extracts the number of bits needed to code a value in the range 0 to x-1.</p>
+   <p>An equivalent definition (using the pseudo-code notation introduced in the following section) is:</p>
+<pre class="language-cpp highlight"><c- n>CeilLog2</c-><c- p>(</c-> <c- n>x</c-> <c- p>)</c-> <c- p>{</c->
+  <c- k>if</c-> <c- p>(</c-> <c- n>x</c-> <c- o>&lt;</c-> <c- mi>2</c-> <c- p>)</c->
+    <c- k>return</c-> <c- mi>0</c->
+  <c- n>i</c-> <c- o>=</c-> <c- mi>1</c->
+  <c- n>p</c-> <c- o>=</c-> <c- mi>2</c->
+  <c- k>while</c-> <c- p>(</c-> <c- n>p</c-> <c- o>&lt;</c-> <c- n>x</c-> <c- p>)</c-> <c- p>{</c->
+    <c- n>i</c-><c- o>++</c->
+    <c- n>p</c-> <c- o>=</c-> <c- n>p</c-> <c- o>&lt;&lt;</c-> <c- mi>1</c->
+  <c- p>}</c->
+  <c- k>return</c-> <c- n>i</c->
+<c- p>}</c->
+</pre>
    <h3 class="heading settled" data-level="4.8" id="#conventions-bitstream-syntax"><span class="secno">4.8. </span><span class="content">Method of describing bitstream syntax</span><a class="self-link" href="#%23conventions-bitstream-syntax"></a></h3>
    <p>The description style of the syntax is similar to the C programming language. Syntax elements in the bitstream are represented in bold type. Each syntax element is described by its name (using only lower case letters with underscore characters) and a descriptor for its method of coded representation. The decoding process behaves according to the value of the syntax element and to the values of previously decoded syntax elements. When a value of a syntax element is used in the syntax tables or the text, it appears in regular (i.e. not bold) type. If the value of a syntax element is being computed (e.g. being written with a default value instead of being coded in the bitstream), it also appears in regular type (e.g. tile_size_minus_1).</p>
    <p>In some cases the syntax tables may use the values of other variables derived from syntax elements values. Such variables appear in the syntax tables, or text, named by a mixture of lower case and upper case letter and without any underscore characters. Variables starting with an upper case letter are derived for the decoding of the current syntax structure and all depending syntax structures. These variables may be used in the decoding process for later syntax structures. Variables starting with a lower case letter are only used within the process from which they are derived. (Single character variables are allowed.)</p>
@@ -3100,12 +3299,11 @@ relate to the semantics of a particular syntax element are defined in
   </main>
   <div data-fill-with="conformance">
    <h2 class="no-ref no-num heading settled" id="conformance"><span class="content"> Conformance</span><a class="self-link" href="#conformance"></a></h2>
-   <p> Conformance requirements are expressed with a combination of descriptive assertions and RFC 2119 terminology.
-            The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
-            in the normative parts of this document
-            are to be interpreted as described in RFC 2119.
-            However, for readability,
-            these words do not appear in all uppercase letters in this specification. </p>
+   <p> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+           NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+           "MAY", and "OPTIONAL" in this document are to be interpreted as
+           described in BCP 14 <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> <a data-link-type="biblio" href="#biblio-rfc8174" title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</a> when, and only when, they
+           appear in all capitals, as shown here. </p>
    <p> All of the text of this specification is normative
             except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a> </p>
    <p> Examples in this specification are introduced with the words “for example”
@@ -3244,6 +3442,22 @@ relate to the semantics of a particular syntax element are defined in
 
 })();
 </script>
+<script>
+MathJax = {
+  loader: {
+     load: ['[tex]/tagFormat', 'output/svg']
+  },
+  tex: {
+    packages: {'[+]': ['tagFormat']},
+    tags: "all"
+  },
+  chtml: {
+    scale: 0.9,
+  ,
+};
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
@@ -3324,4 +3538,6 @@ relate to the semantics of a particular syntax element are defined in
   <dl>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-rfc8174">[RFC8174]
+   <dd>B. Leiba. <a href="https://www.rfc-editor.org/rfc/rfc8174"><cite>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</cite></a>. May 2017. Best Current Practice. URL: <a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>
   </dl>

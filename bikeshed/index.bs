@@ -14,6 +14,7 @@ Group: AOM
 !Latest approved version: <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">https://aomediacodec.github.io/av1-spec/av1-spec.pdf</a>
 Metadata Order: This version, !*, *
 Markup Shorthands: markdown yes
+Local Boilerplate: footer yes
 </pre>
 
 
@@ -1470,7 +1471,105 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
 
 The following mathematical functions (Abs, Clip3, Clip1, Min, Max, Round2 and Round2Signed) are defined as follows:
 
-TBD
+\[
+\text{Abs}(x) =
+\begin{cases}
+x; & x \geq 0\\
+-x; & x < 0
+\end{cases}
+\]
+
+\[
+  \text{Clip1}(x) = \text{Clip3}(0, 2^{BitDepth}-1, x)
+\]
+
+\[
+\text{Clip3}(x,y,z) =
+\begin{cases}
+x; & z < x \\
+y; & z > y \\
+z; & \text{otherwise}
+\end{cases}
+\]
+
+\[
+\text{Min}(x, y) =
+\begin{cases}
+x; & x \leq y \\
+y; & x > y
+\end{cases}
+\]
+
+\[
+\text{Max}(x, y) =
+\begin{cases}
+x; & x \geq y \\
+y; & x < y
+\end{cases}
+\]
+
+\[
+  \text{Round2}(x,n) = \left\lfloor \frac{x+2^{n-1}}{2^n} \right\rfloor
+\]
+
+\[
+  \text{Round2Signed}(x,n) =
+\begin{cases}
+\text{Round2}(x,n); & x \geq 0\\
+-\text{Round2}(-x,n); & x < 0
+\end{cases}
+\]
+
+The definition of Round2 uses standard mathematical power and division operations, not integer operations. An equivalent definition using integer operations is:
+
+```cpp
+Round2( x, n ) {
+  if ( n == 0 )
+    return x;
+  return (x + (1 << (n - 1)) ) > > n;
+}
+```
+
+The `FloorLog2(x)` function is defined to be the floor of the base 2 logarithm of the input x.
+
+The input x will always be an integer, and will always be greater than or equal to 1.
+
+This function extracts the location of the most significant bit in x.
+
+An equivalent definition (using the pseudo-code notation introduced in the following section) is:
+
+```cpp
+FloorLog2( x ) {
+  s = 0
+  while ( x != 0 ) {
+    x = x >> 1
+    s++
+  }
+  return s - 1
+}
+```
+
+The `CeilLog2(x)` function is defined to be the ceiling of the base 2 logarithm of the input x (when x is 0, it is defined to return 0).
+
+The input x will always be an integer, and will always be greater than or equal to 0.
+
+This function extracts the number of bits needed to code a value in the range 0 to x-1.
+
+An equivalent definition (using the pseudo-code notation introduced in the following section) is:
+
+```cpp
+CeilLog2( x ) {
+  if ( x < 2 )
+    return 0
+  i = 1
+  p = 2
+  while ( p < x ) {
+    i++
+    p = p << 1
+  }
+  return i
+}
+```
 
 ## Method of describing bitstream syntax ## {##conventions-bitstream-syntax}
 
