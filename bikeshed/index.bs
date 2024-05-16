@@ -23,8 +23,6 @@ Local Boilerplate: footer yes
 This document specifies the Alliance for Open Media AV1 bitstream formats and
 decoding process.
 
-
-
 # Terms and definitions # {#terms_and_definitions}
 
 For the purposes of this document, the following terms and definitions apply:
@@ -1310,7 +1308,7 @@ Additional constants are defined below:
 
 # Conventions # {#conventions}
 
-## General ## {##conventions-general}
+## General ## {#conventions-general}
 
 The mathematical operators and their precedence rules used to describe this Specification are similar to those used in the C programming language. However, the operation of integer division with truncation is specifically defined.
 
@@ -1320,7 +1318,7 @@ When a variable is said to be representable by a signed integer with <code>x</co
 
 The key words “must”, “must not”, “required”, “shall”, “shall not”, “should”, “should not”, “recommended”, “may”, and “optional” in this document are to be interpreted as described in RFC 2119.
 
-## Arithmetic operators ## {##conventions-arithmetic-operators}
+## Arithmetic operators ## {#conventions-arithmetic-operators}
 
 <table class="table table-sm table-bordered table-nohead">
   <tbody>
@@ -1359,7 +1357,7 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
   </tbody>
 </table>
 
-## Logical operators ## {##conventions-logical-operators}
+## Logical operators ## {#conventions-logical-operators}
 
 <table class="table table-sm table-bordered table-nohead">
   <tbody>
@@ -1378,7 +1376,7 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
   </tbody>
 </table>
 
-## Relational operators ## {##conventions-relational-operators}
+## Relational operators ## {#conventions-relational-operators}
 
 <table class="table table-sm table-bordered table-nohead">
   <tbody>
@@ -1409,7 +1407,7 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
   </tbody>
 </table>
 
-## Bitwise operators ## {##conventions-bitwise-operators}
+## Bitwise operators ## {#conventions-bitwise-operators}
 
 <table class="table table-sm table-bordered table-nohead">
   <tbody>
@@ -1440,7 +1438,7 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
   </tbody>
 </table>
 
-## Assignment ## {##conventions-assignment}
+## Assignment ## {#conventions-assignment}
 
 <table class="table table-sm table-bordered table-nohead">
   <tbody>
@@ -1467,7 +1465,7 @@ The key words “must”, “must not”, “required”, “shall”, “shall 
   </tbody>
 </table>
 
-## Mathematical functions ## {##conventions-mathematical-functions}
+## Mathematical functions ## {#conventions-mathematical-functions}
 
 The following mathematical functions (Abs, Clip3, Clip1, Min, Max, Round2 and Round2Signed) are defined as follows:
 
@@ -1571,7 +1569,7 @@ CeilLog2( x ) {
 }
 ```
 
-## Method of describing bitstream syntax ## {##conventions-bitstream-syntax}
+## Method of describing bitstream syntax ## {#conventions-bitstream-syntax}
 
 The description style of the syntax is similar to the C programming language. Syntax elements in the bitstream are represented in bold type. Each syntax element is described by its name (using only lower case letters with underscore characters) and a descriptor for its method of coded representation. The decoding process behaves according to the value of the syntax element and to the values of previously decoded syntax elements. When a value of a syntax element is used in the syntax tables or the text, it appears in regular (i.e. not bold) type. If the value of a syntax element is being computed (e.g. being written with a default value instead of being coded in the bitstream), it also appears in regular type (e.g. tile_size_minus_1).
 
@@ -1591,7 +1589,7 @@ The following table lists examples of the syntax specification format. When <cod
 
 TBD
 
-## Functions ## {##conventions-functions}
+## Functions ## {#conventions-functions}
 
 Bitstream functions used for syntax description are specified in this section.
 
@@ -1605,33 +1603,145 @@ The specification of these functions makes use of a bitstream position indicator
 
 **exit_symbol( )**: Exit the arithmetic decode process as described in section 8.2.4 (TBD) (this includes reading trailing bits).
 
-## Descriptors ## {##conventions-descriptors}
+## Descriptors ## {#conventions-descriptors}
 
-### General ### {###conventions-descriptors-general}
+### General ### {#conventions-descriptors-general}
 
 The following descriptors specify the parsing of syntax elements. Lower case descriptors specify syntax elements that are represented by an integer number of bits in the bitstream; upper case descriptors specify syntax elements that are represented by arithmetic coding.
 
-### f(n) ### {###conventions-descriptors-fn}
-### uvlc() ### {###conventions-descriptors-uvlc}
-### le(n) ### {###conventions-descriptors-len}
-### leb128() ### {###conventions-descriptors-leb128}
-### su(n) ### {###conventions-descriptors-sun}
-### ns(n) ### {###conventions-descriptors-nsn}
-### L(n) ### {###conventions-descriptors-ln}
-### S() ### {###conventions-descriptors-s}
-### NS(n) ### {###conventions-descriptors-nsn2}
+### f(n) ### {#conventions-descriptors-fn}
+### uvlc() ### {#conventions-descriptors-uvlc}
+### le(n) ### {#conventions-descriptors-len}
+### leb128() ### {#conventions-descriptors-leb128}
+### su(n) ### {#conventions-descriptors-sun}
+### ns(n) ### {#conventions-descriptors-nsn}
+### L(n) ### {#conventions-descriptors-ln}
+### S() ### {#conventions-descriptors-s}
+### NS(n) ### {#conventions-descriptors-nsn2}
 
 # Syntax structures # {#syntax-structures}
 
-## General ## {##syntax-structures-general}
-## Low overhead bitstream format ## {##syntax-structures-low-overhead-format}
-## OBU syntax ## {##obu-syntax}
-### General OBU syntax ### {###obu-syntax-general}
-### OBU header syntax ### {###obu-syntax-obu-header}
-### OBU extension header syntax ### {###obu-syntax-obu-header-extension}
-### Trailing bits syntax ### {###obu-syntax-trailing-bits}
-### Byte alignment syntax ### {###obu-syntax-byte-alignment}
-## Reserved OBU syntax ## {##reserved-obu-syntax}
-## Sequence header OBU syntax ## {##shobu-syntax}
-### General sequence header OBU syntax ### {###shobu-syntax-general}
-### Color config syntax ### {###color-config-syntax}
+## General ## {#syntax-structures-general}
+## Low overhead bitstream format ## {#syntax-structures-low-overhead-format}
+## OBU syntax ## {#obu-syntax}
+### General OBU syntax ### {#obu-syntax-general}
+### OBU header syntax ### {#obu-syntax-obu-header}
+
+Example of SDL-like syntax with AV1 Descriptors
+
+```cpp
+class OBUHeader {
+  f(1) obu_forbidden_bit;
+  f(4) obu_type;
+  f(1) obu_extension_flag;
+  f(1) obu_has_size_field;
+  f(1) obu_reserved_1bit;
+  if ( obu_extension_flag == 1 ) {
+    OBUExtensionHeader obu_extension_header;
+  }
+}
+```
+
+Example using SDL syntax
+
+```cpp
+class OBUHeader {
+  bit(1) obu_forbidden_bit;
+  unsigned int(4) obu_type;
+  bit(1) obu_extension_flag;
+  bit(1) obu_has_size_field;
+  bit(1) obu_reserved_1bit;
+  if ( obu_extension_flag == 1 ) {
+    OBUExtensionHeader obu_extension_header;
+  }
+}
+```
+
+AV1 style to specify syntax. 
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>obu_header() {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td><b class="syntax-element">obu_forbidden_bit</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_type</b></td>
+      <td>f(4)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_extension_flag</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_has_size_field</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_reserved_1bit</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( obu_extension_flag == 1 )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;obu_extension_header()</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+However, note that edditing the HTML table is not so easy. We could export the following definition to a separate file. e.g. `obu_header.syntax` which would contain this.
+
+```
+| --------------------------------------------------------- | ---------------- |
+| obu_header() {                                            | **Type**
+|     @@obu_forbidden_bit                                   | f(1)
+|     @@obu_type                                            | f(4)
+|     @@obu_extension_flag                                  | f(1)
+|     @@obu_has_size_field                                 | f(1)
+|     @@obu_reserved_1bit                                   | f(1)
+|     if ( obu_extension_flag == 1 )
+|         obu_extension_header()
+| }
+```
+
+and then we could write a python script that would translate it into HTML. That way it is still easy to work on syntax with minimal changes and the GitHub Actions automation will do the rest.
+
+### OBU extension header syntax ### {#obu-syntax-obu-header-extension}
+
+Example of SDL-like syntax with AV1 Descriptors
+
+```cpp
+class OBUExtensionHeader {
+  f(3) temporal_id;
+  f(2) spatial_id;
+  f(3) extension_header_reserved_3bits;
+}
+```
+
+Example using SDL syntax
+
+```cpp
+class OBUExtensionHeader {
+  unsigned int(3) temporal_id;
+  unsigned int(2) spatial_id;
+  bit(3) extension_header_reserved_3bits;
+}
+```
+
+### Trailing bits syntax ### {#obu-syntax-trailing-bits}
+### Byte alignment syntax ### {#obu-syntax-byte-alignment}
+## Reserved OBU syntax ## {#reserved-obu-syntax}
+## Sequence header OBU syntax ## {#shobu-syntax}
+### General sequence header OBU syntax ### {#shobu-syntax-general}
+### Color config syntax ### {#color-config-syntax}
