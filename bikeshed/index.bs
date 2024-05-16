@@ -1622,9 +1622,20 @@ The following descriptors specify the parsing of syntax elements. Lower case des
 # Syntax structures # {#syntax-structures}
 
 ## General ## {#syntax-structures-general}
+
+This section presents the syntax structures in a tabular form. The meaning of each of the syntax elements is presented in Section 6 (TBD).
+
 ## Low overhead bitstream format ## {#syntax-structures-low-overhead-format}
+
+This specification defines a low-overhead bitstream format as a sequence of the OBU syntactical elements defined in this section. When using this format, obu_has_size_field must be equal to 1. For applications requiring a format where it is easier to skip through frames or temporal units, a length-delimited bitstream format is defined in Annex B.
+
+Derived specifications, such as container formats enabling storage of AV1 videos together with audio or subtitles, should indicate which of these formats they rely on. Other methods of packing OBUs into a bitstream format are also allowed.
+
 ## OBU syntax ## {#obu-syntax}
 ### General OBU syntax ### {#obu-syntax-general}
+
+TBD
+
 ### OBU header syntax ### {#obu-syntax-obu-header}
 
 Example of SDL-like syntax with AV1 Descriptors
@@ -1657,45 +1668,132 @@ class OBUHeader {
 }
 ```
 
-AV1 style to specify syntax. 
+**obu_forbidden_bit** must be set to 0.
 
-<table class="syntax">
+NOTE: This ensures that MPEG2 transport is possible by preventing emulation of MPEG2 transport stream ids.
+
+**obu_type specifies** the type of data structure contained in the OBU payload:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>obu_type</th>
+      <th>Name of obu_type</th>
+      <th>Layer-specific</th>
+    </tr>
+  </thead>
   <tbody>
     <tr>
-      <td>obu_header() {</td>
-      <td><strong>Type</strong></td>
+      <td>0</td>
+      <td>Reserved</td>
+      <td>-</td>
     </tr>
     <tr>
-      <td><b class="syntax-element">obu_forbidden_bit</b></td>
-      <td>f(1)</td>
+      <td>1</td>
+      <td>OBU_SEQUENCE_HEADER.</td>
+      <td>N</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_type</b></td>
-      <td>f(4)</td>
+      <td>2</td>
+      <td>OBU_TEMPORAL_DELIMITER</td>
+      <td>N</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_extension_flag</b></td>
-      <td>f(1)</td>
+      <td>3</td>
+      <td>OBU_FRAME_HEADER</td>
+      <td>Y</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_has_size_field</b></td>
-      <td>f(1)</td>
+      <td>4</td>
+      <td>OBU_TILE_GROUP</td>
+      <td>Y</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_reserved_1bit</b></td>
-      <td>f(1)</td>
+      <td>5</td>
+      <td>OBU_METADATA</td>
+      <td>See Table in Section 6.7.1</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( obu_extension_flag == 1 )</td>
-      <td>&nbsp;</td>
+      <td>6</td>
+      <td>OBU_FRAME</td>
+      <td>Y</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;obu_extension_header()</td>
-      <td>&nbsp;</td>
+      <td>7</td>
+      <td>OBU_REDUNDANT_FRAME_HEADER</td>
+      <td>Y</td>
     </tr>
     <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
+      <td>8</td>
+      <td>OBU_TILE_LIST</td>
+      <td>N</td>
+    </tr>
+    <tr>
+      <td>9-14</td>
+      <td>Reserved</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>OBU_PADDING</td>
+      <td>Either</td>
+    </tr>
+  </tbody>
+</table>
+
+Reserved units are for future use and shall be ignored by AV1 decoder.
+
+The column “Layer-specific” indicates if the corresponding OBU type is considered to be associated with a specific layer (“Y”), or not (“N”). OBUs that are not layer-specific must have the obu_extension_flag set to 0.
+
+Metadata OBU types may or may not be layer-specific, depending on the metadata type. The table in Section 6.7.1 specifies which types of metadata OBUs are layer-specific and which are not.
+
+Padding OBUs may or may not be layer-specific. If the obu_extension_flag is set to 1 they are layer-specific, whereas when the obu_extension_flag is set to 0 they are not.
+
+**obu_extension_flag** indicates if the optional obu_extension_header is present.
+
+**obu_has_size_field** equal to 1 indicates that the obu_size syntax element will be present. obu_has_size_field equal to 0 indicates that the obu_size syntax element will not be present.
+
+**obu_reserved_1bit** must be set to 0. The value is ignored by a decoder.
+
+AV1 style to specify syntax. 
+
+<table class="syntax" style="width: 100%; border-collapse: collapse;">
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #ccc;">obu_header() {</td>
+      <td style="border: 1px solid #ccc;"><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;"><b class="syntax-element">obu_forbidden_bit</b></td>
+      <td style="border: 1px solid #ccc;">f(1)</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_type</b></td>
+      <td style="border: 1px solid #ccc;">f(4)</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_extension_flag</b></td>
+      <td style="border: 1px solid #ccc;">f(1)</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_has_size_field</b></td>
+      <td style="border: 1px solid #ccc;">f(1)</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_reserved_1bit</b></td>
+      <td style="border: 1px solid #ccc;">f(1)</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;if ( obu_extension_flag == 1 )</td>
+      <td style="border: 1px solid #ccc;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;obu_extension_header()</td>
+      <td style="border: 1px solid #ccc;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc;">}</td>
+      <td style="border: 1px solid #ccc;">&nbsp;</td>
     </tr>
   </tbody>
 </table>

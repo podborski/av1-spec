@@ -1490,7 +1490,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
   <link href="https://aomediacodec.github.io/av1-spec/" rel="canonical">
-  <meta content="8ad045cb2ce9811cfe97fc050c2b2973f6be6a23" name="document-revision">
+  <meta content="e61c2ae5dea2d27f3a838b176393088583ea8e49" name="document-revision">
 <style>/* style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -3285,9 +3285,13 @@ y; &amp; x &lt; y
    <h4 class="heading settled" data-level="4.10.10" id="conventions-descriptors-nsn2"><span class="secno">4.10.10. </span><span class="content">NS(n)</span><a class="self-link" href="#conventions-descriptors-nsn2"></a></h4>
    <h2 class="heading settled" data-level="5" id="syntax-structures"><span class="secno">5. </span><span class="content">Syntax structures</span><a class="self-link" href="#syntax-structures"></a></h2>
    <h3 class="heading settled" data-level="5.1" id="syntax-structures-general"><span class="secno">5.1. </span><span class="content">General</span><a class="self-link" href="#syntax-structures-general"></a></h3>
+   <p>This section presents the syntax structures in a tabular form. The meaning of each of the syntax elements is presented in Section 6 (TBD).</p>
    <h3 class="heading settled" data-level="5.2" id="syntax-structures-low-overhead-format"><span class="secno">5.2. </span><span class="content">Low overhead bitstream format</span><a class="self-link" href="#syntax-structures-low-overhead-format"></a></h3>
+   <p>This specification defines a low-overhead bitstream format as a sequence of the OBU syntactical elements defined in this section. When using this format, obu_has_size_field must be equal to 1. For applications requiring a format where it is easier to skip through frames or temporal units, a length-delimited bitstream format is defined in Annex B.</p>
+   <p>Derived specifications, such as container formats enabling storage of AV1 videos together with audio or subtitles, should indicate which of these formats they rely on. Other methods of packing OBUs into a bitstream format are also allowed.</p>
    <h3 class="heading settled" data-level="5.3" id="obu-syntax"><span class="secno">5.3. </span><span class="content">OBU syntax</span><a class="self-link" href="#obu-syntax"></a></h3>
    <h4 class="heading settled" data-level="5.3.1" id="obu-syntax-general"><span class="secno">5.3.1. </span><span class="content">General OBU syntax</span><a class="self-link" href="#obu-syntax-general"></a></h4>
+   <p>TBD</p>
    <h4 class="heading settled" data-level="5.3.2" id="obu-syntax-obu-header"><span class="secno">5.3.2. </span><span class="content">OBU header syntax</span><a class="self-link" href="#obu-syntax-obu-header"></a></h4>
    <p>Example of SDL-like syntax with AV1 Descriptors</p>
 <pre class="language-cpp highlight"><c- k>class</c-> <c- nc>OBUHeader</c-> <c- p>{</c->
@@ -3313,36 +3317,98 @@ y; &amp; x &lt; y
   <c- p>}</c->
 <c- p>}</c->
 </pre>
-   <p>AV1 style to specify syntax.</p>
-   <table class="syntax">
+   <p><strong>obu_forbidden_bit</strong> must be set to 0.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> This ensures that MPEG2 transport is possible by preventing emulation of MPEG2 transport stream ids.</p>
+   <p><strong>obu_type specifies</strong> the type of data structure contained in the OBU payload:</p>
+   <table class="table table-sm table-bordered">
+    <thead>
+     <tr>
+      <th>obu_type
+      <th>Name of obu_type
+      <th>Layer-specific
     <tbody>
      <tr>
-      <td>obu_header() {
-      <td><strong>Type</strong>
+      <td>0
+      <td>Reserved
+      <td>-
      <tr>
-      <td><b class="syntax-element">obu_forbidden_bit</b>
-      <td>f(1)
+      <td>1
+      <td>OBU_SEQUENCE_HEADER.
+      <td>N
      <tr>
-      <td>    <b class="syntax-element">obu_type</b>
-      <td>f(4)
+      <td>2
+      <td>OBU_TEMPORAL_DELIMITER
+      <td>N
      <tr>
-      <td>    <b class="syntax-element">obu_extension_flag</b>
-      <td>f(1)
+      <td>3
+      <td>OBU_FRAME_HEADER
+      <td>Y
      <tr>
-      <td>    <b class="syntax-element">obu_has_size_field</b>
-      <td>f(1)
+      <td>4
+      <td>OBU_TILE_GROUP
+      <td>Y
      <tr>
-      <td>    <b class="syntax-element">obu_reserved_1bit</b>
-      <td>f(1)
+      <td>5
+      <td>OBU_METADATA
+      <td>See Table in Section 6.7.1
      <tr>
-      <td>    if ( obu_extension_flag == 1 )
-      <td>
+      <td>6
+      <td>OBU_FRAME
+      <td>Y
      <tr>
-      <td>        obu_extension_header()
-      <td>
+      <td>7
+      <td>OBU_REDUNDANT_FRAME_HEADER
+      <td>Y
      <tr>
-      <td>}
-      <td>
+      <td>8
+      <td>OBU_TILE_LIST
+      <td>N
+     <tr>
+      <td>9-14
+      <td>Reserved
+      <td>-
+     <tr>
+      <td>15
+      <td>OBU_PADDING
+      <td>Either
+   </table>
+   <p>Reserved units are for future use and shall be ignored by AV1 decoder.</p>
+   <p>The column “Layer-specific” indicates if the corresponding OBU type is considered to be associated with a specific layer (“Y”), or not (“N”). OBUs that are not layer-specific must have the obu_extension_flag set to 0.</p>
+   <p>Metadata OBU types may or may not be layer-specific, depending on the metadata type. The table in Section 6.7.1 specifies which types of metadata OBUs are layer-specific and which are not.</p>
+   <p>Padding OBUs may or may not be layer-specific. If the obu_extension_flag is set to 1 they are layer-specific, whereas when the obu_extension_flag is set to 0 they are not.</p>
+   <p><strong>obu_extension_flag</strong> indicates if the optional obu_extension_header is present.</p>
+   <p><strong>obu_has_size_field</strong> equal to 1 indicates that the obu_size syntax element will be present. obu_has_size_field equal to 0 indicates that the obu_size syntax element will not be present.</p>
+   <p><strong>obu_reserved_1bit</strong> must be set to 0. The value is ignored by a decoder.</p>
+   <p>AV1 style to specify syntax.</p>
+   <table class="syntax" style="width: 100%; border-collapse: collapse;">
+    <tbody>
+     <tr>
+      <td style="border: 1px solid #ccc;">obu_header() {
+      <td style="border: 1px solid #ccc;"><strong>Type</strong>
+     <tr>
+      <td style="border: 1px solid #ccc;"><b class="syntax-element">obu_forbidden_bit</b>
+      <td style="border: 1px solid #ccc;">f(1)
+     <tr>
+      <td style="border: 1px solid #ccc;">    <b class="syntax-element">obu_type</b>
+      <td style="border: 1px solid #ccc;">f(4)
+     <tr>
+      <td style="border: 1px solid #ccc;">    <b class="syntax-element">obu_extension_flag</b>
+      <td style="border: 1px solid #ccc;">f(1)
+     <tr>
+      <td style="border: 1px solid #ccc;">    <b class="syntax-element">obu_has_size_field</b>
+      <td style="border: 1px solid #ccc;">f(1)
+     <tr>
+      <td style="border: 1px solid #ccc;">    <b class="syntax-element">obu_reserved_1bit</b>
+      <td style="border: 1px solid #ccc;">f(1)
+     <tr>
+      <td style="border: 1px solid #ccc;">    if ( obu_extension_flag == 1 )
+      <td style="border: 1px solid #ccc;">
+     <tr>
+      <td style="border: 1px solid #ccc;">        obu_extension_header()
+      <td style="border: 1px solid #ccc;">
+     <tr>
+      <td style="border: 1px solid #ccc;">}
+      <td style="border: 1px solid #ccc;">
    </table>
    <p>However, note that edditing the HTML table is not so easy. We could export the following definition to a separate file. e.g. <code>obu_header.syntax</code> which would contain this.</p>
 <pre>| --------------------------------------------------------- | ---------------- |
