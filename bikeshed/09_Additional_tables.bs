@@ -8,8 +8,7 @@ the Specification.
 
 ## Scan tables ## {#scan_tables}
 
-This section defines the scan order for different types of transform. Each table is named in the form \<type\>\_Scan\_\<w\>x\<h\>, and contains an ordered
-list of positions within a rectangle of width w and height h. Each position is calculated as w * y + x.
+This section defines the scan order for different types of transform. Each table is named in the form `<type>_Scan_<w>x<h>`, and contains an ordered list of positions within a rectangle of width w and height h. Each position is calculated as w * y + x.
 
 The following table lists pairs of scan tables which are transposes of each other. A table T_wxh is a
 transpose of another table T_hxw if the following function returns 1:
