@@ -1,0 +1,4 @@
+# Scope # {#scope}
+
+This document specifies the Alliance for Open Media AV1 bitstream formats and
+decoding process.

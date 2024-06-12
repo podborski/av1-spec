@@ -1,0 +1,139 @@
+
+# Annex B: Length delimited bitstream format # {#annex_b:_length_delimited_bitstream_format}
+
+## Overview ## {#overview}
+
+[Section 5][] defines the syntax for OBUs.
+[Section 5.2][] defines the low-overhead bitstream format.
+This annex defines a length-delimited format for packing OBUs into a format that
+enables skipping through temporal units and frames more easily.
+
+## Length delimited bitstream syntax ## {#length_delimited_bitstream_syntax}
+
+<table class="syntax">
+<tbody>
+    <tr>
+    <td>bitstream( ) {</td>
+    <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;while ( more_data_in_bitstream() ) {</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">temporal_unit_size</b></td>
+    <td>leb128()</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;temporal_unit( temporal_unit_size )</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;}</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>}</td>
+    <td>&nbsp;</td>
+    </tr>
+</tbody>
+</table>
+
+
+<table class="syntax">
+<tbody>
+    <tr>
+    <td>temporal_unit( sz ) {</td>
+    <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;while ( sz &gt; 0 ) {</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">frame_unit_size</b></td>
+    <td>leb128()</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sz -= Leb128Bytes</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame_unit( frame_unit_size )</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sz -= frame_unit_size</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;}</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>}</td>
+    <td>&nbsp;</td>
+    </tr>
+</tbody>
+</table>
+
+
+<table class="syntax">
+<tbody>
+    <tr>
+    <td>frame_unit( sz ) {</td>
+    <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;while ( sz &gt; 0 ) {</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">obu_length</b></td>
+    <td>leb128()</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sz -= Leb128Bytes</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open_bitstream_unit( obu_length )</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sz -= obu_length</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>&nbsp;&nbsp;&nbsp;}</td>
+    <td>&nbsp;</td>
+    </tr>
+    <tr>
+    <td>}</td>
+    <td>&nbsp;</td>
+    </tr>
+</tbody>
+</table>
+
+
+## Length delimited bitstream semantics ## {#length_delimited_bitstream_semantics}
+
+**more_data_in_bitstream()** is a system-dependent method of determining whether
+the end of the bitstream has been reached.  It returns 1 when there is more data
+to be read, or 0 when the end of the bitstream has been reached.
+
+**temporal_unit_size** specifies the length in bytes of the next temporal unit.
+
+**frame_unit_size** specifies the length in bytes of the next frame unit.
+
+**obu_length** specifies the length in bytes of the next OBU.
+
+Note: It is allowed for the OBU to set obu_has_size_field equal to 1 to indicate
+that the obu_size syntax element is present.  In this case, the decoding process
+assumes that obu_size and obu_length are set consistently.
+If obu_size and obu_length are both present, but inconsistent, then the packed bitstream
+is deemed invalid.
+
+The first OBU in the first frame_unit of each temporal_unit must be a temporal delimiter OBU (and this is the only place temporal delimiter OBUs can appear).
+
+All the frame header and tile group OBUs required for decoding a single frame must be within the same frame_unit (and a frame_unit must not contain frame headers for more than one frame).

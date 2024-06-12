@@ -1,0 +1,1667 @@
+
+# Parsing process # {#parsing_process}
+
+
+## Parsing process for f(n) ## {#parsing_process_for_f(n)}
+
+This process is invoked when the descriptor of a syntax element in the syntax
+tables is equal to f(n).
+
+The next n bits are read from the bit stream.
+
+This process is specified as follows:
+
+~~~~~ c
+x = 0
+for ( i = 0; i < n; i++ ) {
+    x = 2 * x + read_bit( )
+}
+~~~~~
+
+read_bit( ) reads the next bit from the bitstream and advances the bitstream
+position indicator by 1. If the bitstream is provided as a series of bytes, then the
+first bit is given by the most significant bit of the first byte.
+
+The value for the syntax element is given by x.
+
+
+## Parsing process for symbol decoder ## {#parsing_process_for_symbol_decoder}
+
+### General ### {#general}
+
+The entropy decoder is referred to as the "Symbol
+decoder" and the functions init_symbol( sz ), exit_symbol( ), read_symbol( cdf ), and read_bool( )
+are used in this Specification to indicate the entropy decoding operation.
+
+
+### Initialization process for symbol decoder ### {#initialization_process_for_symbol_decoder}
+
+The input to this process is a variable sz specifying the number of bytes to be
+read by the Symbol decoder.
+
+This process is invoked when the function init_symbol( sz ) is called from the
+syntax structure.
+
+Note: The bit position will always be byte aligned when init_symbol is invoked
+because the uncompressed header and the data partitions are always a whole
+number of bytes long.
+
+
+The variable numBits is set equal to Min( sz * 8, 15).
+
+The variable buf is read using the f(numBits) parsing process.
+
+The variable paddedBuf is set equal to ( buf \<\< (15 - numBits) ).
+
+The variable SymbolValue is set to ((1 \<\< 15) - 1) ^ paddedBuf.
+
+The variable SymbolRange is set to 1 \<\< 15.
+
+The variable SymbolMaxBits is set to 8 * sz - 15.
+
+SymbolMaxBits (when non-negative) represents the number of bits still available to be read.
+It is allowed for this number to go negative (either here or during read_symbol).
+SymbolMaxBits (when negative) signifies that all available bits have been read, and that -SymbolMaxBits of padding zero bits
+have been used in the symbol decoding process.  These padding zero bits are not present in the bitstream.
+
+The array TileIntraFrameYModeCdf is set equal to a copy of Default_Intra_Frame_Y_Mode_Cdf.
+
+A copy is made of each of the CDF arrays mentioned in the semantics for
+init_coeff_cdfs and init_non_coeff_cdfs.  The name of the destination for the copy is the name of the CDF array
+prefixed with "Tile".  The name of the source for the copy is the name of the CDF array with no prefix.  This copying produces the following arrays:
+ * TileYModeCdf
+ * TileUVModeCflNotAllowedCdf
+ * TileUVModeCflAllowedCdf
+ * TileAngleDeltaCdf
+ * TileIntrabcCdf
+ * TilePartitionW8Cdf
+ * TilePartitionW16Cdf
+ * TilePartitionW32Cdf
+ * TilePartitionW64Cdf
+ * TilePartitionW128Cdf
+ * TileSegmentIdCdf
+ * TileSegmentIdPredictedCdf
+ * TileTx8x8Cdf
+ * TileTx16x16Cdf
+ * TileTx32x32Cdf
+ * TileTx64x64Cdf
+ * TileTxfmSplitCdf
+ * TileFilterIntraModeCdf
+ * TileFilterIntraCdf
+ * TileInterpFilterCdf
+ * TileMotionModeCdf
+ * TileNewMvCdf
+ * TileZeroMvCdf
+ * TileRefMvCdf
+ * TileCompoundModeCdf
+ * TileDrlModeCdf
+ * TileIsInterCdf
+ * TileCompModeCdf
+ * TileSkipModeCdf
+ * TileSkipCdf
+ * TileCompRefCdf
+ * TileCompBwdRefCdf
+ * TileSingleRefCdf
+ * TileMvJointCdf
+ * TileMvSignCdf
+ * TileMvClassCdf
+ * TileMvClass0BitCdf
+ * TileMvFrCdf
+ * TileMvClass0FrCdf
+ * TileMvClass0HpCdf
+ * TileMvBitCdf
+ * TileMvHpCdf
+ * TilePaletteYModeCdf
+ * TilePaletteUVModeCdf
+ * TilePaletteYSizeCdf
+ * TilePaletteUVSizeCdf
+ * TilePaletteSize2YColorCdf
+ * TilePaletteSize2UVColorCdf
+ * TilePaletteSize3YColorCdf
+ * TilePaletteSize3UVColorCdf
+ * TilePaletteSize4YColorCdf
+ * TilePaletteSize4UVColorCdf
+ * TilePaletteSize5YColorCdf
+ * TilePaletteSize5UVColorCdf
+ * TilePaletteSize6YColorCdf
+ * TilePaletteSize6UVColorCdf
+ * TilePaletteSize7YColorCdf
+ * TilePaletteSize7UVColorCdf
+ * TilePaletteSize8YColorCdf
+ * TilePaletteSize8UVColorCdf
+ * TileDeltaQCdf
+ * TileDeltaLFCdf
+ * TileDeltaLFMultiCdf[ i ] for i = 0..FRAME_LF_COUNT-1
+ * TileIntraTxTypeSet1Cdf
+ * TileIntraTxTypeSet2Cdf
+ * TileInterTxTypeSet1Cdf
+ * TileInterTxTypeSet2Cdf
+ * TileInterTxTypeSet3Cdf
+ * TileUseObmcCdf
+ * TileInterIntraCdf
+ * TileCompRefTypeCdf
+ * TileCflSignCdf
+ * TileUniCompRefCdf
+ * TileWedgeInterIntraCdf
+ * TileCompGroupIdxCdf
+ * TileCompoundIdxCdf
+ * TileCompoundTypeCdf
+ * TileInterIntraModeCdf
+ * TileWedgeIndexCdf
+ * TileCflAlphaCdf
+ * TileUseWienerCdf
+ * TileUseSgrprojCdf
+ * TileRestorationTypeCdf
+ * TileTxbSkipCdf
+ * TileEobPt16Cdf
+ * TileEobPt32Cdf
+ * TileEobPt64Cdf
+ * TileEobPt128Cdf
+ * TileEobPt256Cdf
+ * TileEobPt512Cdf
+ * TileEobPt1024Cdf
+ * TileEobExtraCdf
+ * TileDcSignCdf
+ * TileCoeffBaseEobCdf
+ * TileCoeffBaseCdf
+ * TileCoeffBrCdf
+
+### Boolean decoding process ### {#boolean_decoding_process}
+
+This process decodes a pseudo-raw bit assuming equal probability for
+decoding a 0 or a 1.
+
+This process is invoked when the function read_bool( ) is called from
+the read_literal function in [section 8.2.5][].
+
+An array cdf of length 3 is constructed as follows:
+
+~~~~ c
+cdf[ 0 ] = 1 << 14
+cdf[ 1 ] = 1 << 15
+cdf[ 2 ] = 0
+~~~~
+
+The output of this process is given by read_symbol( cdf ).
+
+Note: This cdf array is constructed each time read_bool is invoked.
+This means that implementations can omit the cdf update performed by
+read_symbol when invoked from read_bool because the modified values are never used.
+
+
+
+### Exit process for symbol decoder ### {#exit_process_for_symbol_decoder}
+
+This process is invoked when the function exit_symbol( ) is called from the syntax
+structure.
+
+It is a requirement of bitstream conformance that SymbolMaxBits is greater than or
+equal to -14 whenever this process is invoked.
+
+The variable trailingBitPosition is set equal to get_position() - Min(15, SymbolMaxBits+15).
+
+The bitstream position indicator is advanced by Max(0,SymbolMaxBits).
+(This skips over any trailing bits that have not already been read during symbol decode.)
+
+The variable paddingEndPosition is set equal to get_position().
+
+Note: paddingEndPosition will always be a multiple of 8 indicating that
+the bit position is byte aligned.
+
+
+It is a requirement of bitstream conformance that the bit at position trailingBitPosition is equal to 1.
+
+It is a requirement of bitstream conformance that the bit at position x is equal to 0 for values of x strictly between trailingBitPosition and paddingEndPosition.
+
+Note: This exit process consumes the OBU trailing bits for a tile group.
+
+
+If disable_frame_end_update_cdf is equal to 0 and TileNum is equal to context_update_tile_id,
+a copy is made of the final CDF values for each of the
+CDF arrays mentioned in the semantics for init_coeff_cdfs and init_non_coeff_cdfs.
+The name of the destination for the copy is the name of the CDF array
+prefixed with "Saved".  The name of the source for the copy is the name of the CDF array
+prefixed with "Tile".
+For example, an array SavedYModeCdf will be created with values equal to TileYModeCdf.
+
+### Parsing process for read_literal ### {#parsing_process_for_read_literal}
+
+This process is invoked when the function read_literal( n ) is invoked.
+
+This process is specified as follows:
+
+~~~~~ c
+x = 0
+for ( i = 0 ; i < n; i++ ) {
+    x = 2 * x + read_bool( )
+}
+~~~~~
+
+The return value for the function is given by x.
+
+
+### Symbol decoding process ### {#symbol_decoding_process}
+
+The input to this process is an array cdf of length N + 1 which specifies the
+cumulative distribution for a symbol with N possible values.
+
+The output of this process is the variable symbol, containing a decoded syntax
+element. The process also modifies the input array cdf to adapt the
+probabilities to the content of the stream.
+
+This process is invoked when the function read_symbol( cdf ) is called.
+
+Note: When this process is invoked, N will be greater than 1 and cdf[ N-1 ]
+will be equal to 1 \<\< 15.
+
+
+The variables cur, prev, and symbol are calculated as follows:
+
+~~~~ c
+cur = SymbolRange
+symbol = -1
+do {
+  symbol++
+  prev = cur
+  f = ( 1 << 15 ) - cdf[ symbol ]
+  cur = ((SymbolRange >> 8) * (f >> EC_PROB_SHIFT)) >> (7 - EC_PROB_SHIFT)
+  cur += EC_MIN_PROB * (N - symbol - 1)
+} while ( SymbolValue < cur )
+~~~~
+
+Note: Implementations may prefer to store the inverse cdf to move the
+subtraction out of this loop.
+
+
+The variable SymbolRange is set to prev - cur.
+
+The variable SymbolValue is set equal to SymbolValue - cur.
+
+The range and value are renormalized by the following ordered steps:
+ 1. The variable bits is set to 15 – FloorLog2( SymbolRange ). This represents the number of new bits to be added to SymbolValue.
+ 2. The variable SymbolRange is set to SymbolRange \<\< bits.
+ 3. The variable numBits is set equal to Min( bits, Max(0, SymbolMaxBits) ). This represents the number of new bits to read from the bitstream.
+ 4. The variable newData is read using the f(numBits) parsing process.
+ 5. The variable paddedData is set equal to newData \<\< ( bits - numBits ).
+ 6. The variable SymbolValue is set to paddedData ^ ( ( ( SymbolValue + 1 ) \<\< bits ) - 1 ).
+ 7. The variable SymbolMaxBits is set to SymbolMaxBits - bits.
+
+Note: bits may be equal to 0, in which case these ordered steps have no
+effect.
+
+
+If disable_cdf_update is equal to 0, the cumulative distribution is updated as follows:
+
+~~~~ c
+rate = 3 + ( cdf[ N ] > 15 ) + ( cdf[ N ] > 31 ) + Min( FloorLog2( N ), 2 )
+tmp = 0
+for ( i = 0; i < N - 1; i++ ) {
+  tmp = ( i == symbol ) ? ( 1 << 15 ) : tmp
+  if ( tmp < cdf[ i ] ) {
+    cdf[ i ] -= ( ( cdf[ i ] - tmp ) >> rate )
+  } else {
+    cdf[ i ] += ( ( tmp - cdf[ i ] ) >> rate )
+  }
+}
+cdf[ N ] += ( cdf[ N ] < 32 )
+~~~~
+
+Note: The last entry of the cdf array is used to keep a count of the number
+of times the symbol has been decoded (up to a maximum of 32).  This allows the
+cdf adaption rate to depend on the number of times the symbol has been decoded.
+
+
+The return value from the function is given by symbol.
+
+
+## Parsing process for CDF encoded syntax elements ## {#parsing_process_for_cdf_encoded_syntax_elements}
+
+### General ### {#general}
+
+This process is invoked when the descriptor of a syntax element in the syntax
+tables is equal to S.
+
+The input to this process is the name of a syntax element.
+
+[Section 8.3.2][] specifies how a CDF array is chosen for the syntax element.
+The variable cdf is set equal to a reference to this CDF array.
+
+Note: The array must be passed by reference because read_symbol will adjust
+the array contents.
+
+
+The output of this process is the result of calling the function read_symbol( cdf ).
+
+
+### Cdf selection process ### {#cdf_selection_process}
+
+The input to this process is the name of a syntax element.
+
+The output of this process is a reference to a CDF array.
+
+When the description in this section uses variables, these variables are
+taken to have the values defined by the syntax tables at the point that the
+syntax element is being decoded.
+
+The probabilities depend on the syntax element as follows:
+
+**use_intrabc**: The cdf for use_intrabc is given by TileIntrabcCdf.
+
+**intra_frame_y_mode**: The cdf for intra_frame_y_mode is given by
+TileIntraFrameYModeCdf[ abovemode ][ leftmode ] where abovemode and leftmode are
+the intra modes used for the blocks immediately above and to the left of this
+block and are computed as:
+
+~~~~~ c
+abovemode = Intra_Mode_Context[ AvailU ? YModes[ MiRow - 1 ][ MiCol ] : DC_PRED ]
+leftmode = Intra_Mode_Context[ AvailL ? YModes[ MiRow ][ MiCol - 1] : DC_PRED ]
+~~~~~
+
+where Intra_Mode_Context is defined as follows:
+
+~~~~~ c
+Intra_Mode_Context[ INTRA_MODES ] = {
+  0, 1, 2, 3, 4, 4, 4, 4, 3, 0, 1, 2, 0
+}
+~~~~~
+
+Note: We are using a 2D array to store the YModes and UVModes for clarity. It is
+possible to reduce memory consumption by only storing one intra mode for
+each 4x4 horizontal and vertical position, i.e. to use two 1D arrays instead.
+
+
+**y_mode**: The cdf for y_mode is given by TileYModeCdf[ ctx ] where the
+variable ctx is computed as Size_Group[ MiSize ].
+
+**uv_mode**: The cdf for uv_mode is derived as follows:
+ * If Lossless is equal to 1 and get_plane_residual_size( MiSize, 1 ) is equal to BLOCK_4X4, the cdf is given by TileUVModeCflAllowedCdf[ YMode ].
+ * Otherwise, if Lossless is equal to 0 and Max( Block_Width[ MiSize ], Block_Height[ MiSize ] ) <= 32, the cdf is given by TileUVModeCflAllowedCdf[ YMode ].
+ * Otherwise, the cdf is given by TileUVModeCflNotAllowedCdf[ YMode ].
+
+**angle_delta_y**: The cdf for angle_delta_y is given by TileAngleDeltaCdf[YMode - V_PRED].
+
+**angle_delta_uv**: The cdf for angle_delta_uv is given by TileAngleDeltaCdf[UVMode - V_PRED].
+
+**partition**: The variable ctx is computed as follows:
+
+~~~~~ c
+bsl = Mi_Width_Log2[ bSize ]
+above = AvailU && ( Mi_Width_Log2[ MiSizes[ r - 1 ][ c ] ] < bsl )
+left = AvailL && ( Mi_Height_Log2[ MiSizes[ r ][ c - 1 ] ] < bsl )
+ctx = left * 2 + above
+~~~~~
+
+The cdf is derived as follows:
+ * If bsl is equal to 1, the cdf is given by TilePartitionW8Cdf[ ctx ].
+ * Otherwise, if bsl is equal to 2, the cdf is given by TilePartitionW16Cdf[ ctx ].
+ * Otherwise, if bsl is equal to 3, the cdf is given by TilePartitionW32Cdf[ ctx ].
+ * Otherwise, if bsl is equal to 4, the cdf is given by TilePartitionW64Cdf[ ctx ].
+ * Otherwise (bsl is equal to 5), the cdf is given by TilePartitionW128Cdf[ ctx ].
+
+**split_or_horz**: split_or_horz uses the same derivation for the variable ctx
+as for the syntax element partition.
+
+The array partitionCdf is derived according to the cdf derivation procedure for the
+syntax element partition (note that bsl is never equal to 1 when decoding split_or_horz).
+
+The cdf to return is given by an array of length 3 which is constructed as
+follows:
+
+~~~~~ c
+psum = ( partitionCdf[ PARTITION_VERT ] - partitionCdf[ PARTITION_VERT - 1 ] +
+         partitionCdf[ PARTITION_SPLIT ] - partitionCdf[ PARTITION_SPLIT - 1 ] +
+         partitionCdf[ PARTITION_HORZ_A ] - partitionCdf[ PARTITION_HORZ_A - 1 ] +
+         partitionCdf[ PARTITION_VERT_A ] - partitionCdf[ PARTITION_VERT_A - 1 ] +
+         partitionCdf[ PARTITION_VERT_B ] - partitionCdf[ PARTITION_VERT_B - 1 ] )
+if ( bSize != BLOCK_128X128 )
+    psum += partitionCdf[ PARTITION_VERT_4 ] - partitionCdf[ PARTITION_VERT_4 - 1 ] )
+cdf[0] = ( 1 << 15 ) - psum
+cdf[1] = 1 << 15
+cdf[2] = 0
+~~~~~
+
+Note: The syntax element split_or_horz is not allowed to return a
+PARTITION_VERT, so the probability for a vertical partition is assigned to the
+probability for the split partition.
+
+
+**split_or_vert**: split_or_vert uses the same derivation for the variable ctx
+as for the syntax element partition.
+
+The array partitionCdf is derived according to the cdf derivation procedure for the
+syntax element partition (note that bsl is never equal to 1 when decoding split_or_vert).
+
+The cdf to return is given by an array of length 3 which is constructed as follows:
+
+~~~~~ c
+psum = ( partitionCdf[ PARTITION_HORZ ] - partitionCdf[ PARTITION_HORZ - 1 ] +
+         partitionCdf[ PARTITION_SPLIT ] - partitionCdf[ PARTITION_SPLIT - 1 ] +
+         partitionCdf[ PARTITION_HORZ_A ] - partitionCdf[ PARTITION_HORZ_A - 1 ] +
+         partitionCdf[ PARTITION_HORZ_B ] - partitionCdf[ PARTITION_HORZ_B - 1 ] +
+         partitionCdf[ PARTITION_VERT_A ] - partitionCdf[ PARTITION_VERT_A - 1 ] )
+if ( bSize != BLOCK_128X128 )
+    psum += partitionCdf[ PARTITION_HORZ_4 ] - partitionCdf[ PARTITION_HORZ_4 - 1 ]
+cdf[0] = ( 1 << 15 ) - psum
+cdf[1] = 1 << 15
+cdf[2] = 0
+~~~~~
+
+**tx_depth**: the cdf depends on the value of maxRectTxSize and ctx,
+where ctx is computed by:
+
+~~~~~ c
+maxTxWidth = Tx_Width[ maxRectTxSize ]
+maxTxHeight = Tx_Height[ maxRectTxSize ]
+
+if ( AvailU && IsInters[ MiRow - 1 ][ MiCol ] ) {
+    aboveW = Block_Width[ MiSizes[ MiRow - 1 ][ MiCol ] ]
+} else if ( AvailU ) {
+    aboveW = get_above_tx_width( MiRow, MiCol )
+} else {
+    aboveW = 0
+}
+
+if ( AvailL && IsInters[ MiRow ][ MiCol - 1 ] ) {
+    leftH = Block_Height[ MiSizes[ MiRow ][ MiCol - 1 ] ]
+} else if ( AvailL ) {
+    leftH = get_left_tx_height( MiRow, MiCol )
+} else {
+    leftH = 0
+}
+
+ctx = ( aboveW >= maxTxWidth ) + ( leftH >= maxTxHeight )
+~~~~~
+
+where get_above_tx_width and get_left_tx_height are functions defined as specified in the CDF selection
+process for txfm_split.
+
+The cdf to return is given by:
+ * TileTx64x64Cdf[ ctx ] if maxTxDepth is equal to 4.
+ * TileTx32x32Cdf[ ctx ] if maxTxDepth is equal to 3.
+ * TileTx16x16Cdf[ ctx ] if maxTxDepth is equal to 2.
+ * TileTx8x8Cdf[ ctx ] otherwise.
+
+**txfm_split**: the cdf is given by TileTxfmSplitCdf[ ctx ], where ctx is computed by:
+
+~~~~~ c
+above = get_above_tx_width( row, col ) < Tx_Width[ txSz ]
+left = get_left_tx_height( row, col ) < Tx_Height[ txSz ]
+size = Min( 64, Max( Block_Width[ MiSize ], Block_Height[ MiSize ] ) )
+maxTxSz = find_tx_size( size, size )
+txSzSqrUp = Tx_Size_Sqr_Up[ txSz ]
+ctx = (txSzSqrUp != maxTxSz) * 3 +
+      (TX_SIZES - 1 - maxTxSz) * 6 + above + left
+~~~~~
+
+where get_above_tx_width and get_left_tx_height are functions defined as follows:
+
+~~~~~ c
+get_above_tx_width( row, col ) {
+    if ( row == MiRow ) {
+        if ( !AvailU ) {
+            return 64
+        } else if ( Skips[ row - 1 ][ col ] && IsInters[ row - 1 ][ col ] ) {
+            return Block_Width[ MiSizes[ row - 1 ][ col ] ]
+        }
+    }
+    return Tx_Width[ InterTxSizes[ row - 1 ][ col ] ]
+}
+
+get_left_tx_height( row, col ) {
+    if ( col == MiCol ) {
+        if ( !AvailL ) {
+            return 64
+        } else if ( Skips[ row ][ col - 1 ] && IsInters[ row ][ col - 1 ] ) {
+            return Block_Height[ MiSizes[ row ][ col - 1 ] ]
+        }
+    }
+    return Tx_Height[ InterTxSizes[ row ][ col - 1 ] ]
+}
+~~~~~
+
+**segment_id**: The cdf is given by TileSegmentIdCdf[ ctx ] where ctx is computed by:
+
+~~~~~ c
+if ( prevUL < 0 )
+    ctx = 0
+else if ( (prevUL == prevU) && (prevUL == prevL) )
+    ctx = 2
+else if ( (prevUL == prevU) || (prevUL == prevL) || (prevU == prevL) )
+    ctx = 1
+else
+    ctx = 0
+~~~~~
+
+
+**seg_id_predicted**: the cdf is given by TileSegmentIdPredictedCdf[ ctx ],
+where ctx is computed by:
+
+~~~~~ c
+ctx = LeftSegPredContext[ MiRow ] + AboveSegPredContext[ MiCol ]
+~~~~~
+
+**new_mv**: the cdf is given by TileNewMvCdf[ NewMvContext ].
+
+**zero_mv**: the cdf is given by TileZeroMvCdf[ ZeroMvContext ].
+
+**ref_mv**: the cdf is given by TileRefMvCdf[ RefMvContext ].
+
+**drl_mode**: the cdf is given by TileDrlModeCdf[ DrlCtxStack[ idx ] ].
+
+**is_inter**: the cdf is given by TileIsInterCdf[ ctx ] where ctx is computed by:
+
+~~~~~ c
+if ( AvailU && AvailL )
+    ctx = (LeftIntra && AboveIntra) ? 3 : LeftIntra || AboveIntra
+else if ( AvailU || AvailL )
+    ctx = 2 * (AvailU ? AboveIntra : LeftIntra)
+else
+    ctx = 0
+~~~~~
+
+
+**use_filter_intra**: the cdf is given by TileFilterIntraCdf[ MiSize ].
+
+**filter_intra_mode**: the cdf is given by TileFilterIntraModeCdf.
+
+**comp_mode**: the cdf is given by TileCompModeCdf[ ctx ] where ctx is computed by:
+
+~~~~~ c
+if ( AvailU && AvailL ) {
+    if ( AboveSingle && LeftSingle )
+    ctx = check_backward( AboveRefFrame[ 0 ] )
+        ^ check_backward( LeftRefFrame[ 0 ] )
+    else if ( AboveSingle )
+        ctx = 2 + ( check_backward( AboveRefFrame[ 0 ] ) || AboveIntra)
+    else if ( LeftSingle )
+        ctx = 2 + ( check_backward( LeftRefFrame[ 0 ] ) || LeftIntra)
+    else
+        ctx = 4
+} else if ( AvailU ) {
+    if ( AboveSingle )
+        ctx = check_backward( AboveRefFrame[ 0 ] )
+    else
+        ctx = 3
+} else if ( AvailL ) {
+    if ( LeftSingle )
+        ctx= check_backward( LeftRefFrame[ 0 ] )
+    else
+        ctx = 3
+} else {
+    ctx = 1
+}
+~~~~~
+
+where check_backward is a function specified as follows:
+
+~~~~~ c
+check_backward(refFrame) {
+  return ( ( refFrame >= BWDREF_FRAME ) && ( refFrame <= ALTREF_FRAME ) )
+}
+~~~~~
+
+**skip_mode**: the cdf is given by TileSkipModeCdf[ ctx ] where ctx is computed
+by:
+
+~~~~~ c
+    ctx = 0
+    if ( AvailU )
+        ctx += SkipModes[ MiRow - 1 ][ MiCol ]
+    if ( AvailL )
+        ctx += SkipModes[ MiRow ][ MiCol - 1 ]
+~~~~~
+
+**skip**: the cdf is given by TileSkipCdf[ ctx ] where ctx is computed
+by:
+
+~~~~~ c
+    ctx = 0
+    if ( AvailU )
+        ctx += Skips[ MiRow - 1 ][ MiCol ]
+    if ( AvailL )
+        ctx += Skips[ MiRow ][ MiCol - 1 ]
+~~~~~
+
+**comp_ref**: the cdf is given by TileCompRefCdf[ ctx ][ 0 ] where ctx is
+computed by:
+
+~~~~~ c
+last12Count = count_refs( LAST_FRAME ) + count_refs( LAST2_FRAME )
+last3GoldCount = count_refs( LAST3_FRAME ) + count_refs( GOLDEN_FRAME )
+ctx = ref_count_ctx( last12Count, last3GoldCount )
+~~~~~
+
+where count_refs is defined as:
+
+~~~~~ c
+count_refs(frameType) {
+    c = 0
+    if ( AvailU ) {
+        if ( AboveRefFrame[ 0 ] == frameType ) c++
+        if ( AboveRefFrame[ 1 ] == frameType ) c++
+    }
+    if ( AvailL ) {
+        if ( LeftRefFrame[ 0 ] == frameType ) c++
+        if ( LeftRefFrame[ 1 ] == frameType ) c++
+    }
+    return c
+}
+~~~~~
+
+and ref_count_ctx is defined as:
+
+~~~~~ c
+ref_count_ctx(counts0, counts1) {
+  if ( counts0 < counts1 )
+    return 0
+  else if ( counts0 == counts1 )
+    return 1
+  else
+    return 2
+}
+~~~~~
+
+**comp_ref_p1**: the cdf is given by TileCompRefCdf[ ctx ][ 1 ] where ctx is
+computed by:
+
+~~~~~ c
+lastCount = count_refs( LAST_FRAME )
+last2Count = count_refs( LAST2_FRAME )
+ctx = ref_count_ctx( lastCount, last2Count )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**comp_ref_p2**: the cdf is given by TileCompRefCdf[ ctx ][ 2 ] where ctx is
+computed by:
+
+~~~~~ c
+last3Count = count_refs( LAST3_FRAME )
+goldCount = count_refs( GOLDEN_FRAME )
+ctx = ref_count_ctx( last3Count, goldCount )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**comp_bwdref**: the cdf is given by TileCompBwdRefCdf[ ctx ][ 0 ] where ctx is
+computed by:
+
+~~~~~ c
+brfarf2Count = count_refs( BWDREF_FRAME ) + count_refs( ALTREF2_FRAME )
+arfCount = count_refs( ALTREF_FRAME )
+ctx = ref_count_ctx( brfarf2Count, arfCount )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**comp_bwdref_p1**: the cdf is given by TileCompBwdRefCdf[ ctx ][ 1 ] where ctx is
+computed by:
+
+~~~~~ c
+brfCount = count_refs( BWDREF_FRAME )
+arf2Count = count_refs( ALTREF2_FRAME )
+ctx = ref_count_ctx( brfCount, arf2Count )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**single_ref_p1**: the cdf is given by TileSingleRefCdf[ ctx ][ 0 ] where
+ctx is computed by:
+
+~~~~~ c
+fwdCount = count_refs( LAST_FRAME )
+fwdCount += count_refs( LAST2_FRAME )
+fwdCount += count_refs( LAST3_FRAME )
+fwdCount += count_refs( GOLDEN_FRAME )
+bwdCount = count_refs( BWDREF_FRAME )
+bwdCount += count_refs( ALTREF2_FRAME )
+bwdCount += count_refs( ALTREF_FRAME )
+ctx = ref_count_ctx( fwdCount, bwdCount )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**single_ref_p2**: the cdf is given by TileSingleRefCdf[ ctx ][ 1 ] where
+ctx is computed as in the CDF selection process for comp_bwdref.
+
+**single_ref_p3**: the cdf is given by TileSingleRefCdf[ ctx ][ 2 ] where
+ctx is computed as in the CDF selection process for comp_ref.
+
+**single_ref_p4**: the cdf is given by TileSingleRefCdf[ ctx ][ 3 ] where
+ctx is computed as in the CDF selection process for comp_ref_p1.
+
+**single_ref_p5**: the cdf is given by TileSingleRefCdf[ ctx ][ 4 ] where
+ctx is computed as in the CDF selection process for comp_ref_p2.
+
+**single_ref_p6**: the cdf is given by TileSingleRefCdf[ ctx ][ 5 ] where
+ctx is computed as in the CDF selection process for comp_bwdref_p1.
+
+**compound_mode**: the cdf is given by TileCompoundModeCdf[ ctx ] where
+ctx is computed by:
+
+~~~~~ c
+ctx = Compound_Mode_Ctx_Map[ RefMvContext >> 1 ][ Min(NewMvContext, COMP_NEWMV_CTXS - 1) ]
+~~~~~
+
+where Compound_Mode_Ctx_Map is defined as follows:
+
+~~~~~ c
+Compound_Mode_Ctx_Map[ 3 ][ COMP_NEWMV_CTXS ] = {
+    { 0, 1, 1, 1, 1 },
+    { 1, 2, 3, 4, 4 },
+    { 4, 4, 5, 6, 7 }
+}
+~~~~~
+
+**interp_filter**: the cdf is given by TileInterpFilterCdf[ ctx ]
+where ctx is computed by:
+
+~~~~~ c
+    ctx = ( ( dir & 1 ) * 2 + ( RefFrame[ 1 ] > INTRA_FRAME ) ) * 4
+    leftType = 3
+    aboveType = 3
+
+    if ( AvailL ) {
+        if ( RefFrames[ MiRow ][ MiCol - 1 ][ 0 ] == RefFrame[ 0 ] ||
+             RefFrames[ MiRow ][ MiCol - 1 ][ 1 ] == RefFrame[ 0 ] )
+            leftType = InterpFilters[ MiRow ] [ MiCol - 1 ][ dir ]
+    }
+
+    if ( AvailU ) {
+        if ( RefFrames[ MiRow - 1 ][ MiCol ][ 0 ] == RefFrame[ 0 ] ||
+             RefFrames[ MiRow - 1 ][ MiCol ][ 1 ] == RefFrame[ 0 ] )
+            aboveType = InterpFilters[ MiRow - 1 ] [ MiCol ][ dir ]
+    }
+
+    if ( leftType == aboveType )
+        ctx += leftType
+    else if ( leftType == 3 )
+        ctx += aboveType
+    else if ( aboveType == 3 )
+        ctx += leftType
+    else
+        ctx += 3
+~~~~~
+
+**motion_mode**: the cdf is given by TileMotionModeCdf[ MiSize ].
+
+**mv_joint**: the cdf is given by TileMvJointCdf[ MvCtx ].
+
+**mv_sign**: the cdf is given by TileMvSignCdf[ MvCtx ][ comp ].
+
+**mv_class**: the cdf is given by TileMvClassCdf[ MvCtx ][ comp ].
+
+**mv_class0_bit**: the cdf is given by TileMvClass0BitCdf[ MvCtx ][ comp ].
+
+**mv_class0_fr**: the cdf is given by TileMvClass0FrCdf[ MvCtx ][ comp ][ mv_class0_bit ].
+
+**mv_class0_hp**: the cdf is given by TileMvClass0HpCdf[ MvCtx ][ comp ].
+
+**mv_fr**: the cdf is given by TileMvFrCdf[ MvCtx ][ comp ].
+
+**mv_hp**: the cdf is given by TileMvHpCdf[ MvCtx ][ comp ].
+
+**mv_bit**: the cdf is given by TileMvBitCdf[ MvCtx ][ comp ][ i ].
+
+**all_zero**: the cdf is given by TileTxbSkipCdf[ txSzCtx ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+maxX4 = MiCols
+maxY4 = MiRows
+if ( plane > 0 ) {
+    maxX4 = maxX4 >> subsampling_x
+    maxY4 = maxY4 >> subsampling_y
+}
+
+w = Tx_Width[txSz]
+h = Tx_Height[txSz]
+
+bsize = get_plane_residual_size( MiSize, plane )
+bw = Block_Width[ bsize ]
+bh = Block_Height[ bsize ]
+
+if ( plane == 0 ) {
+    top = 0
+    left = 0
+    for ( k = 0; k < w4; k++ ) {
+        if ( x4 + k < maxX4 )
+            top = Max( top, AboveLevelContext[ plane ][ x4 + k ] )
+    }
+    for ( k = 0; k < h4; k++ ) {
+        if ( y4 + k < maxY4 )
+            left = Max( left, LeftLevelContext[ plane ][ y4 + k ] )
+    }
+    top = Min( top, 255 )
+    left = Min( left, 255 )
+    if ( bw == w && bh == h ) {
+        ctx = 0
+    } else if ( top == 0 && left == 0 ) {
+        ctx = 1
+    } else if ( top == 0 || left == 0 ) {
+        ctx = 2 + ( Max( top, left ) > 3 )
+    } else if ( Max( top, left ) <= 3 ) {
+        ctx = 4
+    } else if ( Min( top, left ) <= 3 ) {
+        ctx = 5
+    } else {
+        ctx = 6
+    }
+} else {
+    above = 0
+    left = 0
+    for ( i = 0; i < w4; i++ ) {
+        if ( x4 + i < maxX4 ) {
+            above |= AboveLevelContext[ plane ][ x4 + i ]
+            above |= AboveDcContext[ plane ][ x4 + i ]
+        }
+    }
+    for ( i = 0; i < h4; i++ ) {
+        if ( y4 + i < maxY4 ) {
+            left |= LeftLevelContext[ plane ][ y4 + i ]
+            left |= LeftDcContext[ plane ][ y4 + i ]
+        }
+    }
+    ctx = ( above != 0 ) + ( left != 0 )
+    ctx += 7
+    if ( bw * bh > w * h )
+        ctx += 3
+}
+~~~~~
+
+**eob_pt_16**: the cdf is given by TileEobPt16Cdf[ ptype ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+txType = compute_tx_type( plane, txSz, x4, y4 )
+ctx = ( get_tx_class( txType ) == TX_CLASS_2D ) ? 0 : 1
+~~~~~
+
+where get_tx_class() is defined as in the CDF selection for coeff_base.
+
+**eob_pt_32**: the cdf is given by TileEobPt32Cdf[ ptype ][ ctx ], where ctx is computed as for eob_pt_16.
+
+**eob_pt_64**: the cdf is given by TileEobPt64Cdf[ ptype ][ ctx ], where ctx is computed as for eob_pt_16.
+
+**eob_pt_128**: the cdf is given by TileEobPt128Cdf[ ptype ][ ctx ], where ctx is computed as for eob_pt_16.
+
+**eob_pt_256**: the cdf is given by TileEobPt256Cdf[ ptype ][ ctx ], where ctx is computed as for eob_pt_16.
+
+**eob_pt_512**: the cdf is given by TileEobPt512Cdf[ ptype ].
+
+**eob_pt_1024**: the cdf is given by TileEobPt1024Cdf[ ptype ].
+
+**eob_extra**: the cdf is given by TileEobExtraCdf[ txSzCtx ][ ptype ][ eobPt - 3 ].
+
+**coeff_base**: the cdf is given by TileCoeffBaseCdf[ txSzCtx ][ ptype ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+ctx = get_coeff_base_ctx(txSz, plane, x4, y4, scan[c], c, 0)
+~~~~~
+
+where get_coeff_base_ctx is defined as:
+
+~~~~~ c
+get_coeff_base_ctx( txSz, plane, blockX, blockY, pos, c, isEob ) {
+    adjTxSz = Adjusted_Tx_Size[ txSz ]
+    bwl = Tx_Width_Log2[ adjTxSz ]
+    width = 1 << bwl
+    height = Tx_Height[ adjTxSz ]
+    txType = compute_tx_type( plane, txSz, blockX, blockY )
+    if ( isEob ) {
+        if ( c == 0 ) {
+            return SIG_COEF_CONTEXTS - 4
+        }
+        if ( c <= (height << bwl) / 8 ) {
+            return SIG_COEF_CONTEXTS - 3
+        }
+        if ( c <= (height << bwl) / 4 ) {
+            return SIG_COEF_CONTEXTS - 2
+        }
+        return SIG_COEF_CONTEXTS - 1
+    }
+    txClass = get_tx_class( txType )
+    row = pos >> bwl
+    col = pos - (row << bwl)
+    mag = 0
+
+    for ( idx = 0; idx < SIG_REF_DIFF_OFFSET_NUM; idx++ ) {
+        refRow = row + Sig_Ref_Diff_Offset[ txClass ][ idx ][ 0 ]
+        refCol = col + Sig_Ref_Diff_Offset[ txClass ][ idx ][ 1 ]
+        if ( refRow >= 0 &&
+             refCol >= 0 &&
+             refRow < height &&
+             refCol < width ) {
+            mag += Min( Abs( Quant[ (refRow << bwl) + refCol ] ), 3 )
+        }
+    }
+
+    ctx = Min( ( mag + 1 ) >> 1, 4 )
+    if ( txClass == TX_CLASS_2D ) {
+        if ( row == 0 && col == 0 ) {
+            return 0
+        }
+        return ctx + Coeff_Base_Ctx_Offset[ txSz ][ Min( row, 4 ) ][ Min( col, 4 ) ]
+    }
+    idx = ( txClass == TX_CLASS_VERT ) ? row : col
+    return ctx + Coeff_Base_Pos_Ctx_Offset[ Min( idx, 2 ) ]
+}
+~~~~~
+
+where get_tx_class is defined as:
+
+~~~~~ c
+get_tx_class( txType ) {
+    if ( ( txType == V_DCT ) ||
+         ( txType == V_ADST ) ||
+         ( txType == V_FLIPADST ) ) {
+        return TX_CLASS_VERT
+    } else if ( ( txType == H_DCT ) ||
+                ( txType == H_ADST ) ||
+                ( txType == H_FLIPADST ) ) {
+        return TX_CLASS_HORIZ
+    } else
+        return TX_CLASS_2D
+}
+~~~~~
+
+
+Coeff_Base_Ctx_Offset is defined as:
+
+~~~~~ c
+Coeff_Base_Ctx_Offset[ TX_SIZES_ALL ][ 5 ][ 5 ] = {
+  {
+    { 0, 1, 6, 6, 0 },
+    { 1, 6, 6, 21, 0 },
+    { 6, 6, 21, 21, 0 },
+    { 6, 21, 21, 21, 0 },
+    { 0, 0, 0, 0, 0 }
+  },
+  {
+    { 0, 1, 6, 6, 21 },
+    { 1, 6, 6, 21, 21 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 1, 6, 6, 21 },
+    { 1, 6, 6, 21, 21 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 1, 6, 6, 21 },
+    { 1, 6, 6, 21, 21 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 1, 6, 6, 21 },
+    { 1, 6, 6, 21, 21 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 11, 11, 11, 0 },
+    { 11, 11, 11, 11, 0 },
+    { 6, 6, 21, 21, 0 },
+    { 6, 21, 21, 21, 0 },
+    { 21, 21, 21, 21, 0 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 0, 0, 0, 0, 0 }
+  },
+  {
+    { 0, 11, 11, 11, 11 },
+    { 11, 11, 11, 11, 11 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 }
+  },
+  {
+    { 0, 11, 11, 11, 11 },
+    { 11, 11, 11, 11, 11 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 }
+  },
+  {
+    { 0, 11, 11, 11, 11 },
+    { 11, 11, 11, 11, 11 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 }
+  },
+  {
+    { 0, 11, 11, 11, 0 },
+    { 11, 11, 11, 11, 0 },
+    { 6, 6, 21, 21, 0 },
+    { 6, 21, 21, 21, 0 },
+    { 21, 21, 21, 21, 0 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 0, 0, 0, 0, 0 }
+  },
+  {
+    { 0, 11, 11, 11, 11 },
+    { 11, 11, 11, 11, 11 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 }
+  },
+  {
+    { 0, 11, 11, 11, 11 },
+    { 11, 11, 11, 11, 11 },
+    { 6, 6, 21, 21, 21 },
+    { 6, 21, 21, 21, 21 },
+    { 21, 21, 21, 21, 21 }
+  },
+  {
+    { 0, 16, 6, 6, 21 },
+    { 16, 16, 6, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 },
+    { 16, 16, 21, 21, 21 }
+  }
+}
+~~~~~
+
+and Coeff_Base_Pos_Ctx_Offset is defined as:
+
+~~~~~ c
+Coeff_Base_Pos_Ctx_Offset[ 3 ] = {
+  SIG_COEF_CONTEXTS_2D,
+  SIG_COEF_CONTEXTS_2D + 5,
+  SIG_COEF_CONTEXTS_2D + 10
+}
+~~~~~
+
+**coeff_base_eob**: the cdf is given by TileCoeffBaseEobCdf[ txSzCtx ][ ptype ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+ctx = get_coeff_base_ctx(txSz, plane, x4, y4, scan[c], c, 1) - SIG_COEF_CONTEXTS + SIG_COEF_CONTEXTS_EOB
+~~~~~
+
+where get_coeff_base_ctx() is as defined in the CDF selection for coeff_base.
+
+**dc_sign**: the cdf is given by TileDcSignCdf[ ptype ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+maxX4 = MiCols
+maxY4 = MiRows
+if ( plane > 0 ) {
+    maxX4 = maxX4 >> subsampling_x
+    maxY4 = maxY4 >> subsampling_y
+}
+
+dcSign = 0
+for ( k = 0; k < w4; k++ ) {
+    if ( x4 + k < maxX4 ) {
+        sign = AboveDcContext[ plane ][ x4 + k ]
+        if ( sign == 1 ) {
+            dcSign--
+        } else if ( sign == 2 ) {
+            dcSign++
+        }
+    }
+}
+for ( k = 0; k < h4; k++ ) {
+    if ( y4 + k < maxY4 ) {
+        sign = LeftDcContext[ plane ][ y4 + k ]
+        if ( sign == 1 ) {
+            dcSign--
+        } else if ( sign == 2 ) {
+            dcSign++
+        }
+    }
+}
+if ( dcSign < 0 ) {
+    ctx = 1
+} else if ( dcSign > 0 ) {
+    ctx = 2
+} else {
+    ctx = 0
+}
+~~~~~
+
+**coeff_br**: the cdf is given by TileCoeffBrCdf[ Min( txSzCtx, TX_32X32 ) ][ ptype ][ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+adjTxSz = Adjusted_Tx_Size[ txSz ]
+bwl = Tx_Width_Log2[ adjTxSz ]
+txw = Tx_Width[ adjTxSz ]
+txh = Tx_Height[ adjTxSz ]
+row = pos >> bwl
+col = pos - (row << bwl)
+
+mag = 0
+
+txType = compute_tx_type( plane, txSz, x4, y4 )
+txClass = get_tx_class( txType )
+
+for ( idx = 0; idx < 3; idx++ ) {
+    refRow = row + Mag_Ref_Offset_With_Tx_Class[ txClass ][ idx ][ 0 ]
+    refCol = col + Mag_Ref_Offset_With_Tx_Class[ txClass ][ idx ][ 1 ]
+    if ( refRow >= 0 &&
+         refCol >= 0 &&
+         refRow < txh &&
+         refCol < (1 << bwl) ) {
+        mag += Min( Quant[ refRow * txw + refCol ], COEFF_BASE_RANGE + NUM_BASE_LEVELS + 1 )
+    }
+}
+
+mag = Min( ( mag + 1 ) >> 1, 6 )
+if ( pos == 0 ) {
+    ctx = mag
+} else if ( txClass == 0 ) {
+    if ( ( row < 2 ) && ( col < 2 ) ) {
+        ctx = mag + 7
+    } else {
+        ctx = mag + 14
+    }
+} else {
+    if ( txClass == 1 ) {
+        if ( col == 0 ) {
+            ctx = mag + 7
+        } else {
+            ctx = mag + 14
+        }
+    } else {
+        if ( row == 0 ) {
+            ctx = mag + 7
+        } else {
+            ctx = mag + 14
+        }
+    }
+}
+~~~~~
+
+where get_tx_class() is defined as in the CDF selection for coeff_base, and Mag_Ref_Offset_With_Tx_Class is
+defined as:
+
+~~~~~ c
+Mag_Ref_Offset_With_Tx_Class[ 3 ][ 3 ][ 2 ] = {
+  { { 0, 1 }, { 1, 0 }, { 1, 1 } },
+  { { 0, 1 }, { 1, 0 }, { 0, 2 } },
+  { { 0, 1 }, { 1, 0 }, { 2, 0 } }
+}
+~~~~~
+
+**has_palette_y**: the cdf is given by
+TilePaletteYModeCdf[ bsizeCtx ][ ctx ] where ctx is computed as
+follows:
+
+~~~~~ c
+ctx = 0
+if ( AvailU && PaletteSizes[ 0 ][ MiRow - 1 ][ MiCol ] > 0 )
+    ctx += 1
+if ( AvailL && PaletteSizes[ 0 ][ MiRow ][ MiCol - 1 ] > 0 )
+    ctx += 1
+~~~~~
+
+**has_palette_uv**: the cdf is given by
+TilePaletteUVModeCdf[ ctx ] where ctx is computed as
+follows:
+
+~~~~~ c
+ctx = ( PaletteSizeY > 0 ) ? 1 : 0
+~~~~~
+
+**palette_size_y_minus_2**: the cdf is given by TilePaletteYSizeCdf[ bsizeCtx ].
+
+**palette_size_uv_minus_2**: the cdf is given by TilePaletteUVSizeCdf[ bsizeCtx ].
+
+**palette_color_idx_y**: the cdf depends on PaletteSizeY, as follows:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">PaletteSizeY</th>
+      <th style="text-align: center">cdf</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">TilePaletteSize2YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">TilePaletteSize3YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">TilePaletteSize4YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">TilePaletteSize5YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">TilePaletteSize6YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">TilePaletteSize7YColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">8</td>
+      <td style="text-align: center">TilePaletteSize8YColorCdf[ ctx ]</td>
+    </tr>
+  </tbody>
+</table>
+
+where ctx is computed as follows:
+
+~~~~~ c
+ctx = Palette_Color_Context[ ColorContextHash ]
+~~~~~
+
+**palette_color_idx_uv**: the cdf depends on PaletteSizeUV, as follows:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">PaletteSizeUV</th>
+      <th style="text-align: center">cdf</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">TilePaletteSize2UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">TilePaletteSize3UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">TilePaletteSize4UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">TilePaletteSize5UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">TilePaletteSize6UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">TilePaletteSize7UVColorCdf[ ctx ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">8</td>
+      <td style="text-align: center">TilePaletteSize8UVColorCdf[ ctx ]</td>
+    </tr>
+  </tbody>
+</table>
+
+where ctx is computed as follows:
+
+~~~~~ c
+ctx = Palette_Color_Context[ ColorContextHash ]
+~~~~~
+
+**delta_q_abs**: the cdf is given by TileDeltaQCdf.
+
+**delta_lf_abs**: the cdf is derived as follows:
+ * If delta_lf_multi is equal to 0, the cdf is given by TileDeltaLFCdf.
+ * Otherwise (delta_lf_multi is equal to 1), the cdf is given by TileDeltaLFMultiCdf[ i ].
+
+**intra_tx_type**: the cdf depends on the variable set, as follows:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">set</th>
+      <th style="text-align: center">cdf</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">TX_SET_INTRA_1</td>
+      <td style="text-align: center">TileIntraTxTypeSet1Cdf[ Tx_Size_Sqr[ txSz ] ][ intraDir ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">TX_SET_INTRA_2</td>
+      <td style="text-align: center">TileIntraTxTypeSet2Cdf[ Tx_Size_Sqr[ txSz ] ][ intraDir ]</td>
+    </tr>
+  </tbody>
+</table>
+
+where the variable intraDir is derived as follows:
+ * If use_filter_intra is equal to 1, intraDir is set equal to Filter_Intra_Mode_To_Intra_Dir[ filter_intra_mode ],
+ * Otherwise (use_filter_intra is equal to 0), intraDir is set equal to YMode.
+
+The table Filter_Intra_Mode_To_Intra_Dir is defined as:
+
+~~~~~ c
+Filter_Intra_Mode_To_Intra_Dir[ INTRA_FILTER_MODES ] = {
+  DC_PRED, V_PRED, H_PRED, D157_PRED, DC_PRED
+}
+~~~~~
+
+
+**inter_tx_type**: the cdf depends on the variable set, as follows:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">set</th>
+      <th style="text-align: center">cdf</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">TX_SET_INTER_1</td>
+      <td style="text-align: center">TileInterTxTypeSet1Cdf[ Tx_Size_Sqr[ txSz ] ]</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">TX_SET_INTER_2</td>
+      <td style="text-align: center">TileInterTxTypeSet2Cdf</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">TX_SET_INTER_3</td>
+      <td style="text-align: center">TileInterTxTypeSet3Cdf[ Tx_Size_Sqr[ txSz ] ]</td>
+    </tr>
+  </tbody>
+</table>
+
+**comp_ref_type**: The cdf is given by TileCompRefTypeCdf[ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+above0 = AboveRefFrame[ 0 ]
+above1 = AboveRefFrame[ 1 ]
+left0 = LeftRefFrame[ 0 ]
+left1 = LeftRefFrame[ 1 ]
+aboveCompInter = AvailU && !AboveIntra && !AboveSingle
+leftCompInter = AvailL && !LeftIntra && !LeftSingle
+aboveUniComp = aboveCompInter && is_samedir_ref_pair(above0, above1)
+leftUniComp = leftCompInter && is_samedir_ref_pair(left0, left1)
+
+if ( AvailU && !AboveIntra && AvailL && !LeftIntra ) {
+    samedir = is_samedir_ref_pair(above0, left0)
+
+    if ( !aboveCompInter && !leftCompInter ) {
+        ctx = 1 + 2 * samedir
+    } else if ( !aboveCompInter ) {
+        if ( !leftUniComp )
+            ctx = 1
+        else
+            ctx = 3 + samedir
+    } else if ( !leftCompInter ) {
+        if ( !aboveUniComp )
+            ctx = 1
+        else
+            ctx = 3 + samedir
+    } else {
+        if ( !aboveUniComp && !leftUniComp )
+            ctx = 0
+        else if ( !aboveUniComp || !leftUniComp )
+            ctx = 2
+        else
+            ctx = 3 + ((above0 == BWDREF_FRAME) == (left0 == BWDREF_FRAME))
+    }
+} else if ( AvailU && AvailL ) {
+    if ( aboveCompInter )
+        ctx = 1 + 2 * aboveUniComp
+    else if ( leftCompInter )
+        ctx = 1 + 2 * leftUniComp
+    else
+        ctx = 2
+} else if ( aboveCompInter ) {
+    ctx = 4 * aboveUniComp
+} else if ( leftCompInter ) {
+    ctx = 4 * leftUniComp
+} else {
+    ctx = 2
+}
+~~~~~
+
+where is_samedir_ref_pair is defined as:
+
+~~~~~ c
+is_samedir_ref_pair(ref0, ref1) {
+  return (ref0 >= BWDREF_FRAME) == (ref1 >= BWDREF_FRAME)
+}
+~~~~~
+
+**uni_comp_ref**: The cdf is given by TileUniCompRefCdf[ ctx ][ 0 ], where ctx is computed as in the
+CDF selection process for single_ref_p1.
+
+**uni_comp_ref_p1**: The cdf is given by TileUniCompRefCdf[ ctx ][ 1 ], where ctx is computed as follows:
+
+~~~~~ c
+last2Count = count_refs( LAST2_FRAME )
+last3GoldCount = count_refs( LAST3_FRAME ) + count_refs( GOLDEN_FRAME )
+ctx = ref_count_ctx( last2Count, last3GoldCount )
+~~~~~
+
+where count_refs and ref_count_ctx are the same as given in the CDF selection process for comp_ref.
+
+**uni_comp_ref_p2**: The cdf is given by TileUniCompRefCdf[ ctx ][ 2 ], where ctx is computed as in
+the CDF selection process for comp_ref_p2.
+
+**comp_group_idx**: The cdf is given by TileCompGroupIdxCdf[ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+ctx = 0
+if ( AvailU ) {
+  if ( !AboveSingle )
+    ctx += CompGroupIdxs[ MiRow - 1 ][ MiCol ]
+  else if ( AboveRefFrame[ 0 ] == ALTREF_FRAME )
+    ctx += 3
+}
+if ( AvailL ) {
+  if ( !LeftSingle )
+    ctx += CompGroupIdxs[ MiRow ][ MiCol - 1 ]
+  else if ( LeftRefFrame[ 0 ] == ALTREF_FRAME )
+    ctx += 3
+}
+ctx = Min( 5, ctx )
+~~~~~
+
+**compound_idx**: The cdf is given by TileCompoundIdxCdf[ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+fwd = Abs( get_relative_dist( OrderHints[ RefFrame[ 0 ] ], OrderHint ) )
+bck = Abs( get_relative_dist( OrderHints[ RefFrame[ 1 ] ], OrderHint ) )
+ctx = ( fwd == bck ) ? 3 : 0
+if ( AvailU ) {
+  if ( !AboveSingle )
+    ctx += CompoundIdxs[ MiRow - 1 ][ MiCol ]
+  else if ( AboveRefFrame[ 0 ] == ALTREF_FRAME )
+    ctx++
+}
+if ( AvailL ) {
+  if ( !LeftSingle )
+    ctx += CompoundIdxs[ MiRow ][ MiCol - 1 ]
+  else if ( LeftRefFrame[ 0 ] == ALTREF_FRAME )
+    ctx++
+}
+~~~~~
+
+**compound_type**: The cdf is given by TileCompoundTypeCdf[ MiSize ].
+
+**interintra**: The cdf is given by TileInterIntraCdf[ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+ctx = Size_Group[ MiSize ] - 1
+~~~~~
+
+**interintra_mode**: The cdf is given by TileInterIntraModeCdf[ ctx ], where ctx is computed as follows:
+
+~~~~~ c
+ctx = Size_Group[ MiSize ] - 1
+~~~~~
+
+**wedge_index**: The cdf is given by TileWedgeIndexCdf[ MiSize ].
+
+**wedge_interintra**: The cdf is given by TileWedgeInterIntraCdf[ MiSize ].
+
+**use_obmc**: The cdf is given by TileUseObmcCdf[ MiSize ].
+
+**cfl_alpha_signs**: The cdf is given by TileCflSignCdf.
+
+**cfl_alpha_u**: The cdf is given by TileCflAlphaCdf[ ctx ], where ctx is obtained from the following table:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">cfl_alpha_signs</th>
+      <th style="text-align: center">ctx</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">0</td>
+      <td style="text-align: center">N/A</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">N/A</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">3</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">5</td>
+    </tr>
+  </tbody>
+</table>
+
+Note: N/A is used to indicate that no context is needed as the sign is zero and no value
+is decoded.
+
+
+or computed as follows:
+
+~~~~~ c
+ctx = (signU - 1) * 3 + signV
+~~~~~
+
+Note: As shown in the previous table, the variable ctx produced by this calculation will be equal to
+cfl_alpha_signs - 2.
+
+
+**cfl_alpha_v**: The cdf is given by TileCflAlphaCdf[ ctx ], where ctx is obtained from the following table:
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th style="text-align: center">cfl_alpha_signs</th>
+      <th style="text-align: center">ctx</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">0</td>
+      <td style="text-align: center">0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">2</td>
+      <td style="text-align: center">N/A</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">4</td>
+      <td style="text-align: center">4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">5</td>
+      <td style="text-align: center">N/A</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">6</td>
+      <td style="text-align: center">2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">7</td>
+      <td style="text-align: center">5</td>
+    </tr>
+  </tbody>
+</table>
+
+Note: N/A is used to indicate that no context is needed as the sign is zero and no value
+is decoded.
+
+
+or computed as follows:
+
+~~~~~ c
+ctx = (signV - 1) * 3 + signU
+~~~~~
+
+**use_wiener**: The cdf is given by TileUseWienerCdf.
+
+**use_sgrproj**: The cdf is given by TileUseSgrprojCdf.
+
+**restoration_type**: The cdf is given by TileRestorationTypeCdf.
+
+

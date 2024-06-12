@@ -1,0 +1,908 @@
+# Conventions # {#conventions}
+
+## General ## {#conventions-general}
+
+The mathematical operators and their precedence rules used to describe this Specification are similar to those used in the C programming language. However, the operation of integer division with truncation is specifically defined.
+
+In addition, a length 2 array used to hold a motion vector (indicated by the variable name ending with the letters Mv or Mvs) can be accessed using either array notation (e.g. <code>Mv[ 0 ]</code> and <code>Mv[ 1 ]</code>), or by just the name (e.g., <code>Mv</code>). The only operations defined when using the name are assignment and equality/inequality testing. Assignment of an array is represented using the notation <code>A = B</code> and is specified to mean the same as doing both the individual assignments <code>A[ 0 ] = B[ 0 ]</code> and <code>A[ 1 ] = B[ 1 ]</code>. Equality testing of 2 motion vectors is represented using the notation <code>A == B</code> and is specified to mean the same as (<code>A[ 0 ] == B[ 0 ] && A[ 1 ] == B[ 1 ]</code>). Inequality testing is defined as <code>A != B</code> and is specified to mean the same as (<code>A[ 0 ] != B[ 0 ] || A[ 1 ] != B[ 1 ]</code>).
+
+When a variable is said to be representable by a signed integer with <code>x</code> bits, it means that the variable is greater than or equal to <code>-(1 << (x-1))</code>, and that the variable is less than or equal to <code>(1 << (x-1))-1</code>.
+
+The key words “must”, “must not”, “required”, “shall”, “shall not”, “should”, “should not”, “recommended”, “may”, and “optional” in this document are to be interpreted as described in RFC 2119.
+
+## Arithmetic operators ## {#conventions-arithmetic-operators}
+
+<table class="table table-sm table-bordered table-nohead">
+  <tbody>
+    <tr>
+      <td>+</td>
+      <td>Addition</td>
+    </tr>
+    <tr>
+      <td>–</td>
+      <td>Subtraction (as a binary operator) or negation (as a unary prefix operator)</td>
+    </tr>
+    <tr>
+      <td>*</td>
+      <td>Multiplication</td>
+    </tr>
+    <tr>
+      <td>/</td>
+      <td>Integer division with truncation of the result toward zero. For example, <code>7/4</code> and <code>-7/-4</code> are truncated to <code>1</code> and <code>-7/4</code> and <code>7/-4</code> are truncated to <code>-1</code>.</td>
+    </tr>
+    <tr>
+      <td>a&nbsp;%&nbsp;b</td>
+      <td>Remainder from division of <code>a</code> by <code>b</code>. Both <code>a</code> and <code>b</code> are positive integers.</td>
+    </tr>
+    <tr>
+      <td>÷</td>
+      <td>Floating point (arithmetical) division.</td>
+    </tr>
+    <tr>
+      <td>ceil(x)</td>
+      <td>The smallest integer that is greater or equal than <code>x</code>.</td>
+    </tr>
+    <tr>
+      <td>floor(x)</td>
+      <td>The largest integer that is smaller or equal than <code>x</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Logical operators ## {#conventions-logical-operators}
+
+<table class="table table-sm table-bordered table-nohead">
+  <tbody>
+    <tr>
+      <td>a &amp;&amp; b</td>
+      <td>Logical AND operation between <code>a</code> and <code>b</code></td>
+    </tr>
+    <tr>
+      <td>a || b</td>
+      <td>Logical OR operation between <code>a</code> and <code>b</code></td>
+    </tr>
+    <tr>
+      <td>!</td>
+      <td>Logical NOT operation.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Relational operators ## {#conventions-relational-operators}
+
+<table class="table table-sm table-bordered table-nohead">
+  <tbody>
+    <tr>
+      <td>&gt;</td>
+      <td>Greater than</td>
+    </tr>
+    <tr>
+      <td>&gt;=</td>
+      <td>Greater than or equal to</td>
+    </tr>
+    <tr>
+      <td>&lt;</td>
+      <td>Less than</td>
+    </tr>
+    <tr>
+      <td>&lt;=</td>
+      <td>Less than or equal to</td>
+    </tr>
+    <tr>
+      <td>==</td>
+      <td>Equal to</td>
+    </tr>
+    <tr>
+      <td>!=</td>
+      <td>Not equal to</td>
+    </tr>
+  </tbody>
+</table>
+
+## Bitwise operators ## {#conventions-bitwise-operators}
+
+<table class="table table-sm table-bordered table-nohead">
+  <tbody>
+    <tr>
+      <td>&amp;</td>
+      <td>AND operation</td>
+    </tr>
+    <tr>
+      <td>|</td>
+      <td>OR operation</td>
+    </tr>
+    <tr>
+      <td>^</td>
+      <td>XOR operation</td>
+    </tr>
+    <tr>
+      <td>~</td>
+      <td>Negation operation</td>
+    </tr>
+    <tr>
+      <td>a&nbsp;&gt;&gt;&nbsp;b</td>
+      <td>Shift <code>a</code> in 2’s complement binary integer representation format to the right by <code>b</code> bit positions. This operator is only used with <code>b</code> being a non-negative integer. Bits shifted into the MSBs as a result of the right shift have a value equal to the MSB of <code>a</code> prior to the shift operation.</td>
+    </tr>
+    <tr>
+      <td>a&nbsp;&lt;&lt;&nbsp;b</td>
+      <td>Shift <code>a</code> in 2’s complement binary integer representation format to the left by <code>b</code> bit positions. This operator is only used with <code>b</code> being a non-negative integer. Bits shifted into the LSBs as a result of the left shift have a value equal to <code>0</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+## Assignment ## {#conventions-assignment}
+
+<table class="table table-sm table-bordered table-nohead">
+  <tbody>
+    <tr>
+      <td>=</td>
+      <td>Assignment operator</td>
+    </tr>
+    <tr>
+      <td>++</td>
+      <td>Increment, <code>x++</code> is equivalent to <code>x = x + 1</code>. When this operator is used for an array index, the variable value is obtained before the auto increment operation</td>
+    </tr>
+    <tr>
+      <td>- -</td>
+      <td>Decrement, i.e. <code>x--</code> is equivalent to <code>x = x - 1</code>. When this operator is used for an array index, the variable value is obtained before the auto decrement operation</td>
+    </tr>
+    <tr>
+      <td>+=</td>
+      <td>Addition assignment operator, for example <code>x += 3</code> corresponds to <code>x = x + 3</code></td>
+    </tr>
+    <tr>
+      <td>-=</td>
+      <td>Subtraction assignment operator, for example <code>x -= 3</code> corresponds to <code>x = x - 3</code></td>
+    </tr>
+  </tbody>
+</table>
+
+## Mathematical functions ## {#conventions-mathematical-functions}
+
+The following mathematical functions (Abs, Clip3, Clip1, Min, Max, Round2 and Round2Signed) are defined as follows:
+
+\[
+\text{Abs}(x) =
+\begin{cases}
+x; & x \geq 0\\
+-x; & x < 0
+\end{cases}
+\]
+
+\[
+  \text{Clip1}(x) = \text{Clip3}(0, 2^{BitDepth}-1, x)
+\]
+
+\[
+\text{Clip3}(x,y,z) =
+\begin{cases}
+x; & z < x \\
+y; & z > y \\
+z; & \text{otherwise}
+\end{cases}
+\]
+
+\[
+\text{Min}(x, y) =
+\begin{cases}
+x; & x \leq y \\
+y; & x > y
+\end{cases}
+\]
+
+\[
+\text{Max}(x, y) =
+\begin{cases}
+x; & x \geq y \\
+y; & x < y
+\end{cases}
+\]
+
+\[
+  \text{Round2}(x,n) = \left\lfloor \frac{x+2^{n-1}}{2^n} \right\rfloor
+\]
+
+\[
+  \text{Round2Signed}(x,n) =
+\begin{cases}
+\text{Round2}(x,n); & x \geq 0\\
+-\text{Round2}(-x,n); & x < 0
+\end{cases}
+\]
+
+The definition of Round2 uses standard mathematical power and division operations, not integer operations. An equivalent definition using integer operations is:
+
+```cpp
+Round2( x, n ) {
+  if ( n == 0 )
+    return x;
+  return (x + (1 << (n - 1)) ) > > n;
+}
+```
+
+The `FloorLog2(x)` function is defined to be the floor of the base 2 logarithm of the input x.
+
+The input x will always be an integer, and will always be greater than or equal to 1.
+
+This function extracts the location of the most significant bit in x.
+
+An equivalent definition (using the pseudo-code notation introduced in the following section) is:
+
+```cpp
+FloorLog2( x ) {
+  s = 0
+  while ( x != 0 ) {
+    x = x >> 1
+    s++
+  }
+  return s - 1
+}
+```
+
+The `CeilLog2(x)` function is defined to be the ceiling of the base 2 logarithm of the input x (when x is 0, it is defined to return 0).
+
+The input x will always be an integer, and will always be greater than or equal to 0.
+
+This function extracts the number of bits needed to code a value in the range 0 to x-1.
+
+An equivalent definition (using the pseudo-code notation introduced in the following section) is:
+
+```cpp
+CeilLog2( x ) {
+  if ( x < 2 )
+    return 0
+  i = 1
+  p = 2
+  while ( p < x ) {
+    i++
+    p = p << 1
+  }
+  return i
+}
+```
+
+## Method of describing bitstream syntax ## {#conventions-bitstream-syntax}
+
+The description style of the syntax is similar to the C programming language. Syntax elements in the bitstream are represented in bold type. Each syntax element is described by its name (using only lower case letters with underscore characters) and a descriptor for its method of coded representation. The decoding process behaves according to the value of the syntax element and to the values of previously decoded syntax elements. When a value of a syntax element is used in the syntax tables or the text, it appears in regular (i.e. not bold) type. If the value of a syntax element is being computed (e.g. being written with a default value instead of being coded in the bitstream), it also appears in regular type (e.g. tile_size_minus_1).
+
+In some cases the syntax tables may use the values of other variables derived from syntax elements values. Such variables appear in the syntax tables, or text, named by a mixture of lower case and upper case letter and without any underscore characters. Variables starting with an upper case letter are derived for the decoding of the current syntax structure and all depending syntax structures. These variables may be used in the decoding process for later syntax structures. Variables starting with a lower case letter are only used within the process from which they are derived. (Single character variables are allowed.)
+
+Constant values appear in all upper case letters with underscore characters (e.g. MI_SIZE).
+
+Constant lookup tables appear as words (with the first letter of each word in upper case, and remaining letters in lower case) separated with underscore characters (e.g. Block_Width[…]).
+
+Hexadecimal notation, indicated by prefixing the hexadecimal number by <code>0x</code>, may be used when the number of bits is an integer multiple of 4. For example, <code>0x1a</code> represents a bit string <code>0001 1010</code>.
+
+Binary notation is indicated by prefixing the binary number by <code>0b</code>. For example, <code>0b00011010</code> represents a bit string <code>0001 1010</code>. Binary numbers may include underscore characters to enhance readability. If present, the underscore characters appear every 4 binary digits starting from the LSB. For example, <code>0b11010</code> may also be written as <code>0b1_1010</code>.
+
+A value equal to 0 represents a FALSE condition in a test statement. The value TRUE is represented by any value not equal to 0.
+
+The following table lists examples of the syntax specification format. When <code>syntax_element</code> appears (with bold face font), it specifies that this syntax element is parsed from the bitstream.
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>/* A statement can be a syntax element with associated</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>descriptor or can be an expression used to specify its</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>existence, type, and value, as in the following</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>examples */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><b class="syntax-element">syntax_element</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* A group of statements enclosed in brackets is a</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>compound statement and is treated functionally as a single</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>statement. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>{</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;…</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* A “while” structure specifies that the statement is</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>to be evaluated repeatedly while the condition remains</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>true. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>while ( condition )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* A “do .. while” structure executes the statement once,</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>and then tests the condition. It repeatedly evaluates the</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>statement while the condition remains true. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>do</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>while ( condition )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* An “if .. else” structure tests the condition first. If</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>it is true, the primary statement is evaluated. Otherwise,</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>the alternative statement is evaluated. If the alternative</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>statement is unnecessary to be evaluated, the “else” and</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>corresponding alternative statement can be omitted. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>if ( condition )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;primary statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>else</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;alternative statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* A “for” structure evaluates the initial statement at the</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>beginning then tests the condition. If it is true, the primary</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>and subsequent statements are evaluated until the condition</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>becomes false. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>for ( initial statement; condition; subsequent statement )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;primary statement</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>/* The return statement in a syntax structure specifies</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>that the parsing of the syntax structure will be terminated</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>without processing any additional information after this stage.</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>When a value immediately follows a return statement, this value</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>shall also be returned as the output of this syntax structure. */</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>return x</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+## Functions ## {#conventions-functions}
+
+Bitstream functions used for syntax description are specified in this section.
+
+Other functions are included in the syntax tables. The convention is that a section is called syntax if it causes syntax elements to be read from the bitstream, either directly or indirectly through subprocesses. The remaining sections are called functions.
+
+The specification of these functions makes use of a bitstream position indicator. This bitstream position indicator locates the position of the bit that is going to be read next.
+
+**get_position( )**: Return the value of the bitstream position indicator.
+
+**init_symbol( sz )**: Initialize the arithmetic decode process for the Symbol decoder with a size of sz bytes as specified in section 8.2.2 (TBD).
+
+**exit_symbol( )**: Exit the arithmetic decode process as described in section 8.2.4 (TBD) (this includes reading trailing bits).
+
+## Descriptors ## {#conventions-descriptors}
+
+### General ### {#conventions-descriptors-general}
+
+The following descriptors specify the parsing of syntax elements. Lower case descriptors specify syntax elements that are represented by an integer number of bits in the bitstream; upper case descriptors specify syntax elements that are represented by arithmetic coding.
+
+### f(n) ### {#conventions-descriptors-fn}
+
+Unsigned n-bit number appearing directly in the bitstream. The bits are read from high to low order.  The parsing process specified in section 8.1 (TBD) is invoked and the syntax element is set equal to the return value.
+
+### uvlc() ### {#conventions-descriptors-uvlc}
+
+Variable length unsigned number appearing directly in the bitstream. The parsing process for this descriptor is specified below:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>uvlc() {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;leadingZeros = 0</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;while ( 1 ) {</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">done</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( done )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leadingZeros++</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( leadingZeros &gt;= 32 ) {</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ( 1 &lt;&lt; 32 ) - 1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">value</b></td>
+      <td>f(leadingZeros)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value + ( 1 &lt;&lt; leadingZeros ) - 1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+### le(n) ### {#conventions-descriptors-len}
+
+Unsigned little-endian n-byte number appearing directly in the bitstream. The parsing process for this descriptor is specified below:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>le(n) {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;t = 0</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;for ( i = 0; i &lt; n; i++) {</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">byte</b></td>
+      <td>f(8)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t += ( byte &lt;&lt; ( i * 8 ) )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return t</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+### leb128() ### {#conventions-descriptors-leb128}
+
+Unsigned integer represented by a variable number of little-endian bytes.
+
+Note: This syntax element will only be present when the bitstream position is byte aligned.
+
+In this encoding, the most significant bit of each byte is equal to 1 to signal that more bytes should be read, or equal to 0 to signal the end of the encoding.
+
+A variable Leb128Bytes is set equal to the number of bytes read during this process.
+
+The parsing process for this descriptor is specified below:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>leb128() {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;value = 0</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;Leb128Bytes = 0</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;for ( i = 0; i &lt; 8; i++ ) {</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">leb128_byte</b></td>
+      <td>f(8)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value |= ( (leb128_byte &amp; 0x7f) &lt;&lt; (i*7) )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leb128Bytes += 1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( !(leb128_byte &amp; 0x80) ) {</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+It is a requirement of bitstream conformance that the value returned from the leb128 parsing process is less than or equal to `(1 << 32) - 1`.
+
+`leb128_byte` contains 8 bits read from the bitstream. The bottom 7 bits are used to compute the variable value. The most significant bit is used to indicate that there are more bytes to be read.
+
+It is a requirement of bitstream conformance that the most significant bit of leb128_byte is equal to 0 if i is equal to 7. (This ensures that this syntax descriptor never uses more than 8 bytes.)
+
+Note: There are multiple ways of encoding the same value depending on how many leading zero bits are encoded. There is no requirement that this syntax descriptor uses the most compressed representation. This can be useful for encoder implementations by allowing a fixed amount of space to be filled in later when the value becomes known.
+
+### su(n) ### {#conventions-descriptors-sun}
+
+Signed integer converted from an n bits unsigned integer in the bitstream. (The unsigned integer corresponds to the bottom n bits of the signed integer.) The parsing process for this descriptor is specified below:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>su(n) {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">value</b></td>
+      <td>f(n)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;signMask = 1 &lt;&lt; (n - 1)</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( value &amp; signMask )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value = value - 2 * signMask</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+### ns(n) ### {#conventions-descriptors-nsn}
+
+Unsigned encoded integer with maximum number of values n (i.e. output in range `0..n-1`).
+
+This descriptor is similar to `f(CeilLog2(n))`, but reduces wastage incurred when encoding non-power of two value ranges by encoding 1 fewer bits for the lower part of the value range. For example, when n is equal to 5, the encodings are as follows (full binary encodings are also presented for comparison):
+
+<table class="table table-sm table-bordered table-striped">
+  <thead>
+    <tr>
+      <th style="text-align: center">Value</th>
+      <th style="text-align: center">Full binary encoding</th>
+      <th style="text-align: center">ns(n) encoding</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">&nbsp;&nbsp;&nbsp;&nbsp;0</td>
+      <td style="text-align: center">000</td>
+      <td style="text-align: center">00</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">&nbsp;&nbsp;&nbsp;&nbsp;1</td>
+      <td style="text-align: center">001</td>
+      <td style="text-align: center">01</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">&nbsp;&nbsp;&nbsp;&nbsp;2</td>
+      <td style="text-align: center">010</td>
+      <td style="text-align: center">10</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">&nbsp;&nbsp;&nbsp;&nbsp;3</td>
+      <td style="text-align: center">011</td>
+      <td style="text-align: center">110</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">&nbsp;&nbsp;&nbsp;&nbsp;4</td>
+      <td style="text-align: center">100</td>
+      <td style="text-align: center">111</td>
+    </tr>
+  </tbody>
+</table>
+
+The parsing process for this descriptor is specified as:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>ns( n ) {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;w = FloorLog2(n) + 1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;m = (1 &lt;&lt; w) - n</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">v</b></td>
+      <td>f(w - 1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( v &lt; m )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">extra_bit</b></td>
+      <td>f(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return (v &lt;&lt; 1) - m + extra_bit</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+The abbreviation ns stands for non-symmetric. This encoding is non-symmetric because the values are not all coded with the same number of bits.
+
+### L(n) ### {#conventions-descriptors-ln}
+
+Unsigned arithmetic encoded n-bit number encoded as n flags (a “literal”). The flags are read from high to low order. The syntax element is set equal to the return value of `read_literal( n )` (see section 8.2.5 (TBD) for a specification of this process).
+
+### S() ### {#conventions-descriptors-s}
+
+An arithmetic encoded symbol coded from a small alphabet of at most 16 entries.
+
+The symbol is decoded based on a context sensitive CDF (see section 8.3 (TBD) for the specification of this process).
+
+### NS(n) ### {#conventions-descriptors-nsn2}
+
+Unsigned arithmetic encoded integer with maximum number of values n (i.e. output in range `0..n-1`).
+
+This descriptor is the same as `ns(n)` except the underlying bits are coded arithmetically.
+
+The parsing process for this descriptor is specified as:
+
+<table class="syntax">
+  <tbody>
+    <tr>
+      <td>NS( n ) {</td>
+      <td><strong>Type</strong></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;w = FloorLog2(n) + 1</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;m = (1 &lt;&lt; w) - n</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">v</b></td>
+      <td>L(w - 1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( v &lt; m )</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">extra_bit</b></td>
+      <td>L(1)</td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;return (v &lt;&lt; 1) - m + extra_bit</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>}</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>

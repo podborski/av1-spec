@@ -1,0 +1,989 @@
+# Symbols and abbreviated terms # {#symbols_and_abbreviated_terms}
+
+DCT
+
+: Discrete Cosine Transform
+
+ADST
+
+: Asymmetric Discrete Sine Transform
+
+LSB
+
+: Least Significant Bit
+
+MSB
+
+: Most Significant Bit
+
+WHT
+
+: Walsh Hadamard Transform
+
+The specification makes use of a number of constant integers.  Constants that
+relate to the semantics of a particular syntax element are defined in
+[section 6][].
+
+Additional constants are defined below:
+
+<table class="table table-sm table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Symbol name</th>
+      <th style="text-align: center">Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code >REFS_PER_FRAME</code></td>
+      <td style="text-align: center">7</td>
+      <td>Number of reference frames that can be used for inter prediction</td>
+    </tr>
+    <tr>
+      <td><code >TOTAL_REFS_PER_FRAME</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of reference frame types (including intra type)</td>
+    </tr>
+    <tr>
+      <td><code >BLOCK_SIZE_GROUPS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of contexts when decoding <code >y_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >BLOCK_SIZES</code></td>
+      <td style="text-align: center">22</td>
+      <td>Number of different block sizes used</td>
+    </tr>
+    <tr>
+      <td><code >BLOCK_INVALID</code></td>
+      <td style="text-align: center">22</td>
+      <td>Sentinel value to mark partition choices that are not allowed</td>
+    </tr>
+    <tr>
+      <td><code >MAX_SB_SIZE</code></td>
+      <td style="text-align: center">128</td>
+      <td>Maximum size of a superblock in luma samples</td>
+    </tr>
+    <tr>
+      <td><code >MI_SIZE</code></td>
+      <td style="text-align: center">4</td>
+      <td>Smallest size of a mode info block in luma samples</td>
+    </tr>
+    <tr>
+      <td><code >MI_SIZE_LOG2</code></td>
+      <td style="text-align: center">2</td>
+      <td>Base 2 logarithm of smallest size of a mode info block</td>
+    </tr>
+    <tr>
+      <td><code >MAX_TILE_WIDTH</code></td>
+      <td style="text-align: center">4096</td>
+      <td>Maximum width of a tile in units of luma samples</td>
+    </tr>
+    <tr>
+      <td><code >MAX_TILE_AREA</code></td>
+      <td style="text-align: center">4096 * 2304</td>
+      <td>Maximum area of a tile in units of luma samples</td>
+    </tr>
+    <tr>
+      <td><code >MAX_TILE_ROWS</code></td>
+      <td style="text-align: center">64</td>
+      <td>Maximum number of tile rows</td>
+    </tr>
+    <tr>
+      <td><code >MAX_TILE_COLS</code></td>
+      <td style="text-align: center">64</td>
+      <td>Maximum number of tile columns</td>
+    </tr>
+    <tr>
+      <td><code >INTRABC_DELAY_PIXELS</code></td>
+      <td style="text-align: center">256</td>
+      <td>Number of horizontal luma samples before intra block copy can be used</td>
+    </tr>
+    <tr>
+      <td><code >INTRABC_DELAY_SB64</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of 64 by 64 blocks before intra block copy can be used</td>
+    </tr>
+    <tr>
+      <td><code >NUM_REF_FRAMES</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of frames that can be stored for future reference</td>
+    </tr>
+    <tr>
+      <td><code >IS_INTER_CONTEXTS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of contexts for <code >is_inter</code></td>
+    </tr>
+    <tr>
+      <td><code >REF_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for <code >single_ref</code>, <code >comp_ref</code>, <code >comp_bwdref</code>, <code >uni_comp_ref</code>, <code >uni_comp_ref_p1</code> and <code >uni_comp_ref_p2</code></td>
+    </tr>
+    <tr>
+      <td><code >MAX_SEGMENTS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of segments allowed in segmentation map</td>
+    </tr>
+    <tr>
+      <td><code >SEGMENT_ID_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for <code >segment_id</code></td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_ALT_Q</code></td>
+      <td style="text-align: center">0</td>
+      <td>Index for quantizer segment feature</td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_ALT_LF_Y_V</code></td>
+      <td style="text-align: center">1</td>
+      <td>Index for vertical luma loop filter segment feature</td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_REF_FRAME</code></td>
+      <td style="text-align: center">5</td>
+      <td>Index for reference frame segment feature</td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_SKIP</code></td>
+      <td style="text-align: center">6</td>
+      <td>Index for skip segment feature</td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_GLOBALMV</code></td>
+      <td style="text-align: center">7</td>
+      <td>Index for global mv feature</td>
+    </tr>
+    <tr>
+      <td><code >SEG_LVL_MAX</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of segment features</td>
+    </tr>
+    <tr>
+      <td><code >PLANE_TYPES</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of different plane types (luma or chroma)</td>
+    </tr>
+    <tr>
+      <td><code >TX_SIZE_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for transform size</td>
+    </tr>
+    <tr>
+      <td><code >INTERP_FILTERS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of values for <code >interp_filter</code></td>
+    </tr>
+    <tr>
+      <td><code >INTERP_FILTER_CONTEXTS</code></td>
+      <td style="text-align: center">16</td>
+      <td>Number of contexts for <code >interp_filter</code></td>
+    </tr>
+    <tr>
+      <td><code >SKIP_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for decoding skip_mode</td>
+    </tr>
+    <tr>
+      <td><code >SKIP_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for decoding skip</td>
+    </tr>
+    <tr>
+      <td><code >PARTITION_CONTEXTS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of contexts when decoding <code >partition</code></td>
+    </tr>
+    <tr>
+      <td><code >TX_SIZES</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of square transform sizes</td>
+    </tr>
+    <tr>
+      <td><code >TX_SIZES_ALL</code></td>
+      <td style="text-align: center">19</td>
+      <td>Number of transform sizes (including non-square sizes)</td>
+    </tr>
+    <tr>
+      <td><code >TX_MODES</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of values for <code >tx_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >DCT_DCT</code></td>
+      <td style="text-align: center">0</td>
+      <td>Inverse transform rows with <code >DCT</code> and columns with <code >DCT</code></td>
+    </tr>
+    <tr>
+      <td><code >ADST_DCT</code></td>
+      <td style="text-align: center">1</td>
+      <td>Inverse transform rows with <code >DCT</code> and columns with <code >ADST</code></td>
+    </tr>
+    <tr>
+      <td><code >DCT_ADST</code></td>
+      <td style="text-align: center">2</td>
+      <td>Inverse transform rows with <code >ADST</code> and columns with <code >DCT</code></td>
+    </tr>
+    <tr>
+      <td><code >ADST_ADST</code></td>
+      <td style="text-align: center">3</td>
+      <td>Inverse transform rows with <code >ADST</code> and columns with <code >ADST</code></td>
+    </tr>
+    <tr>
+      <td><code >FLIPADST_DCT</code></td>
+      <td style="text-align: center">4</td>
+      <td>Inverse transform rows with <code >DCT</code> and columns with <code >FLIPADST</code></td>
+    </tr>
+    <tr>
+      <td><code >DCT_FLIPADST</code></td>
+      <td style="text-align: center">5</td>
+      <td>Inverse transform rows with <code >FLIPADST</code> and columns with <code >DCT</code></td>
+    </tr>
+    <tr>
+      <td><code >FLIPADST_FLIPADST</code></td>
+      <td style="text-align: center">6</td>
+      <td>Inverse transform rows with <code >FLIPADST</code> and columns with <code >FLIPADST</code></td>
+    </tr>
+    <tr>
+      <td><code >ADST_FLIPADST</code></td>
+      <td style="text-align: center">7</td>
+      <td>Inverse transform rows with <code >FLIPADST</code> and columns with <code >ADST</code></td>
+    </tr>
+    <tr>
+      <td><code >FLIPADST_ADST</code></td>
+      <td style="text-align: center">8</td>
+      <td>Inverse transform rows with <code >ADST</code> and columns with <code >FLIPADST</code></td>
+    </tr>
+    <tr>
+      <td><code >IDTX</code></td>
+      <td style="text-align: center">9</td>
+      <td>Inverse transform rows with identity and columns with identity</td>
+    </tr>
+    <tr>
+      <td><code >V_DCT</code></td>
+      <td style="text-align: center">10</td>
+      <td>Inverse transform rows with identity and columns with <code >DCT</code></td>
+    </tr>
+    <tr>
+      <td><code >H_DCT</code></td>
+      <td style="text-align: center">11</td>
+      <td>Inverse transform rows with <code >DCT</code> and columns with identity</td>
+    </tr>
+    <tr>
+      <td><code >V_ADST</code></td>
+      <td style="text-align: center">12</td>
+      <td>Inverse transform rows with identity and columns with <code >ADST</code></td>
+    </tr>
+    <tr>
+      <td><code >H_ADST</code></td>
+      <td style="text-align: center">13</td>
+      <td>Inverse transform rows with <code >ADST</code> and columns with identity</td>
+    </tr>
+    <tr>
+      <td><code >V_FLIPADST</code></td>
+      <td style="text-align: center">14</td>
+      <td>Inverse transform rows with identity and columns with <code >FLIPADST</code></td>
+    </tr>
+    <tr>
+      <td><code >H_FLIPADST</code></td>
+      <td style="text-align: center">15</td>
+      <td>Inverse transform rows with <code >FLIPADST</code> and columns with identity</td>
+    </tr>
+    <tr>
+      <td><code >TX_TYPES</code></td>
+      <td style="text-align: center">16</td>
+      <td>Number of inverse transform types</td>
+    </tr>
+    <tr>
+      <td><code >MB_MODE_COUNT</code></td>
+      <td style="text-align: center">17</td>
+      <td>Number of values for <code >YMode</code></td>
+    </tr>
+    <tr>
+      <td><code >INTRA_MODES</code></td>
+      <td style="text-align: center">13</td>
+      <td>Number of values for <code >y_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >UV_INTRA_MODES_CFL_NOT_ALLOWED</code></td>
+      <td style="text-align: center">13</td>
+      <td>Number of values for <code >uv_mode</code> when chroma from luma is not allowed</td>
+    </tr>
+    <tr>
+      <td><code >UV_INTRA_MODES_CFL_ALLOWED</code></td>
+      <td style="text-align: center">14</td>
+      <td>Number of values for <code >uv_mode</code> when chroma from luma is allowed</td>
+    </tr>
+    <tr>
+      <td><code >COMPOUND_MODES</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of values for <code >compound_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >COMPOUND_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of contexts for <code >compound_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >COMP_NEWMV_CTXS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of new mv values used when constructing context for <code >compound_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >NEW_MV_CONTEXTS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of contexts for <code >new_mv</code></td>
+    </tr>
+    <tr>
+      <td><code >ZERO_MV_CONTEXTS</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of contexts for <code >zero_mv</code></td>
+    </tr>
+    <tr>
+      <td><code >REF_MV_CONTEXTS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of contexts for <code >ref_mv</code></td>
+    </tr>
+    <tr>
+      <td><code >DRL_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for <code >drl_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >MV_CONTEXTS</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of contexts for decoding motion vectors including one for intra block copy</td>
+    </tr>
+    <tr>
+      <td><code >MV_INTRABC_CONTEXT</code></td>
+      <td style="text-align: center">1</td>
+      <td>Motion vector context used for intra block copy</td>
+    </tr>
+    <tr>
+      <td><code >MV_JOINTS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of values for <code >mv_joint</code></td>
+    </tr>
+    <tr>
+      <td><code >MV_CLASSES</code></td>
+      <td style="text-align: center">11</td>
+      <td>Number of values for <code >mv_class</code></td>
+    </tr>
+    <tr>
+      <td><code >CLASS0_SIZE</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of values for <code >mv_class0_bit</code></td>
+    </tr>
+    <tr>
+      <td><code >MV_OFFSET_BITS</code></td>
+      <td style="text-align: center">10</td>
+      <td>Maximum number of bits for decoding motion vectors</td>
+    </tr>
+    <tr>
+      <td><code >MAX_LOOP_FILTER</code></td>
+      <td style="text-align: center">63</td>
+      <td>Maximum value used for loop filtering</td>
+    </tr>
+    <tr>
+      <td><code >REF_SCALE_SHIFT</code></td>
+      <td style="text-align: center">14</td>
+      <td>Number of bits of precision when scaling reference frames</td>
+    </tr>
+    <tr>
+      <td><code >SUBPEL_BITS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of bits of precision when choosing an inter prediction filter kernel</td>
+    </tr>
+    <tr>
+      <td><code >SUBPEL_MASK</code></td>
+      <td style="text-align: center">15</td>
+      <td><code >( 1 &lt;&lt; SUBPEL_BITS ) - 1</code></td>
+    </tr>
+    <tr>
+      <td><code >SCALE_SUBPEL_BITS</code></td>
+      <td style="text-align: center">10</td>
+      <td>Number of bits of precision when computing inter prediction locations</td>
+    </tr>
+    <tr>
+      <td><code >MV_BORDER</code></td>
+      <td style="text-align: center">128</td>
+      <td>Value used when clipping motion vectors</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_COLOR_CONTEXTS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of values for color contexts</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_MAX_COLOR_CONTEXT_HASH</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of mappings between color context hash and color context</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_BLOCK_SIZE_CONTEXTS</code></td>
+      <td style="text-align: center">7</td>
+      <td>Number of values for palette block size</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_Y_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of values for palette Y plane mode contexts</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_UV_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of values for palette U and V plane mode contexts</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_SIZES</code></td>
+      <td style="text-align: center">7</td>
+      <td>Number of values for palette_size</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_COLORS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of values for palette_color</td>
+    </tr>
+    <tr>
+      <td><code >PALETTE_NUM_NEIGHBORS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of neighbors considered within palette computation</td>
+    </tr>
+    <tr>
+      <td><code >DELTA_Q_SMALL</code></td>
+      <td style="text-align: center">3</td>
+      <td>Value indicating alternative encoding of quantizer index delta values</td>
+    </tr>
+    <tr>
+      <td><code >DELTA_LF_SMALL</code></td>
+      <td style="text-align: center">3</td>
+      <td>Value indicating alternative encoding of loop filter delta values</td>
+    </tr>
+    <tr>
+      <td><code >QM_TOTAL_SIZE</code></td>
+      <td style="text-align: center">3344</td>
+      <td>Number of values in the quantizer matrix</td>
+    </tr>
+    <tr>
+      <td><code >MAX_ANGLE_DELTA</code></td>
+      <td style="text-align: center">3</td>
+      <td>Maximum magnitude of AngleDeltaY and AngleDeltaUV</td>
+    </tr>
+    <tr>
+      <td><code >DIRECTIONAL_MODES</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of directional intra modes</td>
+    </tr>
+    <tr>
+      <td><code >ANGLE_STEP</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of degrees of step per unit increase in AngleDeltaY or AngleDeltaUV.</td>
+    </tr>
+    <tr>
+      <td><code >TX_SET_TYPES_INTRA</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of intra transform set types</td>
+    </tr>
+    <tr>
+      <td><code >TX_SET_TYPES_INTER</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of inter transform set types</td>
+    </tr>
+    <tr>
+      <td><code >WARPEDMODEL_PREC_BITS</code></td>
+      <td style="text-align: center">16</td>
+      <td>Internal precision of warped motion models</td>
+    </tr>
+    <tr>
+      <td><code >IDENTITY</code></td>
+      <td style="text-align: center">0</td>
+      <td>Warp model is just an identity transform</td>
+    </tr>
+    <tr>
+      <td><code >TRANSLATION</code></td>
+      <td style="text-align: center">1</td>
+      <td>Warp model is a pure translation</td>
+    </tr>
+    <tr>
+      <td><code >ROTZOOM</code></td>
+      <td style="text-align: center">2</td>
+      <td>Warp model is a rotation + symmetric zoom + translation</td>
+    </tr>
+    <tr>
+      <td><code >AFFINE</code></td>
+      <td style="text-align: center">3</td>
+      <td>Warp model is a general affine transform</td>
+    </tr>
+    <tr>
+      <td><code >GM_ABS_TRANS_BITS</code></td>
+      <td style="text-align: center">12</td>
+      <td>Number of bits encoded for translational components of global motion models, if part of a ROTZOOM or AFFINE model</td>
+    </tr>
+    <tr>
+      <td><code >GM_ABS_TRANS_ONLY_BITS</code></td>
+      <td style="text-align: center">9</td>
+      <td>Number of bits encoded for translational components of global motion models, if part of a TRANSLATION model</td>
+    </tr>
+    <tr>
+      <td><code >GM_ABS_ALPHA_BITS</code></td>
+      <td style="text-align: center">12</td>
+      <td>Number of bits encoded for non-translational components of global motion models</td>
+    </tr>
+    <tr>
+      <td><code >DIV_LUT_PREC_BITS</code></td>
+      <td style="text-align: center">14</td>
+      <td>Number of fractional bits of entries in divisor lookup table</td>
+    </tr>
+    <tr>
+      <td><code >DIV_LUT_BITS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of fractional bits for lookup in divisor lookup table</td>
+    </tr>
+    <tr>
+      <td><code >DIV_LUT_NUM</code></td>
+      <td style="text-align: center">257</td>
+      <td>Number of entries in divisor lookup table</td>
+    </tr>
+    <tr>
+      <td><code >MOTION_MODES</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of values for motion modes</td>
+    </tr>
+    <tr>
+      <td><code >SIMPLE</code></td>
+      <td style="text-align: center">0</td>
+      <td>Use translation or global motion compensation</td>
+    </tr>
+    <tr>
+      <td><code >OBMC</code></td>
+      <td style="text-align: center">1</td>
+      <td>Use overlapped block motion compensation</td>
+    </tr>
+    <tr>
+      <td><code >LOCALWARP</code></td>
+      <td style="text-align: center">2</td>
+      <td>Use local warp motion compensation</td>
+    </tr>
+    <tr>
+      <td><code >LEAST_SQUARES_SAMPLES_MAX</code></td>
+      <td style="text-align: center">8</td>
+      <td>Largest number of samples used when computing a local warp</td>
+    </tr>
+    <tr>
+      <td><code >LS_MV_MAX</code></td>
+      <td style="text-align: center">256</td>
+      <td>Largest motion vector difference to include in local warp computation</td>
+    </tr>
+    <tr>
+      <td><code >WARPEDMODEL_TRANS_CLAMP</code></td>
+      <td style="text-align: center">1&lt;&lt;23</td>
+      <td>Clamping value used for translation components of warp</td>
+    </tr>
+    <tr>
+      <td><code >WARPEDMODEL_NONDIAGAFFINE_CLAMP</code></td>
+      <td style="text-align: center">1&lt;&lt;13</td>
+      <td>Clamping value used for matrix components of warp</td>
+    </tr>
+    <tr>
+      <td><code >WARPEDPIXEL_PREC_SHIFTS</code></td>
+      <td style="text-align: center">1&lt;&lt;6</td>
+      <td>Number of phases used in warped filtering</td>
+    </tr>
+    <tr>
+      <td><code >WARPEDDIFF_PREC_BITS</code></td>
+      <td style="text-align: center">10</td>
+      <td>Number of extra bits of precision in warped filtering</td>
+    </tr>
+    <tr>
+      <td><code >GM_ALPHA_PREC_BITS</code></td>
+      <td style="text-align: center">15</td>
+      <td>Number of fractional bits for sending non-translational warp model coefficients</td>
+    </tr>
+    <tr>
+      <td><code >GM_TRANS_PREC_BITS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of fractional bits for sending translational warp model coefficients</td>
+    </tr>
+    <tr>
+      <td><code >GM_TRANS_ONLY_PREC_BITS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of fractional bits used for pure translational warps</td>
+    </tr>
+    <tr>
+      <td><code >INTERINTRA_MODES</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of inter intra modes</td>
+    </tr>
+    <tr>
+      <td><code >MASK_MASTER_SIZE</code></td>
+      <td style="text-align: center">64</td>
+      <td>Size of MasterMask array</td>
+    </tr>
+    <tr>
+      <td><code >SEGMENT_ID_PREDICTED_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for <code >segment_id_predicted</code></td>
+    </tr>
+    <tr>
+      <td><code >IS_INTER_CONTEXTS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of contexts for <code >is_inter</code></td>
+    </tr>
+    <tr>
+      <td><code >FWD_REFS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of syntax elements for forward reference frames</td>
+    </tr>
+    <tr>
+      <td><code >BWD_REFS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of syntax elements for backward reference frames</td>
+    </tr>
+    <tr>
+      <td><code >SINGLE_REFS</code></td>
+      <td style="text-align: center">7</td>
+      <td>Number of syntax elements for single reference frames</td>
+    </tr>
+    <tr>
+      <td><code >UNIDIR_COMP_REFS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of syntax elements for unidirectional compound reference frames</td>
+    </tr>
+    <tr>
+      <td><code >COMPOUND_TYPES</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of values for <code >compound_type</code></td>
+    </tr>
+    <tr>
+      <td><code >CFL_JOINT_SIGNS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of values for <code >cfl_alpha_signs</code></td>
+    </tr>
+    <tr>
+      <td><code >CFL_ALPHABET_SIZE</code></td>
+      <td style="text-align: center">16</td>
+      <td>Number of values for <code >cfl_alpha_u</code> and <code >cfl_alpha_v</code></td>
+    </tr>
+    <tr>
+      <td><code >COMP_INTER_CONTEXTS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of contexts for <code >comp_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >COMP_REF_TYPE_CONTEXTS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of contexts for <code >comp_ref_type</code></td>
+    </tr>
+    <tr>
+      <td><code >CFL_ALPHA_CONTEXTS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of contexts for <code >cfl_alpha_u</code> and <code >cfl_alpha_v</code></td>
+    </tr>
+    <tr>
+      <td><code >INTRA_MODE_CONTEXTS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of each of left and above contexts for <code >intra_frame_y_mode</code></td>
+    </tr>
+    <tr>
+      <td><code >COMP_GROUP_IDX_CONTEXTS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of contexts for <code >comp_group_idx</code></td>
+    </tr>
+    <tr>
+      <td><code >COMPOUND_IDX_CONTEXTS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of contexts for <code >compound_idx</code></td>
+    </tr>
+    <tr>
+      <td><code >INTRA_EDGE_KERNELS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of filter kernels for the intra edge filter</td>
+    </tr>
+    <tr>
+      <td><code >INTRA_EDGE_TAPS</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of kernel taps for the intra edge filter</td>
+    </tr>
+    <tr>
+      <td><code >FRAME_LF_COUNT</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of loop filter strength values</td>
+    </tr>
+    <tr>
+      <td><code >MAX_VARTX_DEPTH</code></td>
+      <td style="text-align: center">2</td>
+      <td>Maximum depth for variable transform trees</td>
+    </tr>
+    <tr>
+      <td><code >TXFM_PARTITION_CONTEXTS</code></td>
+      <td style="text-align: center">21</td>
+      <td>Number of contexts for txfm_split</td>
+    </tr>
+    <tr>
+      <td><code >REF_CAT_LEVEL</code></td>
+      <td style="text-align: center">640</td>
+      <td>Bonus weight for close motion vectors</td>
+    </tr>
+    <tr>
+      <td><code >MAX_REF_MV_STACK_SIZE</code></td>
+      <td style="text-align: center">8</td>
+      <td>Maximum number of motion vectors in the stack</td>
+    </tr>
+    <tr>
+      <td><code >MFMV_STACK_SIZE</code></td>
+      <td style="text-align: center">3</td>
+      <td>Stack size for motion field motion vectors</td>
+    </tr>
+    <tr>
+      <td><code >MAX_TX_DEPTH</code></td>
+      <td style="text-align: center">2</td>
+      <td>Maximum times the transform can be split</td>
+    </tr>
+    <tr>
+      <td><code >WEDGE_TYPES</code></td>
+      <td style="text-align: center">16</td>
+      <td>Number of directions for the wedge mask process</td>
+    </tr>
+    <tr>
+      <td><code >FILTER_BITS</code></td>
+      <td style="text-align: center">7</td>
+      <td>Number of bits used in Wiener filter coefficients</td>
+    </tr>
+    <tr>
+      <td><code >WIENER_COEFFS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of Wiener filter coefficients to read</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_PARAMS_BITS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of bits needed to specify self guided filter set</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_PRJ_SUBEXP_K</code></td>
+      <td style="text-align: center">4</td>
+      <td>Controls how self guided deltas are read</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_PRJ_BITS</code></td>
+      <td style="text-align: center">7</td>
+      <td>Precision bits during self guided restoration</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_RST_BITS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Restoration precision bits generated higher than source before projection</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_MTABLE_BITS</code></td>
+      <td style="text-align: center">20</td>
+      <td>Precision of mtable division table</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_RECIP_BITS</code></td>
+      <td style="text-align: center">12</td>
+      <td>Precision of division by n table</td>
+    </tr>
+    <tr>
+      <td><code >SGRPROJ_SGR_BITS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Internal precision bits for core selfguided_restoration</td>
+    </tr>
+    <tr>
+      <td><code >EC_PROB_SHIFT</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of bits to reduce CDF precision during arithmetic coding</td>
+    </tr>
+    <tr>
+      <td><code >EC_MIN_PROB</code></td>
+      <td style="text-align: center">4</td>
+      <td>Minimum probability assigned to each symbol during arithmetic coding</td>
+    </tr>
+    <tr>
+      <td><code >SELECT_SCREEN_CONTENT_TOOLS</code></td>
+      <td style="text-align: center">2</td>
+      <td>Value that indicates the allow_screen_content_tools syntax element is coded</td>
+    </tr>
+    <tr>
+      <td><code >SELECT_INTEGER_MV</code></td>
+      <td style="text-align: center">2</td>
+      <td>Value that indicates the force_integer_mv syntax element is coded</td>
+    </tr>
+    <tr>
+      <td><code >RESTORATION_TILESIZE_MAX</code></td>
+      <td style="text-align: center">256</td>
+      <td>Maximum size of a loop restoration tile</td>
+    </tr>
+    <tr>
+      <td><code >MAX_FRAME_DISTANCE</code></td>
+      <td style="text-align: center">31</td>
+      <td>Maximum distance when computing weighted prediction</td>
+    </tr>
+    <tr>
+      <td><code >MAX_OFFSET_WIDTH</code></td>
+      <td style="text-align: center">8</td>
+      <td>Maximum horizontal offset of a projected motion vector</td>
+    </tr>
+    <tr>
+      <td><code >MAX_OFFSET_HEIGHT</code></td>
+      <td style="text-align: center">0</td>
+      <td>Maximum vertical offset of a projected motion vector</td>
+    </tr>
+    <tr>
+      <td><code >WARP_PARAM_REDUCE_BITS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Rounding bitwidth for the parameters to the shear process</td>
+    </tr>
+    <tr>
+      <td><code >NUM_BASE_LEVELS</code></td>
+      <td style="text-align: center">2</td>
+      <td>Number of quantizer base levels</td>
+    </tr>
+    <tr>
+      <td><code >COEFF_BASE_RANGE</code></td>
+      <td style="text-align: center">12</td>
+      <td>The quantizer range above NUM_BASE_LEVELS above which the Exp-Golomb coding process is activated</td>
+    </tr>
+    <tr>
+      <td><code >BR_CDF_SIZE</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of values for <code >coeff_br</code></td>
+    </tr>
+    <tr>
+      <td><code >SIG_COEF_CONTEXTS_EOB</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of contexts for <code >coeff_base_eob</code></td>
+    </tr>
+    <tr>
+      <td><code >SIG_COEF_CONTEXTS_2D</code></td>
+      <td style="text-align: center">26</td>
+      <td>Context offset for <code >coeff_base</code> for horizontal-only or vertical-only transforms.</td>
+    </tr>
+    <tr>
+      <td><code >SIG_COEF_CONTEXTS</code></td>
+      <td style="text-align: center">42</td>
+      <td>Number of contexts for <code >coeff_base</code></td>
+    </tr>
+    <tr>
+      <td><code >SIG_REF_DIFF_OFFSET_NUM</code></td>
+      <td style="text-align: center">5</td>
+      <td>Maximum number of context samples to be used in determining the context index for <code >coeff_base</code> and <code >coeff_base_eob</code>.</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_NUM</code></td>
+      <td style="text-align: center">8</td>
+      <td>Numerator for upscaling ratio</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_DENOM_MIN</code></td>
+      <td style="text-align: center">9</td>
+      <td>Smallest denominator for upscaling ratio</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_DENOM_BITS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of bits sent to specify denominator of upscaling ratio</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_FILTER_BITS</code></td>
+      <td style="text-align: center">6</td>
+      <td>Number of bits of fractional precision for upscaling filter selection</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_FILTER_SHIFTS</code></td>
+      <td style="text-align: center">1 &lt;&lt; SUPERRES_FILTER_BITS</td>
+      <td>Number of phases of upscaling filters</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_FILTER_TAPS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Number of taps of upscaling filters</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_FILTER_OFFSET</code></td>
+      <td style="text-align: center">3</td>
+      <td>Sample offset for upscaling filters</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_SCALE_BITS</code></td>
+      <td style="text-align: center">14</td>
+      <td>Number of fractional bits for computing position in upscaling</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_SCALE_MASK</code></td>
+      <td style="text-align: center">(1 &lt;&lt; 14) - 1</td>
+      <td>Mask for computing position in upscaling</td>
+    </tr>
+    <tr>
+      <td><code >SUPERRES_EXTRA_BITS</code></td>
+      <td style="text-align: center">8</td>
+      <td>Difference in precision between SUPERRES_SCALE_BITS and SUPERRES_FILTER_BITS</td>
+    </tr>
+    <tr>
+      <td><code >TXB_SKIP_CONTEXTS</code></td>
+      <td style="text-align: center">13</td>
+      <td>Number of contexts for <code >all_zero</code></td>
+    </tr>
+    <tr>
+      <td><code >EOB_COEF_CONTEXTS</code></td>
+      <td style="text-align: center">9</td>
+      <td>Number of contexts for <code >eob_extra</code></td>
+    </tr>
+    <tr>
+      <td><code >DC_SIGN_CONTEXTS</code></td>
+      <td style="text-align: center">3</td>
+      <td>Number of contexts for <code >dc_sign</code></td>
+    </tr>
+    <tr>
+      <td><code >LEVEL_CONTEXTS</code></td>
+      <td style="text-align: center">21</td>
+      <td>Number of contexts for <code >coeff_br</code></td>
+    </tr>
+    <tr>
+      <td><code >TX_CLASS_2D</code></td>
+      <td style="text-align: center">0</td>
+      <td>Transform class for transform types performing non-identity transforms in both directions</td>
+    </tr>
+    <tr>
+      <td><code >TX_CLASS_HORIZ</code></td>
+      <td style="text-align: center">1</td>
+      <td>Transform class for transforms performing only a horizontal non-identity transform</td>
+    </tr>
+    <tr>
+      <td><code >TX_CLASS_VERT</code></td>
+      <td style="text-align: center">2</td>
+      <td>Transform class for transforms performing only a vertical non-identity transform</td>
+    </tr>
+    <tr>
+      <td><code >REFMVS_LIMIT</code></td>
+      <td style="text-align: center">( 1 &lt;&lt; 12 ) - 1</td>
+      <td>Largest reference MV component that can be saved</td>
+    </tr>
+    <tr>
+      <td><code >INTRA_FILTER_SCALE_BITS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Scaling shift for intra filtering process</td>
+    </tr>
+    <tr>
+      <td><code >INTRA_FILTER_MODES</code></td>
+      <td style="text-align: center">5</td>
+      <td>Number of types of intra filtering</td>
+    </tr>
+    <tr>
+      <td><code >COEFF_CDF_Q_CTXS</code></td>
+      <td style="text-align: center">4</td>
+      <td>Number of selectable context types for the coeff( ) syntax structure</td>
+    </tr>
+    <tr>
+      <td><code >PRIMARY_REF_NONE</code></td>
+      <td style="text-align: center">7</td>
+      <td>Value of <code >primary_ref_frame</code> indicating that there is no primary reference frame</td>
+    </tr>
+    <tr>
+      <td><code >BUFFER_POOL_MAX_SIZE</code></td>
+      <td style="text-align: center">10</td>
+      <td>Number of frames in buffer pool</td>
+    </tr>
+  </tbody>
+</table>
