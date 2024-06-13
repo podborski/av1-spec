@@ -1,6 +1,4 @@
-
 # Annex A: Profiles and levels # {#annex_a:_profiles_and_levels}
-
 
 ## General ## {#general}
 
@@ -148,8 +146,8 @@ integer values) to the defined levels:
 
 
 Note: The level uses a X.Y format.
-X is equal to 2 + (seq_level_idx \>\> 2).
-Y is given by (seq_level_idx & 3).
+X is equal to `2 + (seq_level_idx >> 2)`.
+Y is given by `(seq_level_idx & 3)`.
 
 
 The level defines variables as specified in the following tables:
@@ -516,7 +514,7 @@ TemporalParallelNum and TemporalParallelDen are defined to be equal to 1.
 
 Otherwise, if scalability_mode_idc is not equal to SCALABILITY_SS,
 TemporalParallelDen is defined as 1 and TemporalParallelNum is defined as
-(1 \<\< ( TemporalLayers - 1 )) where TemporalLayers is the number of temporal
+`(1 << ( TemporalLayers - 1 ))` where TemporalLayers is the number of temporal
 layers as defined in the semantics for scalability_mode_idc.
 
 Otherwise (scalability_mode_idc is equal to SCALABILITY_SS),

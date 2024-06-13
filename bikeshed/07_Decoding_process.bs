@@ -1,4 +1,3 @@
-
 # Decoding process # {#decoding_process}
 
 ## Overview ## {#overview}
@@ -127,10 +126,10 @@ for ( y = 0; y < h; y++ ) {
 OutputFrameY (representing the luma plane of the output frame) is outputW samples across by outputH samples down.
 
 OutputFrameU (representing the U plane of the output frame) is
-( outputW \>\> subsampling_x ) samples across by ( outputH \>\> subsampling_y ) samples down.
+`( outputW >> subsampling_x )` samples across by `( outputH >> subsampling_y )` samples down.
 
 OutputFrameV (representing the V plane of the output frame) is
-( outputW \>\> subsampling_x ) samples across by ( outputH \>\> subsampling_y ) samples down.
+`( outputW >> subsampling_x )` samples across by `( outputH >> subsampling_y )` samples down.
 
 The bitdepth of each output sample is given by BitDepth.
 
@@ -226,8 +225,8 @@ Note: It is allowed to use intra blocks, they are not forbidden by this constrai
 
 Arrays OutY, OutU, OutV (representing the decoded samples for the tile) are specified as:
  * The array OutY is w samples across by h samples down and the sample at location x samples across and y samples down is given by OutY[ y ][ x ] = CurrFrame[ 0 ][ y0 + y ][ x0 + x ] with x = 0..w - 1 and y = 0..h - 1.
- * The array OutU is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = CurrFrame[ 1 ][ yC0 + y ][ xC0 + x ] with x = 0..(w \>\> subX) - 1 and y = 0..(h \>\> subY) - 1.
- * The array OutV is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = CurrFrame[ 2 ][ yC0 + y ][ xC0 + x ] with x = 0..(w \>\> subX) - 1 and y = 0..(h \>\> subY) - 1.
+ * The array OutU is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = CurrFrame[ 1 ][ yC0 + y ][ xC0 + x ] with `x = 0..(w >> subX) - 1` and `y = 0..(h >> subY) - 1`.
+ * The array OutV is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = CurrFrame[ 2 ][ yC0 + y ][ xC0 + x ] with `x = 0..(w >> subX) - 1` and `y = 0..(h >> subY) - 1`.
 
 The output of this process is arrays OutY, OutU, OutV representing the Y, U, and V samples. 
 
@@ -449,7 +448,7 @@ usedFrame[ last_frame_idx ] = 1
 usedFrame[ gold_frame_idx ] = 1
 ~~~~~
 
-A variable curFrameHint is set equal to 1 \<\< (OrderHintBits - 1).
+A variable curFrameHint is set equal to `1 << (OrderHintBits - 1)`.
 
 An array shiftedOrderHints (containing the expected output order shifted such that the current frame has hint equal to curFrameHint) is prepared as follows:
 
@@ -617,9 +616,9 @@ is estimated for each reference frame used by the current frame.
 
 A motion vector (for each reference frame type) is prepared at each location on an 8x8 luma sample grid.
 
-The variable w8 (representing the width of the motion field in units of 8x8 luma samples) is set equal to MiCols \>\> 1.
+The variable w8 (representing the width of the motion field in units of 8x8 luma samples) is set equal to `MiCols >> 1`.
 
-The variable h8 (representing the height of the motion field in units of 8x8 luma samples) is set equal to MiRows \>\> 1.
+The variable h8 (representing the height of the motion field in units of 8x8 luma samples) is set equal to `MiRows >> 1`.
 
 As the linear projection can create a field with holes, the motion fields are initialized
 to an invalid motion vector of -32768, -32768 as follows:
@@ -678,9 +677,9 @@ The process outputs a single boolean value representing whether the source frame
 
 The variable srcIdx (representing which reference frame is used) is set equal to ref_frame_idx[ src - LAST_FRAME ].
 
-The variable w8 (representing the width of the motion field in units of 8x8 luma samples) is set equal to MiCols \>\> 1.
+The variable w8 (representing the width of the motion field in units of 8x8 luma samples) is set equal to `MiCols >> 1`.
 
-The variable h8 (representing the height of the motion field in units of 8x8 luma samples) is set equal to MiRows \>\> 1.
+The variable h8 (representing the height of the motion field in units of 8x8 luma samples) is set equal to `MiRows >> 1`.
 
 If RefMiRows[ srcIdx ] is not equal to MiRows, RefMiCols[ srcIdx ] is not equal to MiCols, or RefFrameType[ srcIdx ] is equal to INTRA_ONLY_FRAME or KEY_FRAME, the process exits
 at this point, with the output set equal to 0.
@@ -777,9 +776,9 @@ need to be projected.
 
 The variable posValid is set equal to 1.
 
-The variable PosY8 is set equal to project(y8, projMv[ 0 ], dstSign, MiRows \>\> 1, MAX_OFFSET_HEIGHT).
+The variable PosY8 is set equal to `project(y8, projMv[ 0 ], dstSign, MiRows >> 1, MAX_OFFSET_HEIGHT)`.
 
-The variable PosX8 is set equal to project(x8, projMv[ 1 ], dstSign, MiCols \>\> 1, MAX_OFFSET_WIDTH).
+The variable PosX8 is set equal to `project(x8, projMv[ 1 ], dstSign, MiCols >> 1, MAX_OFFSET_WIDTH)`.
 
 where the function `project` is specified as follows:
 
@@ -1154,9 +1153,9 @@ The variable mvCol is set equal to (MiCol + deltaCol) \| 1.
 
 If is_inside( mvRow, mvCol ) is equal to 0, this process terminates immediately.
 
-The variable x8 is set equal to mvCol \>\> 1.
+The variable x8 is set equal to `mvCol >> 1`.
 
-The variable y8 is set equal to mvRow \>\> 1.
+The variable y8 is set equal to `mvRow >> 1`.
 
 (x8 and y8 represent the position of the candidate in units of 8x8 luma samples.)
 
@@ -1854,28 +1853,28 @@ The process makes use of the already reconstructed samples in the current frame 
 The outputs of this process are intra predicted samples in the current frame
 CurrFrame.
 
-The variable w is set equal to 1 \<\< log2W.
+The variable w is set equal to `1 << log2W`.
 
-The variable h is set equal to 1 \<\< log2H.
+The variable h is set equal to `1 << log2H`.
 
-The variable maxX is set equal to ( MiCols * MI_SIZE ) - 1.
+The variable maxX is set equal to `( MiCols * MI_SIZE ) - 1`.
 
-The variable maxY is set equal to ( MiRows * MI_SIZE ) - 1.
+The variable maxY is set equal to `( MiRows * MI_SIZE ) - 1`.
 
 If plane is greater than 0, then:
- * maxX is set equal to ( ( MiCols * MI_SIZE ) \>\> subsampling_x ) - 1.
- * maxY is set equal to ( ( MiRows * MI_SIZE ) \>\> subsampling_y ) - 1.
+ * maxX is set equal to `( ( MiCols * MI_SIZE ) >> subsampling_x ) - 1`.
+ * maxY is set equal to `( ( MiRows * MI_SIZE ) >> subsampling_y ) - 1`.
 
 The array AboveRow[ i ] for i = 0..w + h - 1 is derived as follows:
  * If haveAbove is equal to 0 and haveLeft is equal to 1, AboveRow[ i ] is set equal to  CurrFrame[ plane ][ y ][ x - 1 ].
- * Otherwise, if haveAbove is equal to 0 and haveLeft is equal to 0, AboveRow[ i ] is set equal to ( 1 \<\< ( BitDepth - 1 ) ) - 1.
+ * Otherwise, if haveAbove is equal to 0 and haveLeft is equal to 0, AboveRow[ i ] is set equal to `( 1 << ( BitDepth - 1 ) ) - 1`.
  * Otherwise, the following applies:
  * The variable aboveLimit is set equal to Min( maxX, x + ( haveAboveRight ? 2 * w : w ) - 1 ).
  * AboveRow[ i ] is set equal to CurrFrame[ plane ][ y-1 ][ Min(aboveLimit, x+i) ].
 
 The array LeftCol[ i ] for i = 0..w + h - 1 is derived as follows:
  * If haveLeft is equal to 0 and haveAbove is equal to 1, LeftCol[ i ] is set equal to  CurrFrame[ plane ][ y - 1 ][ x ].
- * Otherwise, if haveLeft is equal to 0 and haveAbove is equal to 0, LeftCol[ i ] is set equal to ( 1 \<\< ( BitDepth - 1 ) ) + 1.
+ * Otherwise, if haveLeft is equal to 0 and haveAbove is equal to 0, LeftCol[ i ] is set equal to `( 1 << ( BitDepth - 1 ) ) + 1`.
  * Otherwise, the following applies:
  * The variable leftLimit is set equal to Min( maxY, y + ( haveBelowLeft ? 2 * h : h ) - 1 ).
  * LeftCol[ i ] is set equal to CurrFrame[ plane ][ Min(leftLimit, y+i) ][ x-1 ].
@@ -1884,7 +1883,7 @@ The array AboveRow[ i ] for i = -1 is specified by:
  * If haveAbove is equal to 1 and haveLeft is equal to 1, AboveRow[ -1 ] is set equal to CurrFrame[ plane ][ y-1 ][ x-1 ].
  * Otherwise if haveAbove is equal to 1, AboveRow[ -1 ] is set equal to CurrFrame [ plane ][ y - 1 ][ x ].
  * Otherwise if haveLeft is equal to 1, AboveRow[ -1 ] is set equal to CurrFrame [ plane ][ y ][ x - 1 ].
- * Otherwise, AboveRow[ -1 ] is set equal to 1 \<\< ( BitDepth - 1 ).
+ * Otherwise, AboveRow[ -1 ] is set equal to `1 << ( BitDepth - 1 )`.
 
 The array LeftCol[ i ] for i = -1 is set equal to AboveRow[ -1 ].
 
@@ -1930,23 +1929,23 @@ The output of this process is a 2D array named pred containing the intra predict
 For each block of 4x2 samples, this process first prepares an array p of 7 neighboring samples, and then produces
 the output block by filtering this array.
 
-The variable w4 is set equal to w \>\> 2.
+The variable w4 is set equal to `w >> 2`.
 
-The variable h2 is set equal to h \>\> 1.
+The variable h2 is set equal to `h >> 1`.
 
 The following steps apply for i2 = 0..h2-1, for j4 = 0..w4-1:
  * The array p is derived as follows for i = 0..6:
  * If i is less than 5, p[ i ] is derived as follows:
- * If i2 is equal to 0, p[ i ] is set equal to AboveRow[ ( j4 \<\< 2 ) + i - 1 ].
- * Otherwise, if j4 is equal to 0 and i is equal to 0, p[ i ] is set equal to LeftCol[ ( i2 \<\< 1 ) - 1 ].
- * Otherwise, p[ i ] is set equal to pred[ ( i2 \<\< 1 ) - 1 ][ ( j4 \<\< 2 ) + i - 1 ].
+ * If i2 is equal to 0, p[ i ] is set equal to `AboveRow[ ( j4 << 2 ) + i - 1 ]`.
+ * Otherwise, if j4 is equal to 0 and i is equal to 0, p[ i ] is set equal to `LeftCol[ ( i2 << 1 ) - 1 ]`.
+ * Otherwise, p[ i ] is set equal to `pred[ ( i2 << 1 ) - 1 ][ ( j4 << 2 ) + i - 1 ]`.
  * Otherwise (i is greater than or equal to 5), p[ i ] is derived as follows:
- * If j4 is equal to 0, p[ i ] is set equal to LeftCol[ ( i2 \<\< 1 ) + i - 5 ].
- * Otherwise (j4 is not equal to 0), p[ i ] is set equal to pred[ ( i2 \<\< 1 ) + i - 5 ][ ( j4 \<\< 2 ) - 1 ].
+ * If j4 is equal to 0, p[ i ] is set equal to `LeftCol[ ( i2 << 1 ) + i - 5 ]`.
+ * Otherwise (j4 is not equal to 0), p[ i ] is set equal to `pred[ ( i2 << 1 ) + i - 5 ][ ( j4 << 2 ) - 1 ]`.
  * The following steps apply for i1 = 0..1, j1 = 0..3:
  * The variable pr is set equal to 0.
- * The variable pr is incremented by Intra_Filter_Taps[ filter_intra_mode ][ ( i1 \<\< 2 ) + j1 ][ i ] * p[ i ] for i = 0..6.
- * pred[ ( i2 \<\< 1 ) + i1 ][ ( j4 \<\< 2 ) + j1 ] is set equal to Clip1( Round2Signed( pr, INTRA_FILTER_SCALE_BITS ) ).
+ * The variable pr is incremented by `Intra_Filter_Taps[ filter_intra_mode ][ ( i1 << 2 ) + j1 ][ i ] * p[ i ]` for i = 0..6.
+ * `pred[ ( i2 << 1 ) + i1 ][ ( j4 << 2 ) + j1 ]` is set equal to Clip1( Round2Signed( pr, INTRA_FILTER_SCALE_BITS ) ).
 
 The output of the process is the array pred.
 
@@ -2009,32 +2008,32 @@ The following ordered steps apply:
 
  7. If pAngle is less than 90, the following steps apply for i = 0..h-1, for j = 0..w-1:
 
- * The variable idx is set equal to ( i + 1 ) * dx.
- * The variable base is set equal to (idx \>\> ( 6 - upsampleAbove ) ) + (j \<\< upsampleAbove).
- * The variable shift is set equal to ( (idx \<\< upsampleAbove) \>\> 1 ) & 0x1F.
- * The variable maxBaseX is set equal to (w + h - 1) \<\< upsampleAbove.
+ * The variable idx is set equal to `( i + 1 ) * dx`.
+ * The variable base is set equal to `(idx >> ( 6 - upsampleAbove ) ) + (j << upsampleAbove)`.
+ * The variable shift is set equal to `( (idx << upsampleAbove) >> 1 ) & 0x1F`.
+ * The variable maxBaseX is set equal to `(w + h - 1) << upsampleAbove`.
  * If base is less than maxBaseX, pred[ i ][ j ] is set equal to Round2( AboveRow[ base ] * ( 32 - shift ) + AboveRow[ base + 1 ] * shift, 5 ).
  * Otherwise (base is greater than or equal to maxBaseX), pred[ i ][ j ] is set equal to AboveRow[ maxBaseX ].
  
  8. Otherwise, if pAngle is greater than 90 and pAngle is less than 180, the following steps apply for i = 0..h-1, for j = 0..w-1:
 
- * The variable idx is set equal to ( j \<\< 6 ) - ( i + 1 ) * dx.
- * The variable base is set equal to idx \>\> ( 6 - upsampleAbove ).
- * If base is greater than or equal to -(1 \<\< upsampleAbove), the following steps apply:
- * The variable shift is set equal to ( ( idx \<\< upsampleAbove ) \>\> 1 ) & 0x1F.
+ * The variable idx is set equal to `( j << 6 ) - ( i + 1 ) * dx`.
+ * The variable base is set equal to `idx >> ( 6 - upsampleAbove )`.
+ * If base is greater than or equal to `-(1 << upsampleAbove)`, the following steps apply:
+ * The variable shift is set equal to `( ( idx << upsampleAbove ) >> 1 ) & 0x1F`.
  * pred[ i ][ j ] is set equal to Round2( AboveRow[ base ] * ( 32 - shift ) + AboveRow[ base + 1 ] * shift, 5 ).
- * Otherwise (base is less than -(1 \<\< upsampleAbove), the following steps apply:
- * The variable idx is set equal to ( i \<\< 6 ) - ( j + 1 ) * dy.
- * The variable base is set equal to idx \>\> ( 6 - upsampleLeft ).
- * The variable shift is set equal to ( ( idx \<\< upsampleLeft ) \>\> 1 ) & 0x1F.
- * pred[ i ][ j ] is set equal to Round2( LeftCol[ base ] * ( 32 - shift ) + LeftCol[ base + 1 ] * shift, 5 ).
+ * Otherwise (base is less than `-(1 << upsampleAbove)`, the following steps apply:
+ * The variable idx is set equal to `( i << 6 ) - ( j + 1 ) * dy`.
+ * The variable base is set equal to `idx >> ( 6 - upsampleLeft )`.
+ * The variable shift is set equal to `( ( idx << upsampleLeft ) >> 1 ) & 0x1F`.
+ * pred[ i ][ j ] is set equal to `Round2( LeftCol[ base ] * ( 32 - shift ) + LeftCol[ base + 1 ] * shift, 5 )`.
  
  9. Otherwise, if pAngle is greater than 180, the following steps apply for i = 0..h-1, for j = 0..w-1:
 
- * The variable idx is set equal to ( j + 1 ) * dy.
- * The variable base is set equal to ( idx \>\> ( 6 - upsampleLeft ) ) + ( i \<\< upsampleLeft ).
- * The variable shift is set equal to ( ( idx \<\< upsampleLeft ) \>\> 1 ) & 0x1F.
- * pred[ i ][ j ] is set equal to Round2( LeftCol[ base ] * ( 32 - shift ) + LeftCol[ base + 1 ] * shift, 5 ).
+ * The variable idx is set equal to `( j + 1 ) * dy`.
+ * The variable base is set equal to `( idx >> ( 6 - upsampleLeft ) ) + ( i << upsampleLeft )`.
+ * The variable shift is set equal to `( ( idx << upsampleLeft ) >> 1 ) & 0x1F`.
+ * pred[ i ][ j ] is set equal to `Round2( LeftCol[ base ] * ( 32 - shift ) + LeftCol[ base + 1 ] * shift, 5 )`.
  
  10. Otherwise, if pAngle is equal to 90, pred[ i ][ j ] is set equal to AboveRow[ j ] with j = 0..w-1 and i = 0..h-1 (each row of the block is filled with a copy of AboveRow).
  
@@ -2088,7 +2087,7 @@ Note: The reference code shows how the division by (w+h) can be implemented with
     }
     aboveAvg = Clip1( ( sum + ( w >> 1 ) ) >> log2W )
     ~~~~~
- * Otherwise (haveLeft is equal to 0 and haveAbove is equal to 0), pred[ i ][ j ] is set equal to 1 \<\< ( BitDepth - 1 ) with i = 0..h-1 and j = 0..w-1.
+ * Otherwise (haveLeft is equal to 0 and haveAbove is equal to 0), pred[ i ][ j ] is set equal to `1 << ( BitDepth - 1 )` with i = 0..h-1 and j = 0..w-1.
 
 The output of the process is the array pred.
 
@@ -2480,8 +2479,8 @@ Otherwise (strength is not equal to 0), the following ordered steps apply for i 
       a. The variable k is set equal to Clip3( 0, sz - 1, i - 2 + j ).
 
       b. The variable s is incremented by Intra_Edge_Kernel[ strength - 1 ][ j ] * edge[ k ].
- 3. If left is equal to 1, LeftCol[ i - 1 ] is set equal to ( s + 8 ) \>\> 4.
- 4. If left is equal to 0, AboveRow[ i - 1 ] is set equal to ( s + 8 ) \>\> 4.
+ 3. If left is equal to 1, LeftCol[ i - 1 ] is set equal to `( s + 8 ) >> 4`.
+ 4. If left is equal to 0, AboveRow[ i - 1 ] is set equal to `( s + 8 ) >> 4`.
 
 The array Intra_Edge_Kernel is specified as follows:
 
@@ -2536,7 +2535,7 @@ The prediction arrays are formed by the following ordered steps:
     * Otherwise (use_intrabc is equal to 1), refIdx is set equal to -1 and RefFrameWidth[ -1 ] is set equal to FrameWidth, RefFrameHeight[ -1 ] is set equal to FrameHeight, and RefUpscaledWidth[ -1 ] is set equal to UpscaledWidth. (These values ensure that the motion vector scaling has no effect.)
 10. The motion vector scaling process in [section 7.11.3.3][] is invoked with plane, refIdx, x, y, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
 11. If use_intrabc is equal to 1, RefFrameWidth[ -1 ] is set equal to  MiCols * MI_SIZE, RefFrameHeight[ -1 ] is set equal to MiRows * MI_SIZE, and RefUpscaledWidth[ -1 ] is set equal to  MiCols * MI_SIZE. (These values are needed to avoid intrabc prediction being cropped to the frame boundaries.)
-12. If useWarp is not equal to 0, the block warp process in [section 7.11.3.5][] is invoked with useWarp, plane, refList, x, y, i8, j8, w, h as inputs and the output is merged into the 2D array preds[ refList ] for i8 = 0..((h-1) \>\> 3) and for j8 = 0..((w-1) \>\> 3). (Each invocation fills in a block of output of size w by h at x offset j8 * 8 and y offset i8 * 8.)
+12. If useWarp is not equal to 0, the block warp process in [section 7.11.3.5][] is invoked with useWarp, plane, refList, x, y, i8, j8, w, h as inputs and the output is merged into the 2D array preds[ refList ] for `i8 = 0..((h-1) >> 3)` and for `j8 = 0..((w-1) >> 3)`. (Each invocation fills in a block of output of size w by h at x offset j8 * 8 and y offset i8 * 8.)
 13. If useWarp is equal to 0, the block inter prediction process in [section 7.11.3.4][] is invoked with plane, refIdx, startX, startY, stepX, stepY, w, h, candRow, candCol as inputs and the output is assigned to the 2D array preds[ refList ].
 14. If isCompound is equal to 1, then the variable refList is set equal to 1 and steps 5 to 13 are repeated to form the prediction for the second reference.
 
@@ -2603,38 +2602,34 @@ are satisfied:
  * FrameWidth <= 16 * RefUpscaledWidth[ refIdx ]
  * FrameHeight <= 16 * RefFrameHeight[ refIdx ]
 
-A variable xScale is set equal to ( ( RefUpscaledWidth[ refIdx ] \<\<
-REF_SCALE_SHIFT ) + ( FrameWidth / 2 ) ) / FrameWidth.
+A variable xScale is set equal to `( ( RefUpscaledWidth[ refIdx ] << REF_SCALE_SHIFT ) + ( FrameWidth / 2 ) ) / FrameWidth`.
 
-A variable yScale is set equal to ( ( RefFrameHeight[ refIdx ] \<\<
-REF_SCALE_SHIFT ) + ( FrameHeight / 2 ) ) / FrameHeight.
+A variable yScale is set equal to `( ( RefFrameHeight[ refIdx ] << REF_SCALE_SHIFT ) + ( FrameHeight / 2 ) ) / FrameHeight`.
 
-(xScale and yScale specify the size of the reference frame relative to the
-current frame in units where (1 \<\< 14) is equivalent to both frames having
-the same size.)
+(xScale and yScale specify the size of the reference frame relative to the current frame in units where `(1 << 14)` is equivalent to both frames having the same size.)
 
 The variables subX and subY are set equal to the subsampling for the current
 plane as follows:
  * If plane is equal to 0, subX is set equal to 0 and subY is set equal to 0.
  * Otherwise, subX is set equal to subsampling_x and subY is set equal to subsampling_y.
 
-The variable halfSample (representing half the size of a sample in units of 1/16 th of a sample) is set equal to ( 1 \<\< ( SUBPEL_BITS - 1 ) ).
+The variable halfSample (representing half the size of a sample in units of 1/16 th of a sample) is set equal to `( 1 << ( SUBPEL_BITS - 1 ) )`.
 
-The variable origX is set equal to ( (x \<\< SUBPEL_BITS) + ( ( 2 * mv[1] ) \>\> subX ) + halfSample ).
+The variable origX is set equal to `( (x << SUBPEL_BITS) + ( ( 2 * mv[1] ) >> subX ) + halfSample )`.
 
-The variable origY is set equal to ( (y \<\< SUBPEL_BITS) + ( ( 2 * mv[0] ) \>\> subY ) + halfSample ).
+The variable origY is set equal to `( (y << SUBPEL_BITS) + ( ( 2 * mv[0] ) >> subY ) + halfSample )`.
 
 (origX and origY specify the location of the centre of the sample at the top-left corner of the
 reference block in the current frame's coordinate system in units of 1/16 th of a sample, i.e. with SUBPEL_BITS=4 fractional bits.)
 
-The variable baseX is set equal to (origX * xScale - ( halfSample \<\< REF_SCALE_SHIFT ) ).
+The variable baseX is set equal to `(origX * xScale - ( halfSample << REF_SCALE_SHIFT ) )`.
 
-The variable baseY is set equal to (origY * yScale - ( halfSample \<\< REF_SCALE_SHIFT ) ).
+The variable baseY is set equal to `(origY * yScale - ( halfSample << REF_SCALE_SHIFT ) )`.
 
 (baseX and baseY specify the location of the top-left corner of the block in the
 reference frame in the reference frame's coordinate system with 18 fractional bits.)
 
-The variable off (containing a rounding offset for the filter tap selection) is set equal to ( ( 1 \<\< (SCALE_SUBPEL_BITS - SUBPEL_BITS) ) / 2 ).
+The variable off (containing a rounding offset for the filter tap selection) is set equal to `( ( 1 << (SCALE_SUBPEL_BITS - SUBPEL_BITS) ) / 2 )`.
 
 The output variable startX is set equal to (Round2Signed( baseX, REF_SCALE_SHIFT + SUBPEL_BITS - SCALE_SUBPEL_BITS) + off).
 
@@ -2672,16 +2667,14 @@ plane as follows:
  * If plane is equal to 0, subX is set equal to 0 and subY is set equal to 0.
  * Otherwise, subX is set equal to subsampling_x and subY is set equal to subsampling_y.
 
-The variable lastX is set equal to ( (RefUpscaledWidth[ refIdx ] + subX) \>\>
-subX) - 1.
+The variable lastX is set equal to `( (RefUpscaledWidth[ refIdx ] + subX) >> subX) - 1`.
 
-The variable lastY is set equal to ( (RefFrameHeight[ refIdx ] + subY) \>\>
-subY) - 1.
+The variable lastY is set equal to `( (RefFrameHeight[ refIdx ] + subY) >> subY) - 1`.
 
 (lastX and lastY specify the coordinates of the bottom right sample of the reference plane.)
 
 The variable intermediateHeight specifying the height required for the
-intermediate array is set equal to (((h - 1) * yStep + (1 \<\< SCALE_SUBPEL_BITS) - 1) \>\> SCALE_SUBPEL_BITS) + 8.
+intermediate array is set equal to `(((h - 1) * yStep + (1 << SCALE_SUBPEL_BITS) - 1) >> SCALE_SUBPEL_BITS) + 8`.
 
 The sub-sample interpolation is effected via two one-dimensional convolutions.
 First a horizontal filter is used to build up a temporary array, and then this
@@ -2887,17 +2880,15 @@ plane as follows:
  * If plane is equal to 0, subX is set equal to 0 and subY is set equal to 0.
  * Otherwise, subX is set equal to subsampling_x and subY is set equal to subsampling_y.
 
-The variable lastX is set equal to ( (RefUpscaledWidth[ refIdx ] + subX) \>\>
-subX) - 1.
+The variable lastX is set equal to `( (RefUpscaledWidth[ refIdx ] + subX) >> subX) - 1`.
 
-The variable lastY is set equal to ( (RefFrameHeight[ refIdx ] + subY) \>\>
-subY) - 1.
+The variable lastY is set equal to `( (RefFrameHeight[ refIdx ] + subY) >> subY) - 1`.
 
 (lastX and lastY specify the coordinates of the bottom right sample of the reference plane.)
 
-The variable srcX is set equal to (x + j8 * 8 + 4) \<\< subX.
+The variable srcX is set equal to `(x + j8 * 8 + 4) << subX`.
 
-The variable srcY is set equal to (y + i8 * 8 + 4) \<\< subY.
+The variable srcY is set equal to `(y + i8 * 8 + 4) << subY`.
 
 (srcX and srcY specify a location in the luma plane that will be projected using the warp parameters.)
 
@@ -3072,19 +3063,19 @@ The input for this process is an array warpParams representing an affine transfo
 
 The outputs from this process are the variable warpValid and variables alpha, beta, gamma, delta representing two shearing operations that combine to make the full affine transformation.
 
-The variable alpha0 is set equal to Clip3( -32768, 32767, warpParams[ 2 ] - (1 \<\< WARPEDMODEL_PREC_BITS) ).
+The variable alpha0 is set equal to `Clip3( -32768, 32767, warpParams[ 2 ] - (1 << WARPEDMODEL_PREC_BITS) )`.
 
-The variable beta0 is set equal to Clip3( -32768, 32767, warpParams[ 3 ] ).
+The variable beta0 is set equal to `Clip3( -32768, 32767, warpParams[ 3 ] )`.
 
 The resolve divisor process specified in [section 7.11.3.7][] is invoked with warpParams[ 2 ] as input, and the outputs assigned to divShift and divFactor.
 
-The variable v is set equal to ( warpParams[ 4 ] \<\< WARPEDMODEL_PREC_BITS ).
+The variable v is set equal to `( warpParams[ 4 ] << WARPEDMODEL_PREC_BITS )`.
 
-The variable gamma0 is set equal to Clip3( -32768, 32767, Round2Signed( v * divFactor, divShift ) ).
+The variable gamma0 is set equal to `Clip3( -32768, 32767, Round2Signed( v * divFactor, divShift ) )`.
 
-The variable w is set equal to ( warpParams[ 3 ] * warpParams[ 4 ] ).
+The variable w is set equal to `( warpParams[ 3 ] * warpParams[ 4 ] )`.
 
-The variable delta0 is set equal to Clip3( -32768, 32767, warpParams[ 5 ] - Round2Signed( w * divFactor, divShift ) - (1 \<\< WARPEDMODEL_PREC_BITS) ).
+The variable delta0 is set equal to `Clip3( -32768, 32767, warpParams[ 5 ] - Round2Signed( w * divFactor, divShift ) - (1 << WARPEDMODEL_PREC_BITS) )`.
 
 The output variables alpha, beta, gamma, delta are set as follows:
 
@@ -3096,8 +3087,8 @@ delta = Round2Signed( delta0, WARP_PARAM_REDUCE_BITS ) << WARP_PARAM_REDUCE_BITS
 ~~~~~
 
 The output warpValid is set as follows:
- * If 4 * Abs( alpha ) + 7 * Abs( beta ) is greater than or equal to (1 \<\< WARPEDMODEL_PREC_BITS), warpValid is set equal to 0.
- * If 4 * Abs( gamma ) + 4 * Abs( delta ) is greater than or equal to (1 \<\< WARPEDMODEL_PREC_BITS), warpValid is set equal to 0.
+ * If 4 * Abs( alpha ) + 7 * Abs( beta ) is greater than or equal to `(1 << WARPEDMODEL_PREC_BITS)`, warpValid is set equal to 0.
+ * If 4 * Abs( gamma ) + 4 * Abs( delta ) is greater than or equal to `(1 << WARPEDMODEL_PREC_BITS)`, warpValid is set equal to 0.
  * Otherwise, warpValid is set equal to 1.
 
 #### Resolve divisor process #### {#resolve_divisor_process}
@@ -3108,11 +3099,11 @@ The outputs for this process are variables divShift and divFactor that can be us
 
 The variable n (representing the location of the most signficant bit in Abs(d) ) is set equal to FloorLog2( Abs(d) ).
 
-The variable e is set equal to Abs( d ) - ( 1 \<\< n ).
+The variable e is set equal to `Abs( d ) - ( 1 << n )`.
 
 The variable f is set as follows:
  * If n > DIV_LUT_BITS, f is set equal to Round2( e, n - DIV_LUT_BITS ).
- * Otherwise, f is set equal to e \<\< ( DIV_LUT_BITS - n ).
+ * Otherwise, f is set equal to `e << ( DIV_LUT_BITS - n )`.
 
 The output variable divShift is set equal to ( n + DIV_LUT_PREC_BITS ).
 
@@ -3328,8 +3319,8 @@ if ( AvailL ) {
 When the function predict_overlap is invoked, the following ordered steps apply to form the overlap prediction for a region of size predW by predH based on the candidate motion vector:
  1. The motion vector mv is set equal to Mvs[ candRow ][ candCol ][ 0 ].
  2. The variable refIdx is set equal to ref_frame_idx[ RefFrames[ candRow ][ candCol ][ 0 ] - LAST_FRAME ].
- 3. The variable predX is set equal to (x4 * 4) \>\> subX.
- 4. The variable predY is set equal to (y4 * 4) \>\> subY.
+ 3. The variable predX is set equal to `(x4 * 4) >> subX`.
+ 4. The variable predY is set equal to `(y4 * 4) >> subY`.
  5. The motion vector scaling process in [section 7.11.3.3][] is invoked with plane, refIdx, predX, predY, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
  6. The block inter prediction process in [section 7.11.3.4][] is invoked with plane, refIdx, startX, startY, stepX, stepY, predW, predH, candRow, candCol as inputs and the output is assigned to the 2D array obmcPred.
  7. obmcPred[ i ][ j ] is set equal to Clip1( obmcPred[ i ][ j ] ) for i = 0..predH-1 and j = 0..predW-1.
@@ -3861,9 +3852,7 @@ needed by the dequantization process.
 
 The quantization parameters are derived from lookup tables.
 
-The function dc_q( b ) is specified as
-Dc_Qlookup[ (BitDepth-8) \>\> 1 ][ Clip3( 0, 255, b ) ] where Dc_Qlookup is
-defined as follows:
+The function dc_q( b ) is specified as `Dc_Qlookup[ (BitDepth-8) >> 1 ][ Clip3( 0, 255, b ) ]` where `Dc_Qlookup` is defined as follows:
 
 ~~~~~ c
 Dc_Qlookup[ 3 ][ 256 ] = {
@@ -3952,8 +3941,7 @@ Dc_Qlookup[ 3 ][ 256 ] = {
 }
 ~~~~~
 
-The function ac_q( b ) is specified as Ac_Qlookup[
-(BitDepth-8) \>\> 1 ][ Clip3( 0, 255, b ) ] where Ac_Qlookup is defined as follows:
+The `function ac_q( b )` is specified as `Ac_Qlookup[(BitDepth-8) >> 1 ][ Clip3( 0, 255, b ) ]` where `Ac_Qlookup` is defined as follows:
 
 ~~~~~ c
 Ac_Qlookup[ 3 ][ 256 ] = {
@@ -4099,11 +4087,9 @@ block) is set equal to Tx_Width_Log2[ txSz ].
 The variable log2H (specifying the base 2 logarithm of the height of the transform
 block) is set equal to Tx_Height_Log2[ txSz ].
 
-The variable w (specifying the width of the transform block) is set equal
-to 1 \<\< log2W.
+The variable w (specifying the width of the transform block) is set equal to `1 << log2W`.
 
-The variable h (specifying the height of the transform block) is set equal
-to 1 \<\< log2H.
+The variable h (specifying the height of the transform block) is set equal to `1 << log2H`.
 
 The variable tw is set equal to Min( 32, w ).
 
@@ -4136,7 +4122,7 @@ The following ordered steps apply:
 
       e. The variable dq2 is set equal to sign * ( Abs( dq ) & 0xFFFFFF ) / dqDenom.
 
-      f. Dequant[ i ][ j ] is set equal to Clip3( - ( 1 \<\< ( 7 + BitDepth ) ), ( 1 \<\< ( 7 + BitDepth ) ) - 1, dq2 ).
+      f. Dequant[ i ][ j ] is set equal to `Clip3( - ( 1 << ( 7 + BitDepth ) ), ( 1 << ( 7 + BitDepth ) ) - 1, dq2 )`.
  
  2. Invoke the 2D inverse transform block process defined in [section 7.13.3][] with the variable txSz as input. The inverse transform outputs are stored in the Residual buffer.
  
@@ -4247,8 +4233,8 @@ The function H( a, b, 0, r ) performs a Hadamard rotation specified by the
 following ordered steps:
  1. The variable x is set equal to T[ a ].
  2. The variable y is set equal to T[ b ].
- 3. T[ a ] is set equal to Clip3( - ( 1 \<\< ( r - 1 ) ), ( 1 \<\< ( r - 1 ) ) - 1, x + y ).
- 4. T[ b ] is set equal to Clip3( - ( 1 \<\< ( r - 1 ) ), ( 1 \<\< ( r - 1 ) ) - 1, x - y ).
+ 3. T[ a ] is set equal to `Clip3( - ( 1 << ( r - 1 ) ), ( 1 << ( r - 1 ) ) - 1, x + y )`.
+ 4. T[ b ] is set equal to `Clip3( - ( 1 << ( r - 1 ) ), ( 1 << ( r - 1 ) ) - 1, x - y )`.
 
 The function H( a, b, 1, r ) performs a Hadamard rotation with flipped indices
 and is specified as follows:
@@ -4265,7 +4251,7 @@ of the length of the input array.
 
 A temporary array named copyT is set equal to T.
 
-T[ i ] is set equal to copyT[ brev( n, i ) ] for i = 0..((1 \<\< n) - 1).
+T[ i ] is set equal to copyT[ brev( n, i ) ] for `i = 0..((1 << n) - 1)`.
 
 
 #### Inverse DCT process #### {#inverse_dct_process}
@@ -4280,24 +4266,24 @@ The inputs to this process are:
 The following ordered steps apply:
  1. Invoke the inverse DCT permutation process as specified in [section 7.13.2.2][] with the input variable n.
  2. If n is equal to 6, invoke B( 32 + i, 63 - i, 63 - 4 * brev( 4, i ), 0, r ) for i = 0..15.
- 3. If n is greater than or equal to 5, invoke B( 16 + i, 31 - i, 6 + ( brev( 3, 7 - i ) \<\< 3 ), 0, r ) for i = 0..7.
+ 3. If n is greater than or equal to 5, invoke `B( 16 + i, 31 - i, 6 + ( brev( 3, 7 - i ) << 3 ), 0, r )` for i = 0..7.
  4. If n is equal to 6, invoke H( 32 + i * 2, 33 + i * 2, i & 1, r ) for i = 0..15.
- 5. If n is greater than or equal to 4, invoke B( 8 + i, 15 - i, 12 + ( brev( 2, 3 - i ) \<\< 4 ), 0, r ) for i = 0..3.
+ 5. If n is greater than or equal to 4, invoke `B( 8 + i, 15 - i, 12 + ( brev( 2, 3 - i ) << 4 ), 0, r )` for i = 0..3.
  6. If n is greater than or equal to 5, invoke H( 16 + 2 * i, 17 + 2 * i, i & 1, r ) for i = 0..7.
  7. If n is equal to 6, invoke B( 62 - i * 4 - j, 33 + i * 4 + j, 60 - 16 * brev( 2, i ) + 64 * j, 1, r ) for i = 0..3, for j = 0..1.
  8. If n is greater than or equal to 3, invoke B( 4 + i, 7 - i, 56 - 32 * i, 0, r ) for i = 0..1.
  9. If n is greater than or equal to 4, invoke H( 8 + 2 * i, 9 + 2 * i, i & 1, r ) for i = 0..3.
- 10. If n is greater than or equal to 5, invoke B( 30 - 4 * i - j, 17 + 4 * i + j, 24 + (j \<\< 6) + ( ( 1 - i ) \<\< 5 ), 1, r ) for i = 0..1, for j=0..1.
+ 10. If n is greater than or equal to 5, invoke `B( 30 - 4 * i - j, 17 + 4 * i + j, 24 + (j << 6) + ( ( 1 - i ) << 5 ), 1, r )` for i = 0..1, for j=0..1.
  11. If n is equal to 6, invoke H( 32 + i * 4 + j, 35 + i * 4 - j, i & 1, r ) for i = 0..7, for j = 0..1.
  12. Invoke B( 2 * i, 2 * i + 1, 32 + 16 * i, 1 - i, r ) for i = 0..1.
  13. If n is greater than or equal to 3, invoke H( 4 + 2 * i, 5 + 2 * i, i, r ) for i = 0..1.
  14. If n is greater than or equal to 4, invoke B( 14 - i, 9 + i, 48 + 64 * i, 1, r ) for i = 0..1.
  15. If n is greater than or equal to 5, invoke H( 16 + 4 * i + j, 19 + 4 * i - j, i & 1, r ) for i = 0..3, for j = 0..1.
- 16. If n is equal to 6, invoke B( 61 - i * 8 - j, 34 + i * 8 + j, 56 - i * 32 + ( j \>\> 1 ) * 64, 1, r ) for i = 0..1, for j = 0..3.
+ 16. If n is equal to 6, invoke `B( 61 - i * 8 - j, 34 + i * 8 + j, 56 - i * 32 + ( j >> 1 ) * 64, 1, r )` for i = 0..1, for j = 0..3.
  17. Invoke H( i, 3 - i, 0, r ) for i = 0..1.
  18. If n is greater than or equal to 3, invoke B( 6, 5, 32, 1, r ).
  19. If n is greater than or equal to 4, invoke H( 8 + 4 * i + j, 11 + 4 * i - j, i, r ) for i = 0..1, for j = 0..1.
- 20. If n is greater than or equal to 5, invoke B( 29 - i, 18 + i, 48 + ( i \>\> 1 ) * 64, 1, r ) for i = 0..3.
+ 20. If n is greater than or equal to 5, invoke `B( 29 - i, 18 + i, 48 + ( i >> 1 ) * 64, 1, r )` for i = 0..3.
  21. If n is equal to 6, invoke H( 32 + 8 * i + j, 39 + 8 * i - j, i & 1, r ) for i = 0..3, for j = 0..3.
  22. If n is greater than or equal to 3, invoke H( i, 7 - i, 0, r ) for i = 0..3.
  23. If n is greater than or equal to 4, invoke B( 13 - i, 10 + i, 32, 1, r ) for i = 0..1.
@@ -4322,7 +4308,7 @@ which is required as the first step of the inverse ADST, where 3 ≤ n ≤ 4.
 The input to this process is a variable n that specifies the base 2 logarithm
 of the length of the input array.
 
-The variable n0 is set equal to 1 \<\< n.
+The variable n0 is set equal to `1 << n`.
 
 A temporary array named copyT is set equal to T.
 
@@ -4340,18 +4326,18 @@ which is required before the final step of the inverse ADST, where 3 ≤ n ≤ 4
 The input to this process is a variable n that specifies the base 2 logarithm
 of the length of the input array.
 
-The variable n0 is set equal to 1 \<\< n.
+The variable n0 is set equal to `1 << n`.
 
 A temporary array named copyT is set equal to T.
 
 The following steps apply for i = 0..(n0-1):
 
-* The variable a is set equal to ( ( i \>\> 3 ) & 1 ).
-* The variable b is set equal to ( ( i \>\> 2 ) & 1 ) ^ ( ( i \>\> 3 ) & 1 ).
-* The variable c is set equal to ( ( i \>\> 1 ) & 1 ) ^ ( ( i \>\> 2 ) & 1 ).
-* The variable d is set equal to ( i & 1 ) ^ ( ( i \>\> 1 ) & 1 ).
-* The variable idx is set equal to ( ( d \<\< 3 ) \ | ( c \<\< 2 ) \ | ( b \<\< 1 ) \ | a ) \>\> ( 4 - n ).
-* T[ i ] is set equal to ( i & 1 ) ? ( - copyT[ idx ] ) : copyT[ idx ].
+* The variable a is set equal to `( ( i >> 3 ) & 1 )`.
+* The variable b is set equal to `( ( i >> 2 ) & 1 ) ^ ( ( i >> 3 ) & 1 )`.
+* The variable c is set equal to `( ( i >> 1 ) & 1 ) ^ ( ( i >> 2 ) & 1 )`.
+* The variable d is set equal to `( i & 1 ) ^ ( ( i >> 1 ) & 1 )`.
+* The variable idx is set equal to `( ( d << 3 ) \ | ( c << 2 ) \ | ( b << 1 ) \ | a ) >> ( 4 - n )`.
+* T[ i ] is set equal to `( i & 1 ) ? ( - copyT[ idx ] ) : copyT[ idx ]`.
 
 #### Inverse ADST4 process #### {#inverse_adst4_process}
 
@@ -4572,9 +4558,9 @@ Set the variable log2W equal to Tx_Width_Log2[ txSz ].
 
 Set the variable log2H equal to Tx_Height_Log2[ txSz ].
 
-Set the variable w equal to 1 \<\< log2W.
+Set the variable w equal to `1 << log2W`.
 
-Set the variable h equal to 1 \<\< log2H.
+Set the variable h equal to `1 << log2H`.
 
 Set the variable rowShift equal to Lossless ? 0 : Transform_Row_Shift[ txSz ].
 
@@ -4595,8 +4581,7 @@ The row transforms with i = 0..(h-1) are applied as follows:
  * Otherwise, invoke the inverse identity transform process specified in [section 7.13.2.15][] with the input variable n equal to log2W.
  * Set Residual[ i ][ j ] equal to Round2( T[ j ], rowShift ) for j = 0..(w-1).
 
-Between the row and column transforms, Residual[ i ][ j ] is set equal to Clip3( - ( 1 \<\< ( colClampRange - 1 ) ),
-( 1 \<\< ( colClampRange - 1 ) ) - 1, Residual[ i ][ j ] ) for i = 0..(h-1), for j = 0..(w-1).
+Between the row and column transforms, Residual[ i ][ j ] is set equal to `Clip3( - ( 1 << ( colClampRange - 1 ) ), ( 1 << ( colClampRange - 1 ) ) - 1, Residual[ i ][ j ] )` for i = 0..(h-1), for j = 0..(w-1).
 
 The column transforms with j = 0..(w-1) are applied as follows:
  * Set T[ i ] equal to Residual[ i ][ j ] for i = 0..(h-1).
@@ -4702,16 +4687,16 @@ The variable onScreen (equal to 1 if the samples on both sides of the boundary l
 If onScreen is equal to 0, then this process immediately returns and no filtering is applied to this edge.
 
 The variables xP and yP (containing the location in the current plane) are derived as follows:
- * Set xP equal to x \>\> subX
- * Set yP equal to y \>\> subY
+ * Set xP equal to `x >> subX`
+ * Set yP equal to `y >> subY`
 
 The variables prevRow and prevCol (containing the location of the mode info block on the other side of the boundary) are derived as follows:
- * Set prevRow equal to row - ( dy \<\< subY )
- * Set prevCol equal to col - ( dx \<\< subX )
+ * Set prevRow equal to `row - ( dy << subY )`
+ * Set prevCol equal to `col - ( dx << subX )`
 
 Set the variable MiSize equal to MiSizes[ row ][ col ].
 
-Set the variable txSz equal to LoopfilterTxSizes[ plane ][ row \>\> subY ][ col \>\> subX ].
+Set the variable txSz equal to `LoopfilterTxSizes[ plane ][ row >> subY ][ col >> subX ]`.
 
 Set the variable planeSize equal to get_plane_residual_size( MiSize, plane )
 
@@ -4720,7 +4705,7 @@ Set the variable skip equal to Skips[ row ][ col ].
 Set the variable isIntra equal to
      RefFrames[ row ][ col ][ 0 ] <= INTRA_FRAME.
 
-Set the variable prevTxSz equal to LoopfilterTxSizes[ plane ][ prevRow \>\> subY ][ prevCol \>\> subX ].
+Set the variable prevTxSz equal to `LoopfilterTxSizes[ plane ][ prevRow >> subY ][ prevCol >> subX ]`.
 
 The variable isBlockEdge (equal to 1 if the samples cross a prediction
 block edge) is derived as follows:
@@ -4814,12 +4799,12 @@ The variable shift is derived as follows:
  * Otherwise, shift is set equal to 0.
 
 The output variable limit is derived as follows:
- * If loop_filter_sharpness is greater than 0, limit is set equal to Clip3( 1, 9 - loop_filter_sharpness, lvl \>\> shift ).
- * Otherwise, limit is set equal to Max( 1, lvl \>\> shift ).
+ * If loop_filter_sharpness is greater than 0, limit is set equal to `Clip3( 1, 9 - loop_filter_sharpness, lvl >> shift )`.
+ * Otherwise, limit is set equal to `Max( 1, lvl >> shift )`.
 
-The output variable blimit is set equal to 2 * (lvl + 2) + limit.
+The output variable blimit is set equal to `2 * (lvl + 2) + limit`.
 
-The output variable thresh is set equal to lvl \>\> 4.
+The output variable thresh is set equal to `lvl >> 4`.
 
 
 ### Adaptive filter strength selection process ### {#adaptive_filter_strength_selection_process}
@@ -4851,15 +4836,12 @@ The following ordered steps apply:
      b. lvlSeg is set equal to Clip3( 0, MAX_LOOP_FILTER, lvlSeg ).
  4. If loop_filter_delta_enabled is equal to 1, then the following ordered steps apply:
 
-     a. The variable nShift is set equal to lvlSeg \>\> 5.
+     a. The variable nShift is set equal to `lvlSeg >> 5`.
 
-     b. If ref is equal to INTRA_FRAME, then lvlSeg is set equal to lvlSeg +
-        ( loop_filter_ref_deltas[ INTRA_FRAME ] \<\< nShift ).
+     b. If ref is equal to INTRA_FRAME, then lvlSeg is set equal to `lvlSeg + ( loop_filter_ref_deltas[ INTRA_FRAME ] << nShift )`.
 
      c. Otherwise, if ref is not equal to INTRA_FRAME, then lvlSeg is set equal to
-        lvlSeg +
-        ( loop_filter_ref_deltas[ ref ] \<\< nShift ) +
-        ( loop_filter_mode_deltas[ modeType ] \<\< nShift ).
+        `lvlSeg + ( loop_filter_ref_deltas[ ref ] << nShift ) + ( loop_filter_mode_deltas[ modeType ] << nShift )`.
 
      d. lvlSeg is set equal to Clip3(0, MAX_LOOP_FILTER, lvlSeg).
  5. Return lvlSeg.
@@ -4971,7 +4953,7 @@ filterMask = (mask == 0)
 
 The value of flatMask is only required when filterSize >= 8. It measures
 whether samples from each side of the specified boundary are in
-a flat region. That is whether those samples are at most (1 \<\< (BitDepth - 8))
+a flat region. That is whether those samples are at most `(1 << (BitDepth - 8))`
 different from the sample on the boundary. It is calculated as follows:
 
 ~~~~~ c
@@ -5025,9 +5007,9 @@ depending on the value of hevMask as follows:
  * If hevMask is equal to 0 (i.e. the samples do not have high edge variance), this process modifies two samples on each side of the specified boundary, using a filter constructed from just the inner two (one from each side of the specified boundary).
  * Otherwise (the samples do have high edge variance), this process only modifies the one value on each side of the specified boundary, using a filter constructed from four input samples (two from each side of the specified boundary).
 
-The process subtracts 0x80 \<\< (BitDepth - 8) from the input sample values so
-that they are in the range -(1 \<\< (BitDepth - 1))
-to (1 \<\< (BitDepth - 1)) - 1 inclusive. Intermediate values are made to be in
+The process subtracts `0x80 << (BitDepth - 8)` from the input sample values so
+that they are in the range `-(1 << (BitDepth - 1))`
+to `(1 << (BitDepth - 1)) - 1` inclusive. Intermediate values are made to be in
 this range by the following function:
 
 ~~~~~ c
@@ -5180,16 +5162,17 @@ The variable skip is set equal to ( Skips[ r ][ c ] && Skips[ r + 1 ][ c ] && Sk
 If skip is equal to 0, the CDEF direction process specified in [section 7.15.2][] is invoked with r and c as inputs, and the outputs assigned to variables yDir and var.
 
 If skip is equal to 0, the following ordered steps apply:
- 1. The variable priStr is set equal to cdef_y_pri_strength[ idx ] \<\< coeffShift.
- 2. The variable secStr is set equal to cdef_y_sec_strength[ idx ] \<\< coeffShift.
+
+ 1. The variable priStr is set equal to `cdef_y_pri_strength[ idx ] << coeffShift`.
+ 2. The variable secStr is set equal to `cdef_y_sec_strength[ idx ] << coeffShift`.
  3. The variable dir is set equal to ( priStr == 0 ) ? 0 : yDir.
- 4. The variable varStr is set equal to ( var \>\> 6 ) ? Min( FloorLog2( var \>\> 6 ), 12) : 0.
- 5. The variable priStr is set equal to ( var ? ( priStr * ( 4 + varStr ) + 8 ) \>\> 4 : 0 ).
+ 4. The variable varStr is set equal to `( var >> 6 ) ? Min( FloorLog2( var >> 6 ), 12) : 0`.
+ 5. The variable priStr is set equal to `( var ? ( priStr * ( 4 + varStr ) + 8 ) >> 4 : 0 )`.
  6. The variable damping is set equal to CdefDamping + coeffShift.
  7. The CDEF filter process specified in [section 7.15.3][] is invoked with plane equal to 0, r, c, priStr, secStr, damping, and dir as input.
  8. If NumPlanes is equal to 1, the process terminates at this point (i.e. filtering is not done for the U and V planes).
- 8. The variable priStr is set equal to cdef_uv_pri_strength[ idx ] \<\< coeffShift.
- 9. The variable secStr is set equal to cdef_uv_sec_strength[ idx ] \<\< coeffShift.
+ 8. The variable priStr is set equal to `cdef_uv_pri_strength[ idx ] << coeffShift`.
+ 9. The variable secStr is set equal to `cdef_uv_sec_strength[ idx ] << coeffShift`.
  10. The variable dir is set equal to ( priStr == 0 ) ? 0 : Cdef_Uv_Dir[ subsampling_x ][ subsampling_y ][ yDir ].
  11. The variable damping is set equal to CdefDamping + coeffShift - 1.
  12. The CDEF filter process specified in [section 7.15.3][] is invoked with plane equal to 1, r, c, priStr, secStr, damping, and dir as input.
@@ -5550,9 +5533,9 @@ plane as follows:
  * If plane is equal to 0, subX is set equal to 0 and subY is set equal to 0.
  * Otherwise, subX is set equal to subsampling_x and subY is set equal to subsampling_y.
 
-The variable StripeStartY (specifying the start of the stripe in units of samples in the current plane) is set equal to ( (-8 + stripeNum * 64) \>\> subY ).
+The variable StripeStartY (specifying the start of the stripe in units of samples in the current plane) is set equal to `( (-8 + stripeNum * 64) >> subY )`.
 
-The variable StripeEndY (specifying the end of the stripe in units of samples in the current plane) is set equal to StripeStartY + (64 \>\> subY) - 1.
+The variable StripeEndY (specifying the end of the stripe in units of samples in the current plane) is set equal to `StripeStartY + (64 >> subY) - 1`.
 
 Note: StripeStartY and StripeEndY are used by the get source sample process to decide whether to fetch from UpscaledCurrFrame or UpscaledCdefFrame.
 
@@ -5566,9 +5549,9 @@ The variable unitCols (specifying the number of restoration units across the fra
 Note: The number of restoration units in a frame can be different for chroma and luma.
 
 
-The variable unitRow (specifying the vertical index of the current loop restoration unit) is set equal to Min( unitRows - 1, ( ( row * MI_SIZE + 8) \>\> subY ) / unitSize ).
+The variable unitRow (specifying the vertical index of the current loop restoration unit) is set equal to `Min( unitRows - 1, ( ( row * MI_SIZE + 8) >> subY ) / unitSize )`.
 
-The variable unitCol (specifying the horizontal index of the current loop restoration unit) is set equal to Min( unitCols - 1, ( col * MI_SIZE \>\> subX ) / unitSize ).
+The variable unitCol (specifying the horizontal index of the current loop restoration unit) is set equal to `Min( unitCols - 1, ( col * MI_SIZE >> subX ) / unitSize )`.
 
 The horizontal extent of the space allowed for filtering is specified as follows:
 
@@ -5576,13 +5559,13 @@ The variable PlaneEndX (specifying the horizontal extent of the space allowed fo
 
 The variable PlaneEndY (specifying the vertical extent of the space allowed for filtering) is set equal to Round2( FrameHeight, subY ) - 1.
 
-The variable x is set equal to ( col * MI_SIZE \>\> subX ).
+The variable x is set equal to `( col * MI_SIZE >> subX )`.
 
-The variable y is set equal to ( row * MI_SIZE \>\> subY ).
+The variable y is set equal to `( row * MI_SIZE >> subY )`.
 
-The variable w is set equal to Min( MI_SIZE \>\> subX, PlaneEndX - x + 1 ).
+The variable w is set equal to `Min( MI_SIZE >> subX, PlaneEndX - x + 1 )`.
 
-The variable h is set equal to Min( MI_SIZE \>\> subY, PlaneEndY - y + 1 ).
+The variable h is set equal to `Min( MI_SIZE >> subY, PlaneEndY - y + 1 )`.
 
 (Variables x and y represent the position of the block in samples relative to the top-left corner of the current plane.
 Variables w and h represent the size of the block in samples.)
@@ -5907,8 +5890,8 @@ If show_existing_frame is equal to 1, then the decoder should copy OutY, OutU, a
  * The variable subX is set equal to RefSubsamplingX[ frame_to_show_map_idx ].
  * The variable subY is set equal to RefSubsamplingY[ frame_to_show_map_idx ].
  * The array OutY is w samples across by h samples down and the sample at location x samples across and y samples down is given by OutY[ y ][ x ] = FrameStore[ frame_to_show_map_idx ][ 0 ][ y ][ x ] with x = 0..w - 1 and y = 0..h - 1.
- * The array OutU is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = FrameStore[ frame_to_show_map_idx ][ 1 ][ y ][ x ] with x = 0..((w + subX) \>\> subX) - 1 and y = 0..((h + subY) \>\> subY) - 1.
- * The array OutV is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = FrameStore[ frame_to_show_map_idx ][ 2 ][ x ][ y ] with x = 0..((w + subX) \>\> subX) - 1 and y = 0..((h + subY) \>\> subY) - 1.
+ * The array OutU is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = FrameStore[ frame_to_show_map_idx ][ 1 ][ y ][ x ] with `x = 0..((w + subX) >> subX) - 1` and `y = 0..((h + subY) >> subY) - 1`.
+ * The array OutV is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = FrameStore[ frame_to_show_map_idx ][ 2 ][ x ][ y ] with `x = 0..((w + subX) >> subX) - 1` and `y = 0..((h + subY) >> subY) - 1`.
  * The variable BitDepth is set equal to RefBitDepth[ frame_to_show_map_idx ].
  * The bit depth for each sample is BitDepth.
 
@@ -5919,8 +5902,8 @@ current frame as follows:
  * The variable subX is set equal to subsampling_x.
  * The variable subY is set equal to subsampling_y.
  * The array OutY is w samples across by h samples down and the sample at location x samples across and y samples down is given by OutY[ y ][ x ] = LrFrame[ 0 ][ y ][ x ] with x = 0..w - 1 and y = 0..h - 1.
- * The array OutU is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = LrFrame[ 1 ][ y ][ x ] with x = 0..((w + subX) \>\> subX) - 1 and y = 0..((h + subY) \>\> subY) - 1.
- * The array OutV is (w + subX) \>\> subX samples across by (h + subY) \>\> subY samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = LrFrame[ 2 ][ y ][ x ] with x = 0..((w + subX) \>\> subX) - 1 and y = 0..((h + subY) \>\> subY) - 1.
+ * The array OutU is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutU[ y ][ x ] = LrFrame[ 1 ][ y ][ x ] with `x = 0..((w + subX) >> subX) - 1` and `y = 0..((h + subY) >> subY) - 1`.
+ * The array OutV is `(w + subX) >> subX` samples across by `(h + subY) >> subY` samples down and the sample at location x samples across and y samples down is given by OutV[ y ][ x ] = LrFrame[ 2 ][ y ][ x ] with `x = 0..((w + subX) >> subX) - 1` and `y = 0..((h + subY) >> subY) - 1`.
  * The bit depth for each sample is BitDepth.
 
 The output of this process are the variables w, h, subX, and subY.
@@ -5935,9 +5918,9 @@ The inputs to this process are:
 
 The process modifies the arrays OutY, OutU, OutV to add film grain noise as follows:
  1. The variable RandomRegister (used for generating pseudo-random numbers) is set equal to grain_seed.
- 2. The variable GrainCenter is set equal to 128 \<\< (BitDepth - 8).
+ 2. The variable GrainCenter is set equal to `128 << (BitDepth - 8)`.
  3. The variable GrainMin is set equal to = -GrainCenter.
- 4. The variable GrainMax is set equal to (256 \<\< (BitDepth - 8)) - 1 - GrainCenter.
+ 4. The variable GrainMax is set equal to `(256 << (BitDepth - 8)) - 1 - GrainCenter`.
  5. The generate grain process specified in [section 7.18.3.3][] is invoked.
  6. The scaling lookup initialization process specified in [section 7.18.3.4][] is invoked.
  7. The add noise process specified in [section 7.18.3.5][] is invoked with w, h, subX, and subY as inputs.
@@ -6161,7 +6144,7 @@ First an array of noise data noiseStripe is generated for each 32 luma sample hi
 noiseStripe[ lumaNum ][ 0 ] is 34 samples high and w samples wide
 (a few additional samples across are actually written to the array, but these are never read) and contains noise for the luma component.
 
-noiseStripe[ lumaNum ][ 1 ] and noiseStripe[ lumaNum ][ 2 ] are (34 \>\> subY) samples high and Round2(w, subX) samples wide and contain noise for the chroma components.
+noiseStripe[ lumaNum ][ 1 ] and noiseStripe[ lumaNum ][ 2 ] are `(34 >> subY)` samples high and Round2(w, subX) samples wide and contain noise for the chroma components.
 
 noiseStripe represents the result of constructing square grain blocks and blending horizontally adjacent blocks together
 (although blending is only applied if overlap_flag is equal to 1) and is constructed as follows:
@@ -6382,7 +6365,7 @@ previous motion vectors.
 
 For each value of i from 0 to NUM_REF_FRAMES - 1, the following applies
 if bit i of refresh_frame_flags is equal to 1 (i.e.
-if (refresh_frame_flags \>\> i) & 1 is equal to 1):
+if `(refresh_frame_flags >> i) & 1` is equal to 1):
  * RefValid[ i ] is set equal to 1.
  * RefFrameId[ i ] is set equal to current_frame_id.
  * RefUpscaledWidth[ i ] is set equal to UpscaledWidth.
@@ -6399,7 +6382,7 @@ if (refresh_frame_flags \>\> i) & 1 is equal to 1):
  * RefOrderHint[ i ] is set equal to OrderHint.
  * SavedOrderHints[ i ][ j + LAST_FRAME ] is set equal to OrderHints[ j + LAST_FRAME ] for j = 0..REFS_PER_FRAME-1.
  * FrameStore[ i ][ 0 ][ y ][ x ] is set equal to LrFrame[ 0 ][ y ][ x ] for x = 0..UpscaledWidth-1, for y = 0..FrameHeight-1.
- * FrameStore[ i ][ plane ][ y ][ x ] is set equal to LrFrame[ plane ][ y ][ x ] for plane = 1..2, for x = 0..((UpscaledWidth + subsampling_x) \>\> subsampling_x) - 1, for y = 0..((FrameHeight + subsampling_y) \>\> subsampling_y) - 1.
+ * FrameStore[ i ][ plane ][ y ][ x ] is set equal to LrFrame[ plane ][ y ][ x ] for plane = 1..2, for `x = 0..((UpscaledWidth + subsampling_x) >> subsampling_x) - 1`, for `y = 0..((FrameHeight + subsampling_y) >> subsampling_y) - 1`.
  * SavedRefFrames[ i ][ row ][ col ] is set equal to MfRefFrames[ row ][ col ] for row =
     0..MiRows-1, for col = 0..MiCols-1.
  * SavedMvs[ i ][ row ][ col ][ comp ] is set equal to MfMvs[ row ][ col ][ comp ] for comp = 0..1, for row = 0..MiRows-1, for col = 0..MiCols-1.
@@ -6446,7 +6429,7 @@ frame back into the current frame variables. The index of the saved reference fr
  * OrderHint is set equal to RefOrderHint[ frame_to_show_map_idx ].
  * OrderHints[ j + LAST_FRAME ] is set equal to SavedOrderHints[ frame_to_show_map_idx ][ j + LAST_FRAME ] for j = 0..REFS_PER_FRAME-1.
  * LrFrame[ 0 ][ y ][ x ] is set equal to FrameStore[ frame_to_show_map_idx ][ 0 ][ y ][ x ] for x = 0..UpscaledWidth-1, for y = 0..FrameHeight-1.
- * LrFrame[ plane ][ y ][ x ] is set equal to FrameStore[ frame_to_show_map_idx ][ plane ][ y ][ x ] for plane = 1..2, for x = 0..((UpscaledWidth + subsampling_x) \>\> subsampling_x) - 1, for y = 0..((FrameHeight + subsampling_y) \>\> subsampling_y) - 1.
+ * LrFrame[ plane ][ y ][ x ] is set equal to FrameStore[ frame_to_show_map_idx ][ plane ][ y ][ x ] for plane = 1..2, for `x = 0..((UpscaledWidth + subsampling_x) >> subsampling_x) - 1`, for `y = 0..((FrameHeight + subsampling_y) >> subsampling_y) - 1`.
  * MfRefFrames[ row ][ col ] is set equal to SavedRefFrames[ frame_to_show_map_idx ][ row ][ col ] for row = 0..MiRows-1, for col = 0..MiCols-1.
  * MfMvs[ row ][ col ][ comp ] is set equal to SavedMvs[ frame_to_show_map_idx ][ row ][ col ][ comp ] for comp = 0..1, for row = 0..MiRows-1, for col = 0..MiCols-1.
  * gm_params[ ref ][ j ] is set equal to SavedGmParams[ frame_to_show_map_idx ][ ref ][ j ] for ref = LAST_FRAME..ALTREF_FRAME, for j = 0..5.

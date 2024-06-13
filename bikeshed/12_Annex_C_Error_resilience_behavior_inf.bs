@@ -1,4 +1,3 @@
-
 # Annex C: Error resilience behavior (informative) # {#annex_c:_error_resilience_behavior_(informative)}
 
 ## General ## {#general}
@@ -75,7 +74,7 @@ For the decoding process to handle this mode of operation, the following modific
  * If frame_id_numbers_present_flag is equal to 1, for the first frame current_frame_id should not be compared to PrevFrameID (because PrevFrameID is uninitialized).
  * When the syntax element ref_order_hint[ i ] is read, RefOrderHint[ i ] is set equal to ref_order_hint[ i ].
  * The requirement for bitstream conformance described in the semantics for ref_frame_idx[ i ] (that uses RefValid to check that the reference frames are available) should be ignored
- * When using the inter prediction process, if RefValid[ refIdx ] is equal to 0, then the motion vector scaling and block inter prediction processes are not followed. Instead, preds[ refList ] should be generated using an alternative approach. For conformance testing, it may help to define the predicted samples in a standard way. The suggested approach is to fill preds[ refList ] with neutral gray samples, i.e. all values equal to 1 \<\< ( BitDepth - 1 ) .
+ * When using the inter prediction process, if RefValid[ refIdx ] is equal to 0, then the motion vector scaling and block inter prediction processes are not followed. Instead, preds[ refList ] should be generated using an alternative approach. For conformance testing, it may help to define the predicted samples in a standard way. The suggested approach is to fill preds[ refList ] with neutral gray samples, i.e. all values equal to `1 << ( BitDepth - 1 )`.
 
 
 

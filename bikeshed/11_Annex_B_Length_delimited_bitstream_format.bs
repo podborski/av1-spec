@@ -1,4 +1,3 @@
-
 # Annex B: Length delimited bitstream format # {#annex_b:_length_delimited_bitstream_format}
 
 ## Overview ## {#overview}

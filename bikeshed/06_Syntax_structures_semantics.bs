@@ -1,4 +1,3 @@
-
 # Syntax structures semantics # {#syntax_structures_semantics}
 
 ## General ## {#general}
@@ -843,8 +842,7 @@ pictures is not specified.
 **num_ticks_per_picture_minus_1** plus 1 specifies the number of clock ticks
 corresponding to output time between two consecutive pictures in the output order.
 
-It is a requirement of bitstream conformance that the
-value of num_ticks_per_picture_minus_1 shall be in the range of 0 to (1 \<\< 32) − 2, inclusive.
+It is a requirement of bitstream conformance that the value of `num_ticks_per_picture_minus_1` shall be in the range of 0 to `(1 << 32) − 2`, inclusive.
 
 Note: The frame rate, when specified explicitly, applies to the top temporal layer of the
 bitstream. If bitstream is expected to be manipulated, e.g. by intermediate network
@@ -3233,18 +3231,16 @@ disabled.
 Frame id numbers are additional information that do not affect the decoding process, but provide decoders
 with a way of detecting missing reference frames so that appropriate action can be taken.
 
-If frame_type is not equal to KEY_FRAME or show_frame is equal to 0, it is a requirement of bitstream conformance
-that all of the following conditions are true:
+If `frame_type` is not equal to `KEY_FRAME` or `show_frame` is equal to 0, it is a requirement of bitstream conformance that all of the following conditions are true:
 
-  * current_frame_id is not equal to PrevFrameID,
-
-  * DiffFrameID is less than 1 \<\< ( idLen - 1 )
+  * `current_frame_id` is not equal to `PrevFrameID`,
+  * `DiffFrameID` is less than `1 << ( idLen - 1 )`
 
 where DiffFrameID is specified as follows:
 
-  * If current_frame_id is greater than PrevFrameID, DiffFrameID is equal to current_frame_id - PrevFrameID.
+  * If `current_frame_id` is greater than `PrevFrameID`, `DiffFrameID` is equal to `current_frame_id - PrevFrameID`.
 
-  * Otherwise, DiffFrameID is equal to ( 1 \<\< idLen ) + current_frame_id - PrevFrameID.
+  * Otherwise, `DiffFrameID` is equal to `( 1 << idLen ) + current_frame_id - PrevFrameID`.
 
 **frame_size_override_flag** equal to 0 specifies that the frame size is equal to the size in the sequence header.
 frame_size_override_flag equal to 1 specifies that the frame size
@@ -3275,9 +3271,9 @@ clock ticks counted from the removal time of the last random access point
 for operating point opNum when the current frame is not associated with a random access point and from
 the previous random access point when the current frame is associated with a random access point.
 buffer_removal_time is signaled as a fixed length unsigned integer with a length in bits
-given by buffer_removal_time_length_minus_1 + 1.
+given by `buffer_removal_time_length_minus_1 + 1`.
 
-buffer_removal_time is the remainder of a modulo 1 \<\< ( buffer_removal_time_length_minus_1 + 1 ) counter.
+`buffer_removal_time` is the remainder of a modulo `1 << ( buffer_removal_time_length_minus_1 + 1 )` counter.
 
 **allow_screen_content_tools** equal to 1 indicates that intra blocks may use
 palette encoding; allow_screen_content_tools equal to 0 indicates that palette
@@ -3413,7 +3409,7 @@ is invoked the following takes place:
   * PrevSegmentIds[ row ][ col ] is set equal to 0 for row = 0..MiRows-1 and
     col = 0..MiCols-1.
 
-  * PrevGmParams[ ref ][ i ] is set equal to ( ( i % 3 == 2 ) ? 1 \<\< WARPEDMODEL_PREC_BITS : 0 )
+  * PrevGmParams[ ref ][ i ] is set equal to `( ( i % 3 == 2 ) ? 1 << WARPEDMODEL_PREC_BITS : 0 )`
     for ref = LAST_FRAME..ALTREF_FRAME, for i = 0..5.
 
   * loop_filter_delta_enabled is set equal to 1.
@@ -4060,8 +4056,7 @@ translation global motion.
 ### Global param semantics ### {#global_param_semantics}
 
 **absBits** is used to compute the range of values that can be used for
-gm_params[ref][idx]. The values allowed are in the range -(1 \<\< absBits) to
-(1 \<\< absBits).
+gm_params[ref][idx]. The values allowed are in the range `-(1 << absBits)` to `(1 << absBits)`.
 
 **precBits** specifies the number of fractional bits used for representing
 gm_params[ref][idx]. All global motion parameters are stored in the model
@@ -4284,15 +4279,14 @@ of the most recent key frame random access point
 or a key frame dependent recovery point if the current frame is not associated with a
 random access point or if the current frame follows a key frame dependent recovery point.
 The syntax element is signaled as a fixed length unsigned integer with a length in bits
-given by frame_presentation_time_length_minus_1 + 1.
-The frame_presentation_time is the remainder of a modulo 1 \<\< (frame_presentation_time_length_minus_1 + 1) counter.
+given by `frame_presentation_time_length_minus_1 + 1`.
+The `frame_presentation_time` is the remainder of a modulo `1 << (frame_presentation_time_length_minus_1 + 1)` counter.
 
 ## Frame OBU semantics ## {#frame_obu_semantics}
 
 A frame OBU consists of a frame header OBU and a tile group OBU packed into a single OBU.
 
-Note: The intention is to provide a more compact way of coding the common use case where
-the frame header is immediately followed by tile group data.
+Note: The intention is to provide a more compact way of coding the common use case where the frame header is immediately followed by tile group data.
 
 
 ## Tile group OBU semantics ## {#tile_group_obu_semantics}

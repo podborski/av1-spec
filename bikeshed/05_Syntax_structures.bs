@@ -1337,7 +1337,7 @@ tile_info ( ) {
 
 ### Tile size calculation function ### {#tile_size_calculation_function}
 
-tile_log2 returns the smallest value for k such that blkSize \<\< k is greater than or equal to target.
+tile_log2 returns the smallest value for k such that `blkSize << k` is greater than or equal to target.
 
 ```cpp
 tile_log2( blkSize, target ) {
@@ -3181,7 +3181,7 @@ read_mv_component( comp ) {
          d = 0
          for ( i = 0; i < mv_class; i++ ) {
               S() mv_bit
-             = mv_bit \<\< i d \
+             = mv_bit << i d \
          }
          mag = CLASS0_SIZE << ( mv_class + 2 )
          if ( force_integer_mv )

@@ -1,4 +1,3 @@
-
 # Annex D: Large scale tile use case (informative) # {#annex_d:_large_scale_tile_use_case_(informative)}
 
 One potential use-case for this process is the representation and rendering of a 3-dimensional environment
