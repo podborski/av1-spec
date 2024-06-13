@@ -31,6 +31,7 @@ docs/av1-spec.html
 docs/assets/css/av1-spec-print.css
 index.bs
 index.html
+/footer.include
 
 # Python
 # Byte-compiled / optimized / DLL files

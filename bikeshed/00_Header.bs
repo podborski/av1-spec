@@ -17,4 +17,3 @@ Markup Shorthands: markdown yes
 Local Boilerplate: footer yes
 </pre>
 
-
