@@ -1,6 +1,6 @@
 # Syntax structures # {#syntax_structures}
 
-## General ## {#general}
+## General ## {#syntax_general}
 
 This section presents the syntax structures in a tabular form. The meaning of
 each of the syntax elements is presented in [Section 6][].
@@ -69,11 +69,8 @@ open_bitstream_unit( sz ) {
           obu_type != OBU_FRAME ) {
          trailing_bits( obu_size * 8 - payloadBits )
      }
- }
-
+}
 ```
-
-
 
 ### OBU header syntax ### {#obu_header_syntax}
 
@@ -86,11 +83,8 @@ obu_header() {
       f(1) obu_reserved_1bit
      if ( obu_extension_flag == 1 )
          obu_extension_header()
- }
-
+}
 ```
-
-
 
 ### OBU extension header syntax ### {#obu_extension_header_syntax}
 
@@ -99,11 +93,8 @@ obu_extension_header() {
       f(3) temporal_id
       f(2) spatial_id
       f(3) extension_header_reserved_3bits
- }
-
+}
 ```
-
-
 
 ### Trailing bits syntax ### {#trailing_bits_syntax}
 
@@ -115,8 +106,7 @@ trailing_bits( nbBits ) {
           f(1) trailing_zero_bit
          nbBits--;
      }
- }
-
+}
 ```
 
 
@@ -126,18 +116,14 @@ trailing_bits( nbBits ) {
 byte_alignment( ) {
      while ( get_position( ) & 7 )
           f(1) zero_bit
- }
-
+}
 ```
-
-
 
 ## Reserved OBU syntax ## {#reserved_obu_syntax}
 
 ```cpp
 reserved_obu( ) {
- }
-
+}
 ```
 
 
@@ -279,11 +265,8 @@ sequence_header_obu( ) {
       f(1) enable_restoration
      color_config( )
       f(1) film_grain_params_present
- }
-
+}
 ```
-
-
 
 ### Color config syntax ### {#color_config_syntax}
 
@@ -350,11 +333,8 @@ color_config( ) {
          }
      }
       f(1) separate_uv_delta_q
- }
-
+}
 ```
-
-
 
 ### Timing info syntax ### {#timing_info_syntax}
 
@@ -365,8 +345,7 @@ timing_info( ) {
       f(1) equal_picture_interval
      if ( equal_picture_interval )
          uvlc() num_ticks_per_picture_minus_1
- }
-
+}
 ```
 
 
@@ -378,8 +357,7 @@ decoder_model_info( ) {
       f(32) num_units_in_decoding_tick
       f(5) buffer_removal_time_length_minus_1
       f(5) frame_presentation_time_length_minus_1
- }
-
+}
 ```
 
 
@@ -391,19 +369,15 @@ operating_parameters_info( op ) {
       f(n) decoder_buffer_delay[ op ]
       f(n) encoder_buffer_delay[ op ]
       f(1) low_delay_mode_flag[ op ]
- }
-
+}
 ```
-
-
 
 ## Temporal delimiter obu syntax ## {#temporal_delimiter_obu_syntax}
 
 ```cpp
 temporal_delimiter_obu( ) {
      SeenFrameHeader = 0
- }
-
+}
 ```
 
 
@@ -417,8 +391,7 @@ Note: The temporal delimiter has an empty payload.
 padding_obu( ) {
      for ( i = 0; i < obu_padding_length; i++ )
           f(8) obu_padding_byte
- }
-
+}
 ```
 
 
@@ -453,8 +426,7 @@ metadata_obu( ) {
          metadata_scalability( )
      else if ( metadata_type == METADATA_TYPE_TIMECODE )
          metadata_timecode( )
- }
-
+}
 ```
 
 
@@ -480,8 +452,7 @@ metadata_itut_t35( ) {
           f(8) itu_t_t35_country_code_extension_byte
      }
      itu_t_t35_payload_bytes
- }
-
+}
 ```
 
 
@@ -504,11 +475,8 @@ at least one byte of the payload data (including the trailing bit) shall not be 
 metadata_hdr_cll( ) {
       f(16) max_cll
       f(16) max_fall
- }
-
+}
 ```
-
-
 
 ### Metadata high dynamic range mastering display color volume syntax ### {#metadata_high_dynamic_range_mastering_display_color_volume_syntax}
 
@@ -522,11 +490,8 @@ metadata_hdr_mdcv( ) {
       f(16) white_point_chromaticity_y
       f(32) luminance_max
       f(32) luminance_min
- }
-
+}
 ```
-
-
 
 ### Metadata scalability syntax ### {#metadata_scalability_syntax}
 
@@ -535,8 +500,7 @@ metadata_scalability( ) {
       f(8) scalability_mode_idc
      if ( scalability_mode_idc == SCALABILITY_SS )
          scalability_structure( )
- }
-
+}
 ```
 
 
@@ -571,8 +535,7 @@ scalability_structure( ) {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -607,8 +570,7 @@ metadata_timecode( ) {
      if ( time_offset_length > 0 ) {
           f(time_offset_length) time_offset_value
      }
- }
-
+}
 ```
 
 
@@ -631,8 +593,7 @@ frame_header_obu( ) {
              SeenFrameHeader = 1
          }
      }
- }
-
+}
 ```
 
 
@@ -887,11 +848,8 @@ uncompressed_header( ) {
       f(1) reduced_tx_set
      global_motion_params( )
      film_grain_params( )
- }
-
+}
 ```
-
-
 
 ### Get relative distance function ### {#get_relative_distance_function}
 
@@ -906,11 +864,8 @@ get_relative_dist( a, b ) {
      m = 1 << (OrderHintBits - 1)
      diff = (diff & (m - 1)) - (diff & m)
      return diff
- }
-
+}
 ```
-
-
 
 ### Reference frame marking function ### {#reference_frame_marking_function}
 
@@ -930,11 +885,8 @@ mark_ref_frames( idLen ) {
                  RefValid[ i ] = 0
          }
      }
- }
-
+}
 ```
-
-
 
 ### Frame size syntax ### {#frame_size_syntax}
 
@@ -953,11 +905,8 @@ frame_size( ) {
      }
      superres_params( )
      compute_image_size( )
- }
-
+}
 ```
-
-
 
 ### Render size syntax ### {#render_size_syntax}
 
@@ -973,11 +922,8 @@ render_size( ) {
          RenderWidth = UpscaledWidth
          RenderHeight = FrameHeight
      }
- }
-
+}
 ```
-
-
 
 ### Frame size with refs syntax ### {#frame_size_with_refs_syntax}
 
@@ -1001,11 +947,8 @@ frame_size_with_refs( ) {
          superres_params( )
          compute_image_size( )
      }
- }
-
+}
 ```
-
-
 
 ### Superres params syntax ### {#superres_params_syntax}
 
@@ -1024,11 +967,8 @@ superres_params() {
    UpscaledWidth = FrameWidth
    FrameWidth = (UpscaledWidth * SUPERRES_NUM +
                  (SuperresDenom / 2)) / SuperresDenom
- }
-
+}
 ```
-
-
 
 ### Compute image size function ### {#compute_image_size_function}
 
@@ -1036,11 +976,8 @@ superres_params() {
 compute_image_size( ) {
      MiCols = 2 * ( ( FrameWidth + 7 ) >> 3 )
      MiRows = 2 * ( ( FrameHeight + 7 ) >> 3 )
- }
-
+}
 ```
-
-
 
 ### Interpolation filter syntax ### {#interpolation_filter_syntax}
 
@@ -1052,11 +989,8 @@ read_interpolation_filter( ) {
      } else {
           f(2) interpolation_filter
      }
- }
-
+}
 ```
-
-
 
 ### Loop filter params syntax ### {#loop_filter_params_syntax}
 
@@ -1103,11 +1037,8 @@ loop_filter_params( ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Quantization params syntax ### {#quantization_params_syntax}
 
@@ -1144,11 +1075,8 @@ quantization_params( ) {
          else
               f(4) qm_v
      }
- }
-
+}
 ```
-
-
 
 ### Delta quantizer syntax ### {#delta_quantizer_syntax}
 
@@ -1161,11 +1089,8 @@ read_delta_q( ) {
          delta_q = 0
      }
      return delta_q
- }
-
+}
 ```
-
-
 
 ### Segmentation params syntax ### {#segmentation_params_syntax}
 
@@ -1224,8 +1149,7 @@ segmentation_params( ) {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -1329,11 +1253,8 @@ tile_info ( ) {
      } else {
          context_update_tile_id = 0
      }
- }
-
+}
 ```
-
-
 
 ### Tile size calculation function ### {#tile_size_calculation_function}
 
@@ -1344,11 +1265,8 @@ tile_log2( blkSize, target ) {
    for ( k = 0; (blkSize << k) < target; k++ ) {
    }
    return k
- }
-
+}
 ```
-
-
 
 ### Quantizer index delta parameters syntax ### {#quantizer_index_delta_parameters_syntax}
 
@@ -1362,11 +1280,8 @@ delta_q_params( ) {
      if ( delta_q_present ) {
           f(2) delta_q_res
      }
- }
-
+}
 ```
-
-
 
 ### Loop filter delta parameters syntax ### {#loop_filter_delta_parameters_syntax}
 
@@ -1383,11 +1298,8 @@ delta_lf_params( ) {
               f(1) delta_lf_multi
          }
      }
- }
-
+}
 ```
-
-
 
 ### CDEF params syntax ### {#cdef_params_syntax}
 
@@ -1418,11 +1330,8 @@ cdef_params( ) {
                  cdef_uv_sec_strength[i] += 1
          }
      }
- }
-
+}
 ```
-
-
 
 ### Loop restoration params syntax ### {#loop_restoration_params_syntax}
 
@@ -1468,8 +1377,7 @@ lr_params( ) {
          LoopRestorationSize[ 1 ] = LoopRestorationSize[ 0 ] >> lr_uv_shift
          LoopRestorationSize[ 2 ] = LoopRestorationSize[ 0 ] >> lr_uv_shift
      }
- }
-
+}
 ```
 
 
@@ -1496,11 +1404,8 @@ read_tx_mode( ) {
              TxMode = TX_MODE_LARGEST
          }
      }
- }
-
+}
 ```
-
-
 
 ### Skip mode params syntax ### {#skip_mode_params_syntax}
 
@@ -1559,11 +1464,8 @@ skip_mode_params( ) {
      } else {
          skip_mode_present = 0
      }
- }
-
+}
 ```
-
-
 
 ### Frame reference mode syntax ### {#frame_reference_mode_syntax}
 
@@ -1574,11 +1476,8 @@ frame_reference_mode( ) {
      } else {
           f(1) reference_select
      }
- }
-
+}
 ```
-
-
 
 ### Global motion params syntax ### {#global_motion_params_syntax}
 
@@ -1623,11 +1522,8 @@ global_motion_params( ) {
              read_global_param(type,ref,1)
          }
      }
- }
-
+}
 ```
-
-
 
 ### Global param syntax ### {#global_param_syntax}
 
@@ -1651,8 +1547,7 @@ read_global_param( type, ref, idx ) {
      r = (PrevGmParams[ref][idx] >> precDiff) - sub
      gm_params[ref][idx] =
          (decode_signed_subexp_with_ref( -mx, mx + 1, r )<< precDiff) + round
- }
-
+}
 ```
 
 
@@ -1668,8 +1563,7 @@ discarded during the Setup Global MV process.
 decode_signed_subexp_with_ref( low, high, r ) {
      x = decode_unsigned_subexp_with_ref(high - low, r - low)
      return x + low
- }
-
+}
 ```
 
 
@@ -1687,8 +1581,7 @@ decode_unsigned_subexp_with_ref( mx, r ) {
      } else {
          return mx - 1 - inverse_recenter(mx - 1 - r, v)
      }
- }
-
+}
 ```
 
 
@@ -1720,11 +1613,8 @@ decode_subexp( numSyms ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Inverse recenter function ### {#inverse_recenter_function}
 
@@ -1736,11 +1626,8 @@ inverse_recenter( r, v ) {
      return r - ((v + 1) >> 1)
    else
      return r + (v >> 1)
- }
-
+}
 ```
-
-
 
 ### Film grain params syntax ### {#film_grain_params_syntax}
 
@@ -1828,8 +1715,7 @@ film_grain_params( ) {
      }
       f(1) overlap_flag
       f(1) clip_to_restricted_range
- }
-
+}
 ```
 
 
@@ -1839,11 +1725,8 @@ film_grain_params( ) {
 temporal_point_info( ) {
      n = frame_presentation_time_length_minus_1 + 1
       f(n) frame_presentation_time
- }
-
+}
 ```
-
-
 
 ## Frame OBU syntax ## {#frame_obu_syntax}
 
@@ -1856,11 +1739,8 @@ frame_obu( sz ) {
      headerBytes = (endBitPos - startBitPos) / 8
      sz -= headerBytes
      tile_group_obu( sz )
- }
-
+}
 ```
-
-
 
 ## Tile group OBU syntax ## {#tile_group_obu_syntax}
 
@@ -1912,11 +1792,8 @@ tile_group_obu( sz ) {
          decode_frame_wrapup( )
          SeenFrameHeader = 0
      }
- }
-
+}
 ```
-
-
 
 ### Decode tile syntax ### {#decode_tile_syntax}
 
@@ -1945,8 +1822,7 @@ decode_tile( ) {
              decode_partition( r, c, sbSize )
          }
      }
- }
-
+}
 ```
 
 
@@ -1979,11 +1855,8 @@ clear_block_decoded_flags( r, c, sbSize4 ) {
              }
          BlockDecoded[ plane ][ sbSize4 >> subY ][ -1 ] = 0
      }
- }
-
+}
 ```
-
-
 
 ### Decode partition syntax ### {#decode_partition_syntax}
 
@@ -2057,11 +1930,8 @@ decode_partition( r, c, bSize ) {
          if ( c + quarterBlock4x4 * 3 < MiCols )
              decode_block( r, c + quarterBlock4x4 * 3, subSize )
      }
- }
-
+}
 ```
-
-
 
 ### Decode block syntax ### {#decode_block_syntax}
 
@@ -2138,8 +2008,7 @@ decode_block( r, c, subSize ) {
                  DeltaLFs[ r + y ][ c + x ][ i ] = DeltaLF[ i ]
          }
      }
- }
-
+}
 ```
 
 
@@ -2171,11 +2040,8 @@ mode_info( ) {
          intra_frame_mode_info( )
      else
          inter_frame_mode_info( )
- }
-
+}
 ```
-
-
 
 ### Intra frame mode info syntax ### {#intra_frame_mode_info_syntax}
 
@@ -2234,11 +2100,8 @@ intra_frame_mode_info( ) {
          }
          filter_intra_mode_info( )
      }
- }
-
+}
 ```
-
-
 
 ### Intra segment ID syntax ### {#intra_segment_id_syntax}
 
@@ -2249,11 +2112,8 @@ intra_segment_id( ) {
      else
          segment_id = 0
      Lossless = LosslessArray[ segment_id ]
- }
-
+}
 ```
-
-
 
 ### Read segment ID syntax ### {#read_segment_id_syntax}
 
@@ -2284,8 +2144,7 @@ read_segment_id( ) {
          segment_id = neg_deinterleave( segment_id, pred,
                                         LastActiveSegId + 1 )
      }
- }
-
+}
 ```
 
 
@@ -2332,11 +2191,8 @@ read_skip_mode() {
      } else {
           S() skip_mode
      }
- }
-
+}
 ```
-
-
 
 ### Skip syntax ### {#skip_syntax}
 
@@ -2347,11 +2203,8 @@ read_skip() {
      } else {
           S() skip
      }
- }
-
+}
 ```
-
-
 
 ### Quantizer index delta syntax ### {#quantizer_index_delta_syntax}
 
@@ -2375,11 +2228,8 @@ read_delta_qindex( ) {
                  CurrentQIndex + (reducedDeltaQIndex << delta_q_res))
          }
      }
- }
-
+}
 ```
-
-
 
 ### Loop filter delta syntax ### {#loop_filter_delta_syntax}
 
@@ -2414,11 +2264,8 @@ read_delta_lf( ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Segmentation feature active function ### {#segmentation_feature_active_function}
 
@@ -2428,11 +2275,8 @@ seg_feature_active_idx( idx, feature ) {
  }
  seg_feature_active( feature ) {
      return seg_feature_active_idx( segment_id, feature )
- }
-
+}
 ```
-
-
 
 ### TX size syntax ### {#tx_size_syntax}
 
@@ -2451,8 +2295,7 @@ read_tx_size( allowSelect ) {
              TxSize = Split_Tx_Size[ TxSize ]
          }
      }
- }
-
+}
 ```
 
 
@@ -2499,11 +2342,8 @@ read_block_tx_size( ) {
              for ( col = MiCol; col < MiCol + bw4; col++ )
                  InterTxSizes[ row ][ col ] = TxSize
      }
- }
-
+}
 ```
-
-
 
 ### Var TX size syntax ### {#var_tx_size_syntax}
 
@@ -2533,11 +2373,8 @@ read_var_tx_size( row, col, txSz, depth) {
                  InterTxSizes[ row + i ][ col + j ] = txSz
          TxSize = txSz
      }
- }
-
+}
 ```
-
-
 
 ### Inter frame mode info syntax ### {#inter_frame_mode_info_syntax}
 
@@ -2571,11 +2408,8 @@ inter_frame_mode_info( ) {
          inter_block_mode_info( )
      else
          intra_block_mode_info( )
- }
-
+}
 ```
-
-
 
 ### Inter segment ID syntax ### {#inter_segment_id_syntax}
 
@@ -2620,8 +2454,7 @@ inter_segment_id( preSkip ) {
      } else {
          segment_id = 0
      }
- }
-
+}
 ```
 
 
@@ -2638,11 +2471,8 @@ read_is_inter( ) {
      } else {
           S() is_inter
      }
- }
-
+}
 ```
-
-
 
 ### Get segment ID function ### {#get_segment_id_function}
 
@@ -2660,11 +2490,8 @@ get_segment_id( ) {
          for ( x = 0; x < xMis; x++ )
              seg = Min( seg, PrevSegmentIds[ MiRow + y ][ MiCol + x ] )
      return seg
- }
-
+}
 ```
-
-
 
 ### Intra block mode info syntax ### {#intra_block_mode_info_syntax}
 
@@ -2691,11 +2518,8 @@ intra_block_mode_info( ) {
           allow_screen_content_tools )
          palette_mode_info( )
      filter_intra_mode_info( )
- }
-
+}
 ```
-
-
 
 ### Inter block mode info syntax ### {#inter_block_mode_info_syntax}
 
@@ -2771,8 +2595,7 @@ inter_block_mode_info( ) {
          for ( dir = 0; dir < 2; dir++ )
              interp_filter[ dir ] = interpolation_filter
      }
- }
-
+}
 ```
 
 
@@ -2820,11 +2643,8 @@ filter_intra_mode_info( ) {
               S() filter_intra_mode
          }
      }
- }
-
+}
 ```
-
-
 
 ### Ref frames syntax ### {#ref_frames_syntax}
 
@@ -2916,11 +2736,8 @@ read_ref_frames( ) {
              RefFrame[ 1 ] = NONE
          }
      }
- }
-
+}
 ```
-
-
 
 ### Assign MV syntax ### {#assign_mv_syntax}
 
@@ -2962,11 +2779,8 @@ assign_mv( isCompound ) {
              Mv[ i ] = PredMv[ i ]
          }
      }
- }
-
+}
 ```
-
-
 
 ### Read motion mode syntax ### {#read_motion_mode_syntax}
 
@@ -3004,8 +2818,7 @@ read_motion_mode( isCompound ) {
      } else {
           S() motion_mode
      }
- }
-
+}
 ```
 
 
@@ -3047,11 +2860,8 @@ read_interintra_mode( isCompound ) {
      } else {
          interintra = 0
      }
- }
-
+}
 ```
-
-
 
 ### Read compound type syntax ### {#read_compound_type_syntax}
 
@@ -3096,11 +2906,8 @@ read_compound_type( isCompound ) {
              compound_type = COMPOUND_AVERAGE
          }
      }
- }
-
+}
 ```
-
-
 
 ### Get mode function ### {#get_mode_function}
 
@@ -3128,11 +2935,8 @@ get_mode( refList ) {
              compMode = GLOBALMV
      }
      return compMode
- }
-
+}
 ```
-
-
 
 ### MV syntax ### {#mv_syntax}
 
@@ -3152,11 +2956,8 @@ read_mv( ref ) {
          diffMv[ 1 ] = read_mv_component( 1 )
      Mv[ ref ][ 0 ] = PredMv[ ref ][ 0 ] + diffMv[ 0 ]
      Mv[ ref ][ 1 ] = PredMv[ ref ][ 1 ] + diffMv[ 1 ]
- }
-
+}
 ```
-
-
 
 ### MV component syntax ### {#mv_component_syntax}
 
@@ -3195,8 +2996,7 @@ read_mv_component( comp ) {
          mag += ( ( d << 3 ) \
      }
      return mv_sign ? -mag : mag
- }
-
+}
 ```
 
 
@@ -3264,8 +3064,7 @@ compute_prediction() {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -3308,11 +3107,8 @@ residual( ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Transform block syntax ### {#transform_block_syntax}
 
@@ -3382,8 +3178,7 @@ transform_block(plane, baseX, baseY, txSz, x, y) {
                          [ ( subBlockMiCol >> subX ) + j ] = 1
          }
      }
- }
-
+}
 ```
 
 
@@ -3420,8 +3215,7 @@ transform_tree( startX, startY, w, h ) {
              transform_tree( startX + w/2, startY + h/2, w/2, h/2 )
          }
      }
- }
-
+}
 ```
 
 
@@ -3454,11 +3248,8 @@ get_tx_size( plane, txSz ) {
          return TX_32X32
      }
      return uvTx
- }
-
+}
 ```
-
-
 
 ### Get plane residual size function ### {#get_plane_residual_size_function}
 
@@ -3471,8 +3262,7 @@ get_plane_residual_size( subsize, plane ) {
      subx = plane > 0 ? subsampling_x : 0
      suby = plane > 0 ? subsampling_y : 0
      return Subsampled_Size[ subsize ][ subx ][ suby ]
- }
-
+}
 ```
 
 
@@ -3646,11 +3436,8 @@ coeffs( plane, startX, startY, txSz ) {
          LeftDcContext[ plane ][ y4 + i ] = dcCategory
      }
      return eob
- }
-
+}
 ```
-
-
 
 ### Compute transform type function ### {#compute_transform_type_function}
 
@@ -3679,8 +3466,7 @@ compute_tx_type( plane, txSz, blockX, blockY ) {
  is_tx_type_in_set( txSet, txType ) {
      return is_inter ? Tx_Type_In_Set_Inter[ txSet ][ txType ] :
                        Tx_Type_In_Set_Intra[ txSet ][ txType ]
- }
-
+}
 ```
 
 
@@ -3811,11 +3597,8 @@ get_mrow_scan( txSz ) {
          return get_mcol_scan( txSz )
      }
      return get_default_scan( txSz )
- }
-
+}
 ```
-
-
 
 ### Intra angle info luma syntax ### {#intra_angle_info_luma_syntax}
 
@@ -3828,11 +3611,8 @@ intra_angle_info_y( ) {
              AngleDeltaY = angle_delta_y - MAX_ANGLE_DELTA
          }
      }
- }
-
+}
 ```
-
-
 
 ### Intra angle info chroma syntax ### {#intra_angle_info_chroma_syntax}
 
@@ -3845,11 +3625,8 @@ intra_angle_info_uv( ) {
              AngleDeltaUV = angle_delta_uv - MAX_ANGLE_DELTA
          }
      }
- }
-
+}
 ```
-
-
 
 ### Is directional mode function ### {#is_directional_mode_function}
 
@@ -3859,11 +3636,8 @@ is_directional_mode( mode ) {
          return 1
      }
      return 0
- }
-
+}
 ```
-
-
 
 ### Read CFL alphas syntax ### {#read_cfl_alphas_syntax}
 
@@ -3887,11 +3661,8 @@ read_cfl_alphas() {
              CflAlphaV = -CflAlphaV
      } else {
        CflAlphaV = 0
-     }
-
+    }
 ```
-
-
 
 ### Palette mode info syntax ### {#palette_mode_info_syntax}
 
@@ -3994,8 +3765,7 @@ palette_mode_info( ) {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -4061,8 +3831,7 @@ get_palette_cache( plane ) {
          }
      }
      return n
- }
-
+}
 ```
 
 
@@ -4101,8 +3870,7 @@ transform_type( x4, y4, txSz ) {
              TxTypes[ y4 + j ][ x4 + i ] = TxType
          }
      }
- }
-
+}
 ```
 
 
@@ -4139,11 +3907,8 @@ get_tx_set( txSz ) {
          else if ( txSzSqr == TX_16X16 ) return TX_SET_INTRA_2
          return TX_SET_INTRA_1
      }
- }
-
+}
 ```
-
-
 
 ### Palette tokens syntax ### {#palette_tokens_syntax}
 
@@ -4211,11 +3976,8 @@ palette_tokens( ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Palette color context function ### {#palette_color_context_function}
 
@@ -4261,11 +4023,8 @@ get_palette_color_context( colorMap, r, c, n ) {
      for ( i = 0; i < PALETTE_NUM_NEIGHBORS; i++ ) {
          ColorContextHash += scores[ i ] * Palette_Color_Hash_Multipliers[ i ]
      }
- }
-
+}
 ```
-
-
 
 ### Is inside function ### {#is_inside_function}
 
@@ -4277,11 +4036,8 @@ is_inside( candidateR, candidateC ) {
               candidateC < MiColEnd &&
               candidateR >\= MiRowStart &&
               candidateR < MiRowEnd )
- }
-
+}
 ```
-
-
 
 ### Is inside filter region function ### {#is_inside_filter_region_function}
 
@@ -4297,11 +4053,8 @@ is_inside_filter_region( candidateR, candidateC ) {
              candidateC < colEnd &&
              candidateR >\= rowStart &&
              candidateR < rowEnd)
- }
-
+}
 ```
-
-
 
 ### Clamp MV row function ### {#clamp_mv_row_function}
 
@@ -4311,11 +4064,8 @@ clamp_mv_row( mvec, border ) {
      mbToTopEdge = -((MiRow * MI_SIZE) * 8)
      mbToBottomEdge = ((MiRows - bh4 - MiRow) * MI_SIZE) * 8
      return Clip3( mbToTopEdge - border, mbToBottomEdge + border, mvec )
- }
-
+}
 ```
-
-
 
 ### Clamp MV col function ### {#clamp_mv_col_function}
 
@@ -4325,11 +4075,8 @@ clamp_mv_col( mvec, border ) {
      mbToLeftEdge = -((MiCol * MI_SIZE) * 8)
      mbToRightEdge = ((MiCols - bw4 - MiCol) * MI_SIZE) * 8
      return Clip3( mbToLeftEdge - border, mbToRightEdge + border, mvec )
- }
-
+}
 ```
-
-
 
 ### Clear CDEF function ### {#clear_cdef_function}
 
@@ -4342,11 +4089,8 @@ clear_cdef( r, c ) {
          cdef_idx[ r + cdefSize4][ c ] = -1
          cdef_idx[ r + cdefSize4][ c + cdefSize4 ] = -1
      }
- }
-
+}
 ```
-
-
 
 ### Read CDEF syntax ### {#read_cdef_syntax}
 
@@ -4369,11 +4113,8 @@ read_cdef( ) {
              }
          }
      }
- }
-
+}
 ```
-
-
 
 ### Read loop restoration syntax ### {#read_loop_restoration_syntax}
 
@@ -4412,8 +4153,7 @@ read_lr( r, c, bSize ) {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -4482,8 +4222,7 @@ read_lr_unit(plane, unitRow, unitCol) {
              RefSgrXqd[ plane ][ i ] = v
          }
      }
- }
-
+}
 ```
 
 
@@ -4535,8 +4274,7 @@ decode_signed_subexp_with_ref_bool( low, high, k, r ) {
              }
          }
      }
- }
-
+}
 ```
 
 
@@ -4557,8 +4295,7 @@ tile_list_obu( ) {
       f(16) tile_count_minus_1
      for ( tile = 0; tile <= tile_count_minus_1; tile++ )
          tile_list_entry( )
- }
-
+}
 ```
 
 

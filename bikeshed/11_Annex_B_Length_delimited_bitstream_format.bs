@@ -1,6 +1,6 @@
 # Annex B: Length delimited bitstream format # {#annex_b:_length_delimited_bitstream_format}
 
-## Overview ## {#overview}
+## Overview ## {#annex_b_overview}
 
 [Section 5][] defines the syntax for OBUs.
 [Section 5.2][] defines the low-overhead bitstream format.

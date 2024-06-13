@@ -1,6 +1,6 @@
 # Annex E: Decoder model # {#annex_e:_decoder_model}
 
-## General ## {#general}
+## General ## {#annex_e_general}
 
 The decoder model is used to verify that a bitstream can be decoded within the
 constraints imposed by one of the coding levels defined in [section A.3][]. The

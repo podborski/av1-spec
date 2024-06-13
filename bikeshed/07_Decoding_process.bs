@@ -43,7 +43,7 @@ The syntax tables include function calls indicating when the remaining decode pr
 
 ## Large scale tile decoding process ## {#large_scale_tile_decoding_process}
 
-### General ### {#general}
+### General ### {#large_scale_tile_decoding_process_general}
 
 The large scale tile decoding process is used to decode a random subset of tiles taken from a number of coded frames.
 The list of tiles is specified by a tile list OBU.
@@ -327,7 +327,7 @@ For example, a bitstream received in a streaming use case may never contain key 
 
 ## Random access decoding ## {#random_access_decoding}
 
-### General ### {#general}
+### General ### {#random_access_decoding_general}
 
 In general, random access points are places in a bitstream where decoding can be started.
 
@@ -601,7 +601,7 @@ with ties broken based on the reference frame index.
 
 ## Motion field estimation process ## {#motion_field_estimation_process}
 
-### General ### {#general}
+### General ### {#motion_field_estimation_process_general}
 
 This process is triggered by a call to motion_field_estimation while reading the uncompressed header.
 
@@ -806,7 +806,7 @@ The project function clears posValid if the resulting position is offset too far
 
 ## Motion vector prediction processes ## {#motion_vector_prediction_processes}
 
-### General ### {#general}
+### General ### {#motion_vector_prediction_processes_general}
 
 The following sections define the processes used for predicting the motion vectors.
 
@@ -1675,7 +1675,7 @@ has_overlappable_candidates( ) {
 
 ### Find warp samples process ### {#find_warp_samples_process}
 
-#### General #### {#general}
+#### General #### {#find_warp_samples_process_general}
 
 This process is triggered when the find_warp_samples function is invoked.
 
@@ -1816,7 +1816,7 @@ The following ordered steps apply:
 
 ## Prediction processes ## {#prediction_processes}
 
-### General ### {#general}
+### General ### {#prediction_processes_general}
 
 The following sections define the processes used for predicting the sample
 values.
@@ -1827,7 +1827,7 @@ predict_intra, predict_inter, predict_chroma_from_luma, and predict_palette in t
 
 ### Intra prediction process ### {#intra_prediction_process}
 
-#### General #### {#general}
+#### General #### {#intra_prediction_process_general}
 
 The intra prediction process is invoked for intra coded blocks to predict a
 part of the block corresponding to a transform block. When the transform size
@@ -2495,7 +2495,7 @@ Intra_Edge_Kernel[INTRA_EDGE_KERNELS][INTRA_EDGE_TAPS] = {
 
 ### Inter prediction process ### {#inter_prediction_process}
 
-#### General #### {#general}
+#### General #### {#inter_prediction_process_general}
 
 The inter prediction process is invoked for inter coded blocks and interintra blocks.  The inputs
 to this process are:
@@ -3839,7 +3839,7 @@ for ( i = 0; i < h; i++ ) {
 
 ## Reconstruction and dequantization ## {#reconstruction_and_dequantization}
 
-### General ### {#general}
+### General ### {#reconstruction_and_dequantization_general}
 
 This section details the process of reconstructing a block of coefficients
 using dequantization and inverse transforms.
@@ -4143,7 +4143,7 @@ always be representable by a signed integer with Max( BitDepth + 5, 15 ) bits.
 
 ## Inverse transform process ## {#inverse_transform_process}
 
-### General ### {#general}
+### General ### {#inverse_transform_process_general}
 
 This section details the inverse transforms used during the reconstruction
 processes detailed in [section 7.12][].
@@ -4603,7 +4603,7 @@ Transform_Row_Shift[ TX_SIZES_ALL ] = {
 
 ## Loop filter process ## {#loop_filter_process}
 
-### General ### {#general}
+### General ### {#loop_filter_process_general}
 
 Input to this process is the array CurrFrame of reconstructed samples.
 
@@ -4849,7 +4849,7 @@ The following ordered steps apply:
 
 ### Sample filtering process ### {#sample_filtering_process}
 
-#### General #### {#general}
+#### General #### {#sample_filtering_process_general}
 
 The inputs to this process are:
  * variables x and y specifying the location within CurrFrame[ plane ],
@@ -5094,7 +5094,7 @@ Input to this process is the array CurrFrame of reconstructed samples.
 Output from this process is the array CdefFrame containing deringed
 samples.
 
-The purpose of CDEF is to perform deringing based on the detected direction of blocks.
+The purpose of [=CDEF=] is to perform deringing based on the detected direction of blocks.
 
 CDEF parameters are stored for each 64 by 64 block of luma samples.
 
@@ -5848,7 +5848,7 @@ In other words, requests for the third line (above or below) are given a copy of
 
 ## Output process ## {#output_process}
 
-### General ### {#general}
+### General ### {#output_process_general}
 
 This process is invoked to prepare output frames.
 
@@ -5910,7 +5910,7 @@ The output of this process are the variables w, h, subX, and subY.
 
 ### Film grain synthesis process ### {#film_grain_synthesis_process}
 
-#### General #### {#general}
+#### General #### {#fgsp_general}
 
 The inputs to this process are:
  * variables w and h specifying the width and height of the frame,

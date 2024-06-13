@@ -1,6 +1,6 @@
 # Annex C: Error resilience behavior (informative) # {#annex_c:_error_resilience_behavior_(informative)}
 
-## General ## {#general}
+## General ## {#annex_c_general}
 
 This annex defines additional starting points for decoding.
 

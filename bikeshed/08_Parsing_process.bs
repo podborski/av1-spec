@@ -22,7 +22,7 @@ The value for the syntax element is given by x.
 
 ## Parsing process for symbol decoder ## {#parsing_process_for_symbol_decoder}
 
-### General ### {#general}
+### General ### {#parsing_process_for_symbol_decoder_general}
 
 The entropy decoder is referred to as the "Symbol decoder" and the functions `init_symbol( sz )`, `exit_symbol( )`, `read_symbol( cdf )`, and `read_bool( )` are used in this Specification to indicate the entropy decoding operation.
 
@@ -297,7 +297,7 @@ The return value from the function is given by symbol.
 
 ## Parsing process for CDF encoded syntax elements ## {#parsing_process_for_cdf_encoded_syntax_elements}
 
-### General ### {#general}
+### General ### {#parsing_process_for_cdf_encoded_syntax_elements_general}
 
 This process is invoked when the descriptor of a syntax element in the syntax
 tables is equal to S.

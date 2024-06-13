@@ -1,6 +1,6 @@
 # Additional tables # {#additional_tables}
 
-## General ## {#general}
+## General ## {#tables_general}
 
 This section contains tables that do not naturally fit in the main sections of
 the Specification.
@@ -5621,7 +5621,7 @@ Default_Coeff_Br_Cdf[ COEFF_CDF_Q_CTXS ][ TX_SIZES ][ PLANE_TYPES ][ LEVEL_CONTE
 
 ## Quantizer matrix tables ## {#quantizer_matrix_tables}
 
-### General ### {#general}
+### General ### {#quantizer_matrix_tables_general}
 
 There are three fundamental quantizer matrix sizes: 32x32, 32x16 and 16x32. One set of these three sizes of
 matrix is defined for each quantizer level (except level 15)

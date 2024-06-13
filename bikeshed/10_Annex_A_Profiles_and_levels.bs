@@ -1,6 +1,6 @@
 # Annex A: Profiles and levels # {#annex_a:_profiles_and_levels}
 
-## General ## {#general}
+## General ## {#annex_a_general}
 
 Profiles and levels specify restrictions on the capabilities needed to decode
 the bitstreams.

@@ -1,6 +1,6 @@
 # Syntax structures semantics # {#syntax_structures_semantics}
 
-## General ## {#general}
+## General ## {#semantics_general}
 
 This section specifies the meaning of the syntax elements read in the syntax
 structures.
@@ -1460,7 +1460,7 @@ The following figures show the picture prediction structures for certain modes:
 
 ### Scalability structure semantics ### {#scalability_structure_semantics}
 
-#### General #### {#general}
+#### General #### {#scalability_semantics_general}
 
 Note: The scalability_structure is intended for use by intermediate processing entities that may
 perform selective layer elimination.  Its presence allows these entities to know the structure of the
