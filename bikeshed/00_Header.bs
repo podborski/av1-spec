@@ -15,6 +15,7 @@ Group: AOM
 Metadata Order: This version, !*, *
 Markup Shorthands: markdown yes
 Local Boilerplate: footer yes
+Line Numbers: yes
 </pre>
 
 <link rel="stylesheet" href="css/custom.css">
