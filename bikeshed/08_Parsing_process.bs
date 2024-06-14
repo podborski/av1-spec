@@ -1,6 +1,6 @@
 # Parsing process # {#parsing_process}
 
-## Parsing process for f(n) ## {#parsing_process_for_f(n)}
+## Parsing process for f(n) ## {#parsing_process_for_fn}
 
 This process is invoked when the descriptor of a syntax element in the syntax tables is equal to `f(n)`.
 

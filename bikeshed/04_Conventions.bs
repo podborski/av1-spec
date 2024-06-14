@@ -526,9 +526,9 @@ The specification of these functions makes use of a bitstream position indicator
 
 **get_position( )**: Return the value of the bitstream position indicator.
 
-**init_symbol( sz )**: Initialize the arithmetic decode process for the Symbol decoder with a size of sz bytes as specified in section 8.2.2 (TBD).
+**init_symbol( sz )**: Initialize the arithmetic decode process for the Symbol decoder with a size of sz bytes as specified in [[#initialization_process_for_symbol_decoder]].
 
-**exit_symbol( )**: Exit the arithmetic decode process as described in section 8.2.4 (TBD) (this includes reading trailing bits).
+**exit_symbol( )**: Exit the arithmetic decode process as described in [[#exit_process_for_symbol_decoder]] (this includes reading trailing bits).
 
 ## Descriptors ## {#conventions-descriptors}
 
@@ -538,7 +538,7 @@ The following descriptors specify the parsing of syntax elements. Lower case des
 
 ### f(n) ### {#conventions-descriptors-fn}
 
-Unsigned n-bit number appearing directly in the [=Bitstream=]. The bits are read from high to low order.  The parsing process specified in section 8.1 (TBD) is invoked and the [=Syntax element=] is set equal to the return value.
+Unsigned n-bit number appearing directly in the [=Bitstream=]. The bits are read from high to low order.  The parsing process specified in [[#parsing_process_for_fn]] is invoked and the [=Syntax element=] is set equal to the return value.
 
 ### uvlc() ### {#conventions-descriptors-uvlc}
 
@@ -850,13 +850,13 @@ The abbreviation ns stands for non-symmetric. This encoding is non-symmetric bec
 
 ### L(n) ### {#conventions-descriptors-ln}
 
-Unsigned arithmetic encoded n-bit number encoded as n flags (a “literal”). The flags are read from high to low order. The [=Syntax element=] is set equal to the return value of `read_literal( n )` (see section 8.2.5 (TBD) for a specification of this process).
+Unsigned arithmetic encoded n-bit number encoded as n flags (a “literal”). The flags are read from high to low order. The [=Syntax element=] is set equal to the return value of `read_literal( n )`  [[#parsing_process_for_read_literal]] for a specification of this process).
 
 ### S() ### {#conventions-descriptors-s}
 
 An arithmetic encoded symbol coded from a small alphabet of at most 16 entries.
 
-The symbol is decoded based on a context sensitive [=CDF=] (see section 8.3 (TBD) for the specification of this process).
+The symbol is decoded based on a context sensitive [=CDF=] (see [[#parsing_process_for_cdf_encoded_syntax_elements]] for the specification of this process).
 
 ### NS(n) ### {#conventions-descriptors-nsn2}
 
