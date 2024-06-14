@@ -41,6 +41,10 @@ table caption::before {
   padding: .3rem;
 }
 
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,.05);
+}
+
 .formula {
   counter-increment: formula-counter;
   display: inline-block;
