@@ -1,4 +1,4 @@
-# Annex E: Decoder model # {#annex_e:_decoder_model}
+# Annex E: Decoder model # {#annex_e}
 
 ## General ## {#annex_e_general}
 

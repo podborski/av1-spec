@@ -21,8 +21,7 @@ Most Significant Bit
 Walsh Hadamard Transform
 
 The specification makes use of a number of constant integers.  Constants that
-relate to the semantics of a particular [=Syntax element=] are defined in
-[section 6][].
+relate to the semantics of a particular [=Syntax element=] are defined in [[#syntax_structures_semantics]].
 
 Additional constants are defined below:
 

@@ -1,4 +1,4 @@
-# Annex C: Error resilience behavior (informative) # {#annex_c:_error_resilience_behavior_(informative)}
+# Annex C: Error resilience behavior (informative) # {#annex_c}
 
 ## General ## {#annex_c_general}
 

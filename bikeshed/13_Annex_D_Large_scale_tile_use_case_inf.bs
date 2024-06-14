@@ -1,4 +1,4 @@
-# Annex D: Large scale tile use case (informative) # {#annex_d:_large_scale_tile_use_case_(informative)}
+# Annex D: Large scale tile use case (informative) # {#annex_d}
 
 One potential use-case for this process is the representation and rendering of a 3-dimensional environment
 as seen through an array of cameras that together capture a 360 degree view of the surrounding environment.

@@ -1,4 +1,4 @@
-# Annex A: Profiles and levels # {#annex_a:_profiles_and_levels}
+# Annex A: Profiles and levels # {#annex_a}
 
 ## General ## {#annex_a_general}
 
