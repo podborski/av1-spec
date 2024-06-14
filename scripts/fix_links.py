@@ -45,29 +45,36 @@ def parse_headings(file_content):
 
 
 # Function to replace empty markdown links with toc IDs
-def replace_empty_links(file_content, toc):
+def replace_empty_links(file_content, toc, filename):
     link_pattern = re.compile(r'\[section ([\d\.]+)\]\[\]')
 
     def replace_link(match):
         section = match.group(1)
-        return f'[[{toc.get(section, "UNKNOWN")}]])'
+        if section in toc:
+            return f'[[{toc[section]}]]'
+        else:
+            print(f"Error: Section {section} not found in TOC for file {filename}")
+            return match.group(0)  # return the original text if not found
 
     return link_pattern.sub(replace_link, file_content)
 
 
+# Parse headings to construct toc
+with open('index.bs', 'r') as bs_file:
+    bs_file_content = bs_file.read()
+toc = parse_headings(bs_file_content)
+
+
 # Process each file
 for bs_file in BS_FILES:
-    with open(bs_file, 'r') as file:
+    with open(os.path.join('bikeshed', bs_file), 'r') as file:
         file_content = file.read()
 
-    # Parse headings to construct toc
-    toc = parse_headings(file_content)
-
     # Replace empty markdown links with toc IDs
-    updated_content = replace_empty_links(file_content, toc)
+    updated_content = replace_empty_links(file_content, toc, bs_file)
 
     # Write the updated content back to the file
-    # with open(bs_file, 'w') as file:
-    #     file.write(updated_content)
+    with open(os.path.join('bikeshed', bs_file), 'w') as file:
+        file.write(updated_content)
 
-    # print(f"Processed {bs_file}")
+    print(f"Processed {bs_file}")

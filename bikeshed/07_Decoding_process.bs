@@ -7,9 +7,9 @@ AV1 contains two operating modes:
 1. General decoding (input is a sequence of OBUs, output is decoded frames)
 2. Large scale tile decoding (input is a tile list OBU plus additional side information, output is a decoded frame)
 
-The general decoding process is specified in [section 7.2][].
+The general decoding process is specified in [[#general_decoding_process]].
 
-The large scale tile decoding process is specified in [section 7.3][].
+The large scale tile decoding process is specified in [[#large_scale_tile_decoding_process]].
 
 ## General decoding process ## {#general_decoding_process}
 
@@ -17,27 +17,27 @@ When film_grain_params_present is equal to 0, decoders shall produce output fram
 and have the same output order as those produced by the decoding process specified herein.
 
 When film_grain_params_present is equal to 1, a decoder shall implement a film grain synthesis process that
-modifies the output arrays OutY, OutU, OutV. The reference film grain synthesis process is described in [section 7.18.3][].
+modifies the output arrays OutY, OutU, OutV. The reference film grain synthesis process is described in [[#film_grain_synthesis_process]].
 
 When film_grain_params_present is equal to 1, a conformant decoder shall satisfy at least one of the following two options:
- 1. A conformant decoder shall produce output frames that are identical in all respects and have the same output order as those produced by the decoding process specified herein including applying the exact film grain synthesis process as specified in [section 7.18.3][].
- 2. A conformant decoder shall produce intermediate frames that are identical in all respects and have the same order as the frames produced by the process specified in [section 7.18.2][]. In addition to that, a conformant decoder shall produce output frames that are in the same order and do not have perceptually significant differences with the frames produced by the reference film grain synthesis process specified in [section 7.18.3][] when applied to the input frames of the film grain synthesis process with the film grain parameters signaled for these frames. The decoder may also include optional processing steps which are applied to the intermediate frames produced by the process specified in [section 7.18.2][] and before the film grain synthesis process, resulting in the input frames of the film grain synthesis process. Such optional processing steps are beyond the scope of this specification. Otherwise, the intermediate frames are the input frames of the film grain synthesis process. The definition of "perceptually significant differences" is beyond the scope of this specification and may be specified, for example, by a service provider as part of their accreditation program. The film grain synthesis process applied by a conformant decoder should be feature complete with regards to the reference film grain synthesis process of [section 7.18.3][] including scaling strength of the film grain as a function of intensity according to the signaled parameters, same maximum AR lag, and similar modeling of correlation between luma and chroma and smoothing of transitions between blocks of grain when applicable.
+ 1. A conformant decoder shall produce output frames that are identical in all respects and have the same output order as those produced by the decoding process specified herein including applying the exact film grain synthesis process as specified in [[#film_grain_synthesis_process]].
+ 2. A conformant decoder shall produce intermediate frames that are identical in all respects and have the same order as the frames produced by the process specified in [[#intermediate_output_preparation_process]]. In addition to that, a conformant decoder shall produce output frames that are in the same order and do not have perceptually significant differences with the frames produced by the reference film grain synthesis process specified in [[#film_grain_synthesis_process]] when applied to the input frames of the film grain synthesis process with the film grain parameters signaled for these frames. The decoder may also include optional processing steps which are applied to the intermediate frames produced by the process specified in [[#intermediate_output_preparation_process]] and before the film grain synthesis process, resulting in the input frames of the film grain synthesis process. Such optional processing steps are beyond the scope of this specification. Otherwise, the intermediate frames are the input frames of the film grain synthesis process. The definition of "perceptually significant differences" is beyond the scope of this specification and may be specified, for example, by a service provider as part of their accreditation program. The film grain synthesis process applied by a conformant decoder should be feature complete with regards to the reference film grain synthesis process of [[#film_grain_synthesis_process]] including scaling strength of the film grain as a function of intensity according to the signaled parameters, same maximum AR lag, and similar modeling of correlation between luma and chroma and smoothing of transitions between blocks of grain when applicable.
 
 Note: To ensure conformance, decoder manufacturers are advised to implement the film grain synthesis
-process as specified in [section 7.18.3][].
+process as specified in [[#film_grain_synthesis_process]].
 One reason to choose the second conformance option is implementation of optional processing steps
-between the output of [section 7.18.2][] and the film grain synthesis process, in which case there could be minor differences in the output with the reference film grain synthesis process of [section 7.18.3][]. Examples of these optional processing steps are algorithms improving output picture quality, such as de-banding filtering and coding artefacts removal.
+between the output of [[#intermediate_output_preparation_process]] and the film grain synthesis process, in which case there could be minor differences in the output with the reference film grain synthesis process of [[#film_grain_synthesis_process]]. Examples of these optional processing steps are algorithms improving output picture quality, such as de-banding filtering and coding artefacts removal.
 
 
 Note:
-Some applications, such as transcoding from AV1 to AV1, may use intermediate output frames of [section 7.18.2][] for transcoding. In such cases, the original film grain synthesis information may be adapted and inserted in the transcoded bitstream.
+Some applications, such as transcoding from AV1 to AV1, may use intermediate output frames of [[#intermediate_output_preparation_process]] for transcoding. In such cases, the original film grain synthesis information may be adapted and inserted in the transcoded bitstream.
 
 
 The input to this process is a sequence of open bitstream units (OBUs).
 
 The output from this process is a sequence of decoded frames.
 
-For each OBU in turn the syntax elements are extracted as specified in [section 5.3][].
+For each OBU in turn the syntax elements are extracted as specified in [[#obu_syntax]].
 
 The syntax tables include function calls indicating when the remaining decode processes are triggered.
 
@@ -90,7 +90,7 @@ For each tile list entry in the tile list OBU, the following ordered steps are a
  11. RefSubsamplingX[ last ] is set equal to subsampling_x.
  12. RefSubsamplingY[ last ] is set equal to subsampling_y.
  13. RefBitDepth[ last ] is set equal to BitDepth.
- 14. Invoke the decode camera tile process specified in [section 7.3.2][] and write the decoded tiles into an output frame in raster order, in the order that they occur in the tile list OBU.
+ 14. Invoke the decode camera tile process specified in [[#decode_camera_tile_process]] and write the decoded tiles into an output frame in raster order, in the order that they occur in the tile list OBU.
 
 The output from this process is the output frame that is built up in the final step above.
 
@@ -237,20 +237,20 @@ This process is triggered by a call to decode_frame_wrapup from within the synta
 At this stage, all the tile level decode has been done, and this process performs any frame level decode that is required.
 
 If show_existing_frame is equal to 0, the process first performs any post processing filtering by the following ordered steps:
- 1. If loop_filter_level[ 0 ] is not equal to 0 or loop_filter_level[ 1 ] is not equal to 0, the loop filter process specified in [section 7.14][] is invoked (this process modifies the contents of CurrFrame).
- 2. The CDEF process specified in [section 7.15][] is invoked (this process takes CurrFrame and produces CdefFrame).
- 3. The upscaling process specified in [section 7.16][] is invoked with CdefFrame as input and the output is assigned to UpscaledCdefFrame.
- 4. The upscaling process specified in [section 7.16][] is invoked with CurrFrame as input and the output is assigned to UpscaledCurrFrame.
- 5. The loop restoration process specified in [section 7.17][] is invoked (this process takes UpscaledCurrFrame and UpscaledCdefFrame and produces LrFrame).
- 6. The motion field motion vector storage process specified in [section 7.19][] is invoked.
+ 1. If loop_filter_level[ 0 ] is not equal to 0 or loop_filter_level[ 1 ] is not equal to 0, the loop filter process specified in [[#loop_filter_process]] is invoked (this process modifies the contents of CurrFrame).
+ 2. The CDEF process specified in [[#cdef_process]] is invoked (this process takes CurrFrame and produces CdefFrame).
+ 3. The upscaling process specified in [[#upscaling_process]] is invoked with CdefFrame as input and the output is assigned to UpscaledCdefFrame.
+ 4. The upscaling process specified in [[#upscaling_process]] is invoked with CurrFrame as input and the output is assigned to UpscaledCurrFrame.
+ 5. The loop restoration process specified in [[#loop_restoration_process]] is invoked (this process takes UpscaledCurrFrame and UpscaledCdefFrame and produces LrFrame).
+ 6. The motion field motion vector storage process specified in [[#motion_field_motion_vector_storage_process]] is invoked.
  7. If segmentation_enabled is equal to 1 and segmentation_update_map is equal to 0, SegmentIds[ row ][ col ] is set equal to PrevSegmentIds[ row ][ col ] for row = 0..MiRows-1, for col = 0..MiCols-1.
 
-Otherwise (show_existing_frame is equal to 1), if frame_type is equal to KEY_FRAME, the reference frame loading process as specified in [section 7.21][]
+Otherwise (show_existing_frame is equal to 1), if frame_type is equal to KEY_FRAME, the reference frame loading process as specified in [[#reference_frame_loading_process]]
 is invoked (this process loads frame state from the reference frames into the current frame state variables).
 
 The following ordered steps now apply:
- 1. The reference frame update process as specified in [section 7.20][] is invoked (this process saves the current frame state into the reference frames).
- 2. If show_frame is equal to 1 or show_existing_frame is equal to 1, the output process as specified in [section 7.18][] is invoked (this will output the current frame or a saved frame).
+ 1. The reference frame update process as specified in [[#reference_frame_update_process]] is invoked (this process saves the current frame state into the reference frames).
+ 2. If show_frame is equal to 1 or show_existing_frame is equal to 1, the output process as specified in [[#output_process]] is invoked (this will output the current frame or a saved frame).
 
 Note: Although it is specified that all samples in CurrFrame are upscaled, at most 2 lines above and below each stripe
 (defined by StripeStartY and StripeEndY) will end up being read.
@@ -336,13 +336,13 @@ This section defines the types of random access point that must be supported by 
 The purpose of this section is to define a minimum level of functionality that must be supported, not a maximum.
 In other words, decoders may choose to support more types of random access point.
 
-The random access points are defined in [section 7.6.2][].
+The random access points are defined in [[#definitions]].
 
-The conformance requirements are specified in [section 7.6.3][].
+The conformance requirements are specified in [[#conformance_requirements]].
 
-The consequences for encoders are specified in [section 7.6.4][].
+The consequences for encoders are specified in [[#encoder_consequences]].
 
-The consequences for decoders are specified in [section 7.6.5][].
+The consequences for decoders are specified in [[#decoder_consequences]].
 
 ### Definitions ### {#definitions}
 
@@ -639,7 +639,7 @@ The variable lastAltOrderHint (representing the expected output order for ALTREF
 
 The variable useLast (representing whether to project the motion vectors from LAST_FRAME) is set equal to ( lastAltOrderHint != curGoldOrderHint ).
 
-If useLast is equal to 1, the projection process in [section 7.9.2][] is invoked with src equal to LAST_FRAME, and dstSign equal to -1.
+If useLast is equal to 1, the projection process in [[#projection_process]] is invoked with src equal to LAST_FRAME, and dstSign equal to -1.
 (The output of this process is discarded.)
 
 The variable refStamp (that limits how many reference frames have to be projected) is set equal to MFMV_STACK_SIZE - 2.
@@ -647,22 +647,22 @@ The variable refStamp (that limits how many reference frames have to be projecte
 The variable useBwd is set equal to get_relative_dist( OrderHints[ BWDREF_FRAME ], OrderHint ) > 0.
 
 If useBwd is equal to 1, the following steps apply:
- * The projection process in [section 7.9.2][] is invoked with src equal to BWDREF_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
+ * The projection process in [[#projection_process]] is invoked with src equal to BWDREF_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
  * If projOutput is equal to 1, refStamp is set equal to refStamp - 1.
 
 The variable useAlt2 is set equal to get_relative_dist( OrderHints[ ALTREF2_FRAME ], OrderHint ) > 0.
 
 If useAlt2 is equal to 1, the following steps apply:
- * The projection process in [section 7.9.2][] is invoked with src equal to ALTREF2_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
+ * The projection process in [[#projection_process]] is invoked with src equal to ALTREF2_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
  * If projOutput is equal to 1, refStamp is set equal to refStamp - 1.
 
 The variable useAlt is set equal to get_relative_dist( OrderHints[ ALTREF_FRAME ], OrderHint ) > 0.
 
 If useAlt is equal to 1 and (refStamp >= 0), the following steps apply:
- * The projection process in [section 7.9.2][] is invoked with src equal to ALTREF_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
+ * The projection process in [[#projection_process]] is invoked with src equal to ALTREF_FRAME, and dstSign equal to 1, and the output assigned to projOutput.
  * If projOutput is equal to 1, refStamp is set equal to refStamp - 1.
 
-If ( refStamp >= 0 ), the projection process in [section 7.9.2][] is invoked with
+If ( refStamp >= 0 ), the projection process in [[#projection_process]] is invoked with
 src equal to LAST2_FRAME, and dstSign equal to -1. (The output of this process is discarded.)
 
 ### Projection process ### {#projection_process}
@@ -715,9 +715,9 @@ for ( y8 = 0; y8 < h8; y8++ ) {
 }
 ~~~~~
 
-When the function get_mv_projection is called, the get mv projection process specified in [section 7.9.3][] is invoked and the output assigned to projMv.
+When the function get_mv_projection is called, the get mv projection process specified in [[#get_mv_projection_process]] is invoked and the output assigned to projMv.
 
-When the function get_block_position is called, the get block position process specified in [section 7.9.4][] is invoked and the output assigned to posValid.
+When the function get_block_position is called, the get block position process specified in [[#get_block_position_process]] is invoked and the output assigned to posValid.
 This process also sets up the variables PosY8 and PosX8 representing the projected location in the motion field.
 
 The process now exits with the output set equal to 1.
@@ -811,8 +811,8 @@ The project function clears posValid if the resulting position is offset too far
 The following sections define the processes used for predicting the motion vectors.
 
 The entry point to these processes is triggered by the function call to find_mv_stack
-in the inter block mode info syntax described in [section 5.11.23][].
-This function call invokes the Find MV Stack Process specified in [section 7.10.2][].
+in the inter block mode info syntax described in [[#inter_block_mode_info_syntax]].
+This function call invokes the Find MV Stack Process specified in [[#find_mv_stack_process]].
 
 ### Find MV stack process ### {#find_mv_stack_process}
 
@@ -838,21 +838,21 @@ The following ordered steps apply:
 
 1. The variable NewMvCount (representing the number of candidates found that used NEWMV encoding) is set equal to 0.
 
-1. The setup global mv process specified in [section 7.10.2.1][] is invoked with the input 0 and the output is assigned to GlobalMvs[ 0 ].
+1. The setup global mv process specified in [[#setup_global_mv_process]] is invoked with the input 0 and the output is assigned to GlobalMvs[ 0 ].
 
-1. If isCompound is equal to 1, the setup global mv process specified in [section 7.10.2.1][] is invoked with the input 1 and the output is assigned to GlobalMvs[ 1 ].
+1. If isCompound is equal to 1, the setup global mv process specified in [[#setup_global_mv_process]] is invoked with the input 1 and the output is assigned to GlobalMvs[ 1 ].
 
 1. The variable FoundMatch is set equal to 0.
 
-2. The scan row process in [section 7.10.2.2][] is invoked with deltaRow equal to -1 and isCompound as inputs.
+2. The scan row process in [[#scan_row_process]] is invoked with deltaRow equal to -1 and isCompound as inputs.
 
 2. The variable foundAboveMatch is set equal to FoundMatch, and FoundMatch is set equal to 0.
 
-3. The scan col process in [section 7.10.2.3][] is invoked with deltaCol equal to -1 and isCompound as inputs.
+3. The scan col process in [[#scan_col_process]] is invoked with deltaCol equal to -1 and isCompound as inputs.
 
 3. The variable foundLeftMatch is set equal to FoundMatch, and FoundMatch is set equal to 0.
 
-4. If Max( bw4, bh4 ) is less than or equal to 16, the scan point process in [section 7.10.2.4][] is invoked with deltaRow equal to -1, deltaCol equal to bw4, and isCompound as inputs.
+4. If Max( bw4, bh4 ) is less than or equal to 16, the scan point process in [[#scan_point_process]] is invoked with deltaRow equal to -1, deltaCol equal to bw4, and isCompound as inputs.
 
 4. If FoundMatch is equal to 1, the variable foundAboveMatch is set equal to 1.
 
@@ -866,45 +866,45 @@ The following ordered steps apply:
 
 1. The variable ZeroMvContext is set equal to 0.
 
-5. If use_ref_frame_mvs is equal to 1, the temporal scan process in [section 7.10.2.5][] is invoked with isCompound as input (the temporal scan process affects ZeroMvContext).
+5. If use_ref_frame_mvs is equal to 1, the temporal scan process in [[#temporal_scan_process]] is invoked with isCompound as input (the temporal scan process affects ZeroMvContext).
 
-6. The scan point process in [section 7.10.2.4][] is invoked with deltaRow equal to -1, deltaCol equal to -1, and isCompound as inputs.
+6. The scan point process in [[#scan_point_process]] is invoked with deltaRow equal to -1, deltaCol equal to -1, and isCompound as inputs.
 
 6. If FoundMatch is equal to 1, the variable foundAboveMatch is set equal to 1.
 
 6. The variable FoundMatch is set equal to 0.
 
-7. The scan row process in [section 7.10.2.2][] is invoked with deltaRow equal to -3 and isCompound as inputs.
+7. The scan row process in [[#scan_row_process]] is invoked with deltaRow equal to -3 and isCompound as inputs.
 
 7. If FoundMatch is equal to 1, the variable foundAboveMatch is set equal to 1.
 
 7. The variable FoundMatch is set equal to 0.
 
-8. The scan col process in [section 7.10.2.3][] is invoked with deltaCol equal to -3 and isCompound as inputs.
+8. The scan col process in [[#scan_col_process]] is invoked with deltaCol equal to -3 and isCompound as inputs.
 
 8. If FoundMatch is equal to 1, the variable foundLeftMatch is set equal to 1.
 
 7. The variable FoundMatch is set equal to 0.
 
-9. If bh4 is greater than 1, the scan row process in [section 7.10.2.2][] is invoked with deltaRow equal to -5 and isCompound as inputs.
+9. If bh4 is greater than 1, the scan row process in [[#scan_row_process]] is invoked with deltaRow equal to -5 and isCompound as inputs.
 
 7. If FoundMatch is equal to 1, the variable foundAboveMatch is set equal to 1.
 
 7. The variable FoundMatch is set equal to 0.
 
-10. If bw4 is greater than 1, the scan col process in [section 7.10.2.3][] is invoked with deltaCol equal to -5 and isCompound as inputs.
+10. If bw4 is greater than 1, the scan col process in [[#scan_col_process]] is invoked with deltaCol equal to -5 and isCompound as inputs.
 
 7. If FoundMatch is equal to 1, the variable foundLeftMatch is set equal to 1.
 
 12. The variable TotalMatches (representing all found candidates) is set equal to foundAboveMatch + foundLeftMatch.
 
-12. The sorting process in [section 7.10.2.11][] is invoked with start equal to 0, end equal to numNearest, and isCompound as input.
+12. The sorting process in [[#sorting_process]] is invoked with start equal to 0, end equal to numNearest, and isCompound as input.
 
-13. The sorting process in [section 7.10.2.11][] is invoked with start equal to numNearest, end equal to NumMvFound, and isCompound as input.
+13. The sorting process in [[#sorting_process]] is invoked with start equal to numNearest, end equal to NumMvFound, and isCompound as input.
 
-14. If NumMvFound is less than 2, the extra search process in [section 7.10.2.12][] is invoked with isCompound as input.
+14. If NumMvFound is less than 2, the extra search process in [[#extra_search_process]] is invoked with isCompound as input.
 
-14. The context and clamping process in [section 7.10.2.14][] is invoked with isCompound and numNew as input.
+14. The context and clamping process in [[#context_and_clamping_process]] is invoked with isCompound and numNew as input.
 
 #### Setup global MV process #### {#setup_global_mv_process}
 
@@ -950,7 +950,7 @@ lower_mv_precision( mv )
 ~~~~~
 
 
-where the call to lower_mv_precision invokes the lower precision process specified in [section 7.10.2.10][].
+where the call to lower_mv_precision invokes the lower precision process specified in [[#lower_precision_process]].
 
 #### Scan row process #### {#scan_row_process}
 
@@ -1013,7 +1013,7 @@ while ( i < end4 ) {
 }
 ~~~~~
 
-where the call to add_ref_mv_candidate invokes the process in [section 7.10.2.7][].
+where the call to add_ref_mv_candidate invokes the process in [[#add_reference_motion_vector_process]].
 
 
 #### Scan col process #### {#scan_col_process}
@@ -1057,7 +1057,7 @@ while ( i < end4 ) {
 }
 ~~~~~
 
-where the call to add_ref_mv_candidate invokes the process in [section 7.10.2.7][].
+where the call to add_ref_mv_candidate invokes the process in [[#add_reference_motion_vector_process]].
 
 #### Scan point process #### {#scan_point_process}
 
@@ -1074,7 +1074,7 @@ The variable weight is set equal to 4.
 
 If is_inside( mvRow, mvCol ) is equal to 1
 and RefFrames[ mvRow ][ mvCol ][ 0 ] has been written for this frame (this checks that the candidate location has been decoded),
-the add reference motion vector process in [section 7.10.2.7][] is invoked with mvRow, mvCol, isCompound, weight as inputs.
+the add reference motion vector process in [[#add_reference_motion_vector_process]] is invoked with mvRow, mvCol, isCompound, weight as inputs.
 
 #### Temporal scan process #### {#temporal_scan_process}
 
@@ -1100,7 +1100,7 @@ for ( deltaRow = 0; deltaRow < Min( bh4, 16 ) ; deltaRow += stepH4 ) {
 }
 ~~~~~
 
-where the call to add_tpl_ref_mv invokes the temporal sample process in [section 7.10.2.6][].
+where the call to add_tpl_ref_mv invokes the temporal sample process in [[#temporal_sample_process]].
 
 The process then scans positions around the block (but still within the same superblock) as follows:
 
@@ -1226,7 +1226,7 @@ if ( !isCompound ) {
 ~~~~~
 
 
-where the call to lower_mv_precision invokes the lower precision process specified in [section 7.10.2.10][].
+where the call to lower_mv_precision invokes the lower precision process specified in [[#lower_precision_process]].
 
 
 #### Add reference motion vector process #### {#add_reference_motion_vector_process}
@@ -1242,11 +1242,11 @@ If IsInters[ mvRow ][ mvCol ] is equal to 0, this process terminates immediately
 
 If isCompound is equal to 0, the following applies for candList = 0..1:
 
-1. If RefFrames[ mvRow ][ mvCol ][ candList ] is equal to RefFrame[ 0 ], the search stack process in [section 7.10.2.8][] is invoked with mvRow, mvCol, weight, and candList as inputs.
+1. If RefFrames[ mvRow ][ mvCol ][ candList ] is equal to RefFrame[ 0 ], the search stack process in [[#search_stack_process]] is invoked with mvRow, mvCol, weight, and candList as inputs.
 
 Otherwise (isCompound is equal to 1), the following applies:
 
-1. If RefFrames[ mvRow ][ mvCol ][ 0 ] is equal to RefFrame[ 0 ] and RefFrames[ mvRow ][ mvCol ][ 1 ] is equal to RefFrame[ 1 ], the compound search stack process in [section 7.10.2.9][] is invoked with mvRow, mvCol, and weight as inputs.
+1. If RefFrames[ mvRow ][ mvCol ][ 0 ] is equal to RefFrame[ 0 ] and RefFrames[ mvRow ][ mvCol ][ 1 ] is equal to RefFrame[ 1 ], the compound search stack process in [[#compound_search_stack_process]] is invoked with mvRow, mvCol, and weight as inputs.
 
 #### Search stack process #### {#search_stack_process}
 
@@ -1270,7 +1270,7 @@ The candidate motion vector candMv is set as follows:
 * If ( candMode == GLOBALMV \|\| candMode == GLOBAL_GLOBALMV) and ( GmType[ RefFrame[ 0 ] ] > TRANSLATION ) and ( large == 1 ), candMv is set equal to GlobalMvs[ 0 ].
 * Otherwise, candMv is set equal to Mvs[ mvRow ][ mvCol ][ candList ].
 
-The lower precision process specified in [section 7.10.2.10][] is invoked with candMv.
+The lower precision process specified in [[#lower_precision_process]] is invoked with candMv.
 
 If has_newmv( candMode ) is equal to 1, NewMvCount is set equal to NewMvCount + 1.
 
@@ -1306,7 +1306,7 @@ The variable candSize is set equal to MiSizes[ mvRow ][ mvCol ].
 If candMode is equal to GLOBAL_GLOBALMV, for refList = 0..1 the following applies:
  * If GmType[ RefFrame[ refList ] ] > TRANSLATION, candMvs[ refList ] is set equal to GlobalMvs[ refList ].
 
-For i = 0..1, the lower precision process specified in [section 7.10.2.10][] is invoked with candMvs[ i ].
+For i = 0..1, the lower precision process specified in [[#lower_precision_process]] is invoked with candMvs[ i ].
 
 The variable FoundMatch is set equal to 1.
 
@@ -1464,7 +1464,7 @@ for ( pass = 0; pass < 2; pass++ ) {
 
 The first pass searches the row above, the second searches the column to the left.
 
-The function call to add_extra_mv_candidate invokes the add extra mv candidate process specified in [section 7.10.2.13][] with mvRow, mvCol, isCompound as inputs.
+The function call to add_extra_mv_candidate invokes the add extra mv candidate process specified in [[#add_extra_mv_candidate_process]] with mvRow, mvCol, isCompound as inputs.
 
 If isCompound is equal to 1, the candidates in the RefIdMvs and RefDiffMvs arrays are added to the stack as follows (using the temporary array combinedMvs):
 
@@ -1747,7 +1747,7 @@ if ( NumSamples == 0 && NumSamplesScanned > 0 )
    NumSamples = 1
 ~~~~~
 
-where the call to add_sample specifies that the add sample process in [section 7.10.4.2][] should be invoked.
+where the call to add_sample specifies that the add sample process in [[#add_sample_process]] should be invoked.
 
 #### Add sample process #### {#add_sample_process}
 
@@ -1823,7 +1823,7 @@ values.
 
 These processes are triggered at points defined by function calls to
 predict_intra, predict_inter, predict_chroma_from_luma, and predict_palette in the residual syntax table described in
-[section 5.11.34][].
+[[#residual_syntax]].
 
 ### Intra prediction process ### {#intra_prediction_process}
 
@@ -1888,11 +1888,11 @@ The array AboveRow[ i ] for i = -1 is specified by:
 The array LeftCol[ i ] for i = -1 is set equal to AboveRow[ -1 ].
 
 A 2D array named pred containing the intra predicted samples is constructed as follows:
- * If plane is equal to 0 and use_filter_intra is true, the recursive intra prediction process specified in [section 7.11.2.3][] is invoked with w and h as inputs, and the output is assigned to pred.
- * Otherwise, if is_directional_mode( mode ) is true, the directional intra prediction process specified in [section 7.11.2.4][] is invoked with plane, x, y, haveLeft, haveAbove, mode, w, h, maxX, maxY as inputs and the output is assigned to pred.
- * Otherwise if mode is equal to SMOOTH_PRED or SMOOTH_V_PRED or SMOOTH_H_PRED, the smooth intra prediction process specified in [section 7.11.2.6][] is invoked with mode, log2W, log2H, w, and h as inputs, and the output is assigned to pred.
- * Otherwise if mode is equal to DC_PRED, the DC intra prediction process specified in [section 7.11.2.5][] is invoked with haveLeft, haveAbove, log2W, log2H, w, and h as inputs and the output is assigned to pred.
- * Otherwise (mode is equal to PAETH_PRED), the basic intra prediction process specified in [section 7.11.2.2][] is invoked with mode, w, and h as inputs, and the output is assigned to pred.
+ * If plane is equal to 0 and use_filter_intra is true, the recursive intra prediction process specified in [[#recursive_intra_prediction_process]] is invoked with w and h as inputs, and the output is assigned to pred.
+ * Otherwise, if is_directional_mode( mode ) is true, the directional intra prediction process specified in [[#directional_intra_prediction_process]] is invoked with plane, x, y, haveLeft, haveAbove, mode, w, h, maxX, maxY as inputs and the output is assigned to pred.
+ * Otherwise if mode is equal to SMOOTH_PRED or SMOOTH_V_PRED or SMOOTH_H_PRED, the smooth intra prediction process specified in [[#smooth_intra_prediction_process]] is invoked with mode, log2W, log2H, w, and h as inputs, and the output is assigned to pred.
+ * Otherwise if mode is equal to DC_PRED, the DC intra prediction process specified in [[#dc_intra_prediction_process]] is invoked with haveLeft, haveAbove, log2W, log2H, w, and h as inputs and the output is assigned to pred.
+ * Otherwise (mode is equal to PAETH_PRED), the basic intra prediction process specified in [[#basic_intra_prediction_process]] is invoked with mode, w, and h as inputs, and the output is assigned to pred.
 
 The current frame is updated as follows:
  * CurrFrame[ plane ][ y + i ][ x + j ] is set equal to pred[ i ][ j ] for i = 0..h-1 and j = 0..w-1.
@@ -1977,22 +1977,22 @@ The following ordered steps apply:
  4. If enable_intra_edge_filter is equal to 1, the following applies:
 
  * If pAngle is not equal to 90 and pAngle is not equal to 180, the following applies:
- * If (pAngle > 90) and (pAngle < 180) and (w + h) >= 24), the filter corner process specified in [section 7.11.2.7][] is invoked and the output assigned to both LeftCol[ -1 ] and AboveRow[ -1 ].
- * The intra filter type process specified in [section 7.11.2.8][] is invoked with the input variable plane and the output assigned to filterType.
+ * If (pAngle > 90) and (pAngle < 180) and (w + h) >= 24), the filter corner process specified in [[#filter_corner_process]] is invoked and the output assigned to both LeftCol[ -1 ] and AboveRow[ -1 ].
+ * The intra filter type process specified in [[#intra_filter_type_process]] is invoked with the input variable plane and the output assigned to filterType.
  * If haveAbove is equal to 1, the following steps apply:
- * The intra edge filter strength selection process specified in [section 7.11.2.9][] is invoked with w, h, filterType, and pAngle - 90 as inputs, and the output assigned to the variable strength.
+ * The intra edge filter strength selection process specified in [[#intra_edge_filter_strength_selection_process]] is invoked with w, h, filterType, and pAngle - 90 as inputs, and the output assigned to the variable strength.
  * The variable numPx is set equal to Min( w, ( maxX - x + 1 ) ) + ( pAngle < 90 ? h : 0 ) + 1.
- * The intra edge filter process specified in [section 7.11.2.12][] is invoked with the parameters numPx, strength, and 0 as inputs.
+ * The intra edge filter process specified in [[#intra_edge_filter_process]] is invoked with the parameters numPx, strength, and 0 as inputs.
  * If haveLeft is equal to 1, the following steps apply:
- * The intra edge filter strength selection process specified in [section 7.11.2.9][] is invoked with w, h, filterType, and pAngle - 180 as inputs, and the output assigned to the variable strength.
+ * The intra edge filter strength selection process specified in [[#intra_edge_filter_strength_selection_process]] is invoked with w, h, filterType, and pAngle - 180 as inputs, and the output assigned to the variable strength.
  * The variable numPx is set equal to Min( h, ( maxY - y + 1 ) ) + ( pAngle > 180 ? w : 0 ) + 1.
- * The intra edge filter process specified in [section 7.11.2.12][] is invoked with the parameters numPx, strength, and 1 as inputs.
- * The intra edge upsample selection process specified in [section 7.11.2.10][] is invoked with w, h, filterType, and pAngle - 90 as inputs, and the output assigned to the variable upsampleAbove.
+ * The intra edge filter process specified in [[#intra_edge_filter_process]] is invoked with the parameters numPx, strength, and 1 as inputs.
+ * The intra edge upsample selection process specified in [[#intra_edge_upsample_selection_process]] is invoked with w, h, filterType, and pAngle - 90 as inputs, and the output assigned to the variable upsampleAbove.
  * The variable numPx is set equal to ( w + (pAngle < 90 ? h : 0) ).
- * If upsampleAbove is equal to 1, the intra edge upsample process specified in [section 7.11.2.11][] is invoked with the parameters numPx and 0 as inputs.
- * The intra edge upsample selection process specified in [section 7.11.2.10][] is invoked with w, h, filterType, and pAngle - 180 as inputs, and the output assigned to the variable upsampleLeft.
+ * If upsampleAbove is equal to 1, the intra edge upsample process specified in [[#intra_edge_upsample_process]] is invoked with the parameters numPx and 0 as inputs.
+ * The intra edge upsample selection process specified in [[#intra_edge_upsample_selection_process]] is invoked with w, h, filterType, and pAngle - 180 as inputs, and the output assigned to the variable upsampleLeft.
  * The variable numPx is set equal to ( h + (pAngle > 180 ? w : 0) ).
- * If upsampleLeft is equal to 1, the intra edge upsample process specified in [section 7.11.2.11][] is invoked with the parameters numPx and 1 as inputs.
+ * If upsampleLeft is equal to 1, the intra edge upsample process specified in [[#intra_edge_upsample_process]] is invoked with the parameters numPx and 1 as inputs.
 
  5. The variable dx is derived as follows:
 
@@ -2513,12 +2513,12 @@ The variable isCompound is set equal to RefFrames[ candRow ][ candCol ][ 1 ] > I
 
 The prediction arrays are formed by the following ordered steps:
 
-1. The rounding variables derivation process specified in [section 7.11.3.2][] is invoked with the variable isCompound as input.
-2. If plane is equal to 0 and motion_mode is equal to LOCALWARP, the warp estimation process in [section 7.11.3.8][] is invoked.
-3. If plane is equal to 0 and motion_mode is equal to LOCALWARP and LocalValid is equal to 1, the setup shear process specified in [section 7.11.3.6][] is invoked with LocalWarpParams as input, and the output warpValid is assigned to LocalValid (the other outputs are discarded).
+1. The rounding variables derivation process specified in [[#rounding_variables_derivation_process]] is invoked with the variable isCompound as input.
+2. If plane is equal to 0 and motion_mode is equal to LOCALWARP, the warp estimation process in [[#warp_estimation_process]] is invoked.
+3. If plane is equal to 0 and motion_mode is equal to LOCALWARP and LocalValid is equal to 1, the setup shear process specified in [[#setup_shear_process]] is invoked with LocalWarpParams as input, and the output warpValid is assigned to LocalValid (the other outputs are discarded).
 4. The variable refList is set equal to 0.
 5. The variable refFrame is set equal to RefFrames[ candRow ][ candCol ][ refList ].
-6. If (YMode == GLOBALMV \ | \ | YMode == GLOBAL_GLOBALMV) and GmType[ refFrame ] > TRANSLATION, the setup shear process specified in [section 7.11.3.6][] is invoked with gm_params[ refFrame ] as input, and the output warpValid is assigned to globalValid (the other outputs are discarded).
+6. If (YMode == GLOBALMV \ | \ | YMode == GLOBAL_GLOBALMV) and GmType[ refFrame ] > TRANSLATION, the setup shear process specified in [[#setup_shear_process]] is invoked with gm_params[ refFrame ] as input, and the output warpValid is assigned to globalValid (the other outputs are discarded).
 7. The variable useWarp (a value of 1 indicates local warping, 2 indicates global warping) is derived as follows:
     * If w < 8 or h < 8, useWarp is set equal to 0.
     * Otherwise, if force_integer_mv is equal to 1, useWarp is set equal to 0.
@@ -2533,29 +2533,29 @@ The prediction arrays are formed by the following ordered steps:
 9. The variable refIdx specifying which reference frame is being used is set as follows:
     * If use_intrabc is equal to 0, refIdx is set equal to ref_frame_idx[ refFrame - LAST_FRAME ].
     * Otherwise (use_intrabc is equal to 1), refIdx is set equal to -1 and RefFrameWidth[ -1 ] is set equal to FrameWidth, RefFrameHeight[ -1 ] is set equal to FrameHeight, and RefUpscaledWidth[ -1 ] is set equal to UpscaledWidth. (These values ensure that the motion vector scaling has no effect.)
-10. The motion vector scaling process in [section 7.11.3.3][] is invoked with plane, refIdx, x, y, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
+10. The motion vector scaling process in [[#motion_vector_scaling_process]] is invoked with plane, refIdx, x, y, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
 11. If use_intrabc is equal to 1, RefFrameWidth[ -1 ] is set equal to  MiCols * MI_SIZE, RefFrameHeight[ -1 ] is set equal to MiRows * MI_SIZE, and RefUpscaledWidth[ -1 ] is set equal to  MiCols * MI_SIZE. (These values are needed to avoid intrabc prediction being cropped to the frame boundaries.)
-12. If useWarp is not equal to 0, the block warp process in [section 7.11.3.5][] is invoked with useWarp, plane, refList, x, y, i8, j8, w, h as inputs and the output is merged into the 2D array preds[ refList ] for `i8 = 0..((h-1) >> 3)` and for `j8 = 0..((w-1) >> 3)`. (Each invocation fills in a block of output of size w by h at x offset j8 * 8 and y offset i8 * 8.)
-13. If useWarp is equal to 0, the block inter prediction process in [section 7.11.3.4][] is invoked with plane, refIdx, startX, startY, stepX, stepY, w, h, candRow, candCol as inputs and the output is assigned to the 2D array preds[ refList ].
+12. If useWarp is not equal to 0, the block warp process in [[#block_warp_process]] is invoked with useWarp, plane, refList, x, y, i8, j8, w, h as inputs and the output is merged into the 2D array preds[ refList ] for `i8 = 0..((h-1) >> 3)` and for `j8 = 0..((w-1) >> 3)`. (Each invocation fills in a block of output of size w by h at x offset j8 * 8 and y offset i8 * 8.)
+13. If useWarp is equal to 0, the block inter prediction process in [[#block_inter_prediction_process]] is invoked with plane, refIdx, startX, startY, stepX, stepY, w, h, candRow, candCol as inputs and the output is assigned to the 2D array preds[ refList ].
 14. If isCompound is equal to 1, then the variable refList is set equal to 1 and steps 5 to 13 are repeated to form the prediction for the second reference.
 
 
 An array named Mask is prepared as follows:
- * If compound_type is equal to COMPOUND_WEDGE and plane is equal to 0, the wedge mask process in [section 7.11.3.11][] is invoked with w, h as inputs.
- * Otherwise if compound_type is equal to COMPOUND_INTRA, the intra mode variant mask process in [section 7.11.3.13][] is invoked with w, h as inputs.
- * Otherwise if compound_type is equal to COMPOUND_DIFFWTD and plane is equal to 0, the difference weight mask process in [section 7.11.3.12][] is invoked with preds, w, h as inputs.
+ * If compound_type is equal to COMPOUND_WEDGE and plane is equal to 0, the wedge mask process in [[#wedge_mask_process]] is invoked with w, h as inputs.
+ * Otherwise if compound_type is equal to COMPOUND_INTRA, the intra mode variant mask process in [[#intra_mode_variant_mask_process]] is invoked with w, h as inputs.
+ * Otherwise if compound_type is equal to COMPOUND_DIFFWTD and plane is equal to 0, the difference weight mask process in [[#difference_weight_mask_process]] is invoked with preds, w, h as inputs.
  * Otherwise, no mask array is needed.
 
-If compound_type is equal to COMPOUND_DISTANCE, the distance weights process in [section 7.11.3.15][] is invoked with candRow and candCol as inputs.
+If compound_type is equal to COMPOUND_DISTANCE, the distance weights process in [[#distance_weights_process]] is invoked with candRow and candCol as inputs.
 
 The inter predicted samples are then derived as
 follows:
  * If isCompound is equal to 0 and IsInterIntra is equal to 0, CurrFrame[ plane ][ y + i ][ x + j ] is set equal to Clip1( preds[ 0 ][ i ][ j ] ) for i = 0..h-1 and j = 0..w-1.
  * Otherwise if compound_type is equal to COMPOUND_AVERAGE, CurrFrame[ plane ][ y + i ][ x + j ] is set equal to Clip1( Round2( preds[ 0 ][ i ][ j ] + preds[ 1 ][ i ][ j ], 1 + InterPostRound ) ) for i = 0..h-1 and j = 0..w-1.
  * Otherwise if compound_type is equal to COMPOUND_DISTANCE, CurrFrame[ plane ][ y + i ][ x + j ] is set equal to Clip1( Round2( FwdWeight * preds[ 0 ][ i ][ j ] + BckWeight * preds[ 1 ][ i ][ j ], 4 + InterPostRound ) ) for i = 0..h-1 and j = 0..w-1.
- * Otherwise, the mask blend process in [section 7.11.3.14][] is invoked with preds, plane, x, y, w, h as inputs.
+ * Otherwise, the mask blend process in [[#mask_blend_process]] is invoked with preds, plane, x, y, w, h as inputs.
 
-If motion_mode is equal to OBMC, the overlapped motion compensation in [section 7.11.3.9][] is invoked with plane, w, h as inputs.
+If motion_mode is equal to OBMC, the overlapped motion compensation in [[#overlapped_motion_compensation_process]] is invoked with plane, w, h as inputs.
 
 #### Rounding variables derivation process #### {#rounding_variables_derivation_process}
 
@@ -2902,7 +2902,7 @@ The variable dstY is set equal to warpParams[4] * srcX + warpParams[5] * srcY + 
 
 (dstX and dstY specify the destination location in the luma plane using WARPEDMODEL_PREC_BITS bits of precision).
 
-The setup shear process specified in [section 7.11.3.6][] is invoked with warpParams as input, and the outputs are assigned to warpValid, alpha, beta, gamma, and delta.  (warpValid will always be equal to 1 at this point.)
+The setup shear process specified in [[#setup_shear_process]] is invoked with warpParams as input, and the outputs are assigned to warpValid, alpha, beta, gamma, and delta.  (warpValid will always be equal to 1 at this point.)
 
 The sub-sample interpolation is effected via two one-dimensional convolutions.
 First a horizontal filter is used to build up an intermediate array, and then this
@@ -3067,7 +3067,7 @@ The variable alpha0 is set equal to `Clip3( -32768, 32767, warpParams[ 2 ] - (1 
 
 The variable beta0 is set equal to `Clip3( -32768, 32767, warpParams[ 3 ] )`.
 
-The resolve divisor process specified in [section 7.11.3.7][] is invoked with warpParams[ 2 ] as input, and the outputs assigned to divShift and divFactor.
+The resolve divisor process specified in [[#resolve_divisor_process]] is invoked with warpParams[ 2 ] as input, and the outputs assigned to divShift and divFactor.
 
 The variable v is set equal to `( warpParams[ 4 ] << WARPEDMODEL_PREC_BITS )`.
 
@@ -3202,7 +3202,7 @@ The variable LocalValid is set as follows:
 
 If det is equal to 0, this process terminates at this point.
 
-The resolve divisor process specified in [section 7.11.3.7][] is invoked with det as input, and the outputs assigned to divShift and divFactor.
+The resolve divisor process specified in [[#resolve_divisor_process]] is invoked with det as input, and the outputs assigned to divShift and divFactor.
 
 The local warp parameters in LocalWarpParams are derived as follows:
 
@@ -3321,10 +3321,10 @@ When the function predict_overlap is invoked, the following ordered steps apply 
  2. The variable refIdx is set equal to ref_frame_idx[ RefFrames[ candRow ][ candCol ][ 0 ] - LAST_FRAME ].
  3. The variable predX is set equal to `(x4 * 4) >> subX`.
  4. The variable predY is set equal to `(y4 * 4) >> subY`.
- 5. The motion vector scaling process in [section 7.11.3.3][] is invoked with plane, refIdx, predX, predY, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
- 6. The block inter prediction process in [section 7.11.3.4][] is invoked with plane, refIdx, startX, startY, stepX, stepY, predW, predH, candRow, candCol as inputs and the output is assigned to the 2D array obmcPred.
+ 5. The motion vector scaling process in [[#motion_vector_scaling_process]] is invoked with plane, refIdx, predX, predY, mv as inputs and the output being the initial location startX, startY, and the step sizes stepX, stepY.
+ 6. The block inter prediction process in [[#block_inter_prediction_process]] is invoked with plane, refIdx, startX, startY, stepX, stepY, predW, predH, candRow, candCol as inputs and the output is assigned to the 2D array obmcPred.
  7. obmcPred[ i ][ j ] is set equal to Clip1( obmcPred[ i ][ j ] ) for i = 0..predH-1 and j = 0..predW-1.
- 8. The blending process in [section 7.11.3.10][] is invoked with plane, predX, predY, predW, predH, pass, obmcPred, and mask as inputs.
+ 8. The blending process in [[#overlap_blending_process]] is invoked with plane, predX, predY, predW, predH, pass, obmcPred, and mask as inputs.
 
 The function get_obmc_mask returns a blending mask as follows:
 
@@ -4064,7 +4064,7 @@ coefficient for a particular plane and is derived as follows:
 The reconstruct process is invoked to perform dequantization, inverse
 transform and reconstruction. This process is triggered at a point defined by
 a function call to reconstruct in the transform block syntax table described in
-[section 5.11.35][].
+[[#transform_block_syntax]].
 
 The inputs to this process are:
  * a variable plane specifying which plane is being reconstructed,
@@ -4124,7 +4124,7 @@ The following ordered steps apply:
 
       f. Dequant[ i ][ j ] is set equal to `Clip3( - ( 1 << ( 7 + BitDepth ) ), ( 1 << ( 7 + BitDepth ) ) - 1, dq2 )`.
  
- 2. Invoke the 2D inverse transform block process defined in [section 7.13.3][] with the variable txSz as input. The inverse transform outputs are stored in the Residual buffer.
+ 2. Invoke the 2D inverse transform block process defined in [[#2d_inverse_transform_process]] with the variable txSz as input. The inverse transform outputs are stored in the Residual buffer.
  
  3. For i = 0..(h-1), for j = 0..(w-1), the following applies:
  
@@ -4146,7 +4146,7 @@ always be representable by a signed integer with Max( BitDepth + 5, 15 ) bits.
 ### General ### {#inverse_transform_process_general}
 
 This section details the inverse transforms used during the reconstruction
-processes detailed in [section 7.12][].
+processes detailed in [[#reconstruction_and_dequantization]].
 
 ### 1D transforms ### {#1d_transforms}
 
@@ -4264,7 +4264,7 @@ The inputs to this process are:
  * a variable r that specifies the intermediate clamping range.
 
 The following ordered steps apply:
- 1. Invoke the inverse DCT permutation process as specified in [section 7.13.2.2][] with the input variable n.
+ 1. Invoke the inverse DCT permutation process as specified in [[#inverse_dct_array_permutation_process]] with the input variable n.
  2. If n is equal to 6, invoke B( 32 + i, 63 - i, 63 - 4 * brev( 4, i ), 0, r ) for i = 0..15.
  3. If n is greater than or equal to 5, invoke `B( 16 + i, 31 - i, 6 + ( brev( 3, 7 - i ) << 3 ), 0, r )` for i = 0..7.
  4. If n is equal to 6, invoke H( 32 + i * 2, 33 + i * 2, i & 1, r ) for i = 0..15.
@@ -4424,13 +4424,13 @@ This process performs an in-place inverse ADST process on the array T of size 8.
 The input to this process is a variable r, specifying the intermediate clamping range.
 
 The following ordered steps apply:
- 1. Invoke the ADST input array permutation process specified in [section 7.13.2.4][] with the  input variable n set to 3.
+ 1. Invoke the ADST input array permutation process specified in [[#inverse_adst_input_array_permutation_process]] with the  input variable n set to 3.
  2. Invoke B( 2 * i, 2 * i + 1, 60 - 16 * i, 1, r ) for i = 0..3.
  3. Invoke H( i, 4 + i, 0, r ) for i = 0..3.
  4. Invoke B( 4 + 3 * i, 5 + i, 48 - 32 * i, 1, r ) for i = 0..1.
  5. Invoke H( 4 * j + i, 2 + 4 * j + i, 0, r ) for i = 0..1, for j = 0..1.
  6. Invoke B( 2 + 4 * i, 3 + 4 * i, 32, 1, r ) for i = 0..1.
- 7. Invoke the ADST output array permutation process specified in [section 7.13.2.5][] with the  input variable n set to 3.
+ 7. Invoke the ADST output array permutation process specified in [[#inverse_adst_output_array_permutation_process]] with the  input variable n set to 3.
 
 #### Inverse ADST16 process #### {#inverse_adst16_process}
 
@@ -4439,7 +4439,7 @@ This process performs an in-place inverse ADST process on the array T of size 16
 The input to this process is a variable r, specifying the intermediate clamping range.
 
   The following ordered steps apply:
- 1. Invoke the ADST input array permutation process specified in [section 7.13.2.4][] with the  input variable n set to 4.
+ 1. Invoke the ADST input array permutation process specified in [[#inverse_adst_input_array_permutation_process]] with the  input variable n set to 4.
  2. Invoke B( 2 * i, 2 * i + 1, 62 - 8 * i, 1, r ) for i = 0..7.
  3. Invoke H( i, 8 + i, 0, r ) for i = 0..7.
  4. Invoke B( 8 + 2 * i, 9 + 2 * i, 56 - 32 * i, 1, r ) and B( 13 + 2 * i, 12 + 2 * i, 8 + 32 * i, 1, r ) for i = 0..1.
@@ -4447,7 +4447,7 @@ The input to this process is a variable r, specifying the intermediate clamping 
  6. Invoke B( 4 + 8 * j + 3 * i, 5 + 8 * j + i, 48 - 32 * i, 1, r ) for i = 0..1, for j = 0..1.
  7. Invoke H( 4 * j + i, 2 + 4 * j + i, 0, r ) for i = 0..1, for j = 0..3.
  8. Invoke B( 2 + 4 * i, 3 + 4 * i, 32, 1, r ) for i = 0..3.
- 9. Invoke the ADST output array permutation process specified in [section 7.13.2.5][] with the  input variable n set to 4.
+ 9. Invoke the ADST output array permutation process specified in [[#inverse_adst_output_array_permutation_process]] with the  input variable n set to 4.
 
 
 #### Inverse ADST process #### {#inverse_adst_process}
@@ -4460,9 +4460,9 @@ The inputs to this process are:
  * a variable r that specifies the intermediate clamping range.
 
 The following steps apply:
- * If n is equal to 2, invoke the inverse ADST4 process in [section 7.13.2.6][], with the input variable r.
- * Otherwise, if n is equal to 3, invoke the inverse ADST8 process in [section 7.13.2.7][], with the input variable r.
- * Otherwise (n is equal to 4), invoke the inverse ADST16 process in [section 7.13.2.8][], with the input variable r.
+ * If n is equal to 2, invoke the inverse ADST4 process in [[#inverse_adst4_process]], with the input variable r.
+ * Otherwise, if n is equal to 3, invoke the inverse ADST8 process in [[#inverse_adst8_process]], with the input variable r.
+ * Otherwise (n is equal to 4), invoke the inverse ADST16 process in [[#inverse_adst16_process]], with the input variable r.
 
 
 #### Inverse Walsh-Hadamard transform process #### {#inverse_walsh-hadamard_transform_process}
@@ -4541,10 +4541,10 @@ The input to this process is a variable n that specifies the base 2 logarithm
 of the length of the input array.
 
 The process to invoke depends on n as follows:
- * If n is equal to 2, invoke the inverse identity transform 4 process in [section 7.13.2.11][].
- * Otherwise, if n is equal to 3, invoke the inverse identity transform 8 process in [section 7.13.2.12][].
- * Otherwise, if n is equal to 4, invoke the inverse identity transform 16 process in [section 7.13.2.13][].
- * Otherwise (n is equal to 5), invoke the inverse identity transform 32 process in [section 7.13.2.14][].
+ * If n is equal to 2, invoke the inverse identity transform 4 process in [[#inverse_identity_transform_4_process]].
+ * Otherwise, if n is equal to 3, invoke the inverse identity transform 8 process in [[#inverse_identity_transform_8_process]].
+ * Otherwise, if n is equal to 4, invoke the inverse identity transform 16 process in [[#inverse_identity_transform_16_process]].
+ * Otherwise (n is equal to 5), invoke the inverse identity transform 32 process in [[#inverse_identity_transform_32_process]].
 
 
 ### 2D inverse transform process ### {#2d_inverse_transform_process}
@@ -4575,20 +4575,20 @@ The row transforms with i = 0..(h-1) are applied as follows:
  * If i and j are both less than 32, T[ j ] is set equal to Dequant[ i ][ j ].
  * Otherwise, T[ j ] is set equal to 0.
  * If Abs( log2W - log2H ) is equal to 1, T[ j ] is set equal to Round2( T[ j ] * 2896, 12 ) for j = 0..(w-1).
- * If Lossless is equal to 1, invoke the Inverse WHT process as specified in [section 7.13.2.10][] with shift equal to 2.
- * Otherwise, if PlaneTxType is equal to one of DCT_DCT, ADST_DCT, FLIPADST_DCT or H_DCT, invoke the inverse DCT process as specified in [section 7.13.2.3][] with the input variable n equal to log2W and the input variable r equal to rowClampRange.
- * Otherwise, if PlaneTxType is equal to one of DCT_ADST, ADST_ADST, DCT_FLIPADST, FLIPADST_FLIPADST,  ADST_FLIPADST, FLIPADST_ADST, H_ADST, or H_FLIPADST, invoke the inverse ADST process as  specified in [section 7.13.2.9][] with input variable n equal to log2W and the input variable r equal to rowClampRange.
- * Otherwise, invoke the inverse identity transform process specified in [section 7.13.2.15][] with the input variable n equal to log2W.
+ * If Lossless is equal to 1, invoke the Inverse WHT process as specified in [[#inverse_walsh-hadamard_transform_process]] with shift equal to 2.
+ * Otherwise, if PlaneTxType is equal to one of DCT_DCT, ADST_DCT, FLIPADST_DCT or H_DCT, invoke the inverse DCT process as specified in [[#inverse_dct_process]] with the input variable n equal to log2W and the input variable r equal to rowClampRange.
+ * Otherwise, if PlaneTxType is equal to one of DCT_ADST, ADST_ADST, DCT_FLIPADST, FLIPADST_FLIPADST,  ADST_FLIPADST, FLIPADST_ADST, H_ADST, or H_FLIPADST, invoke the inverse ADST process as  specified in [[#inverse_adst_process]] with input variable n equal to log2W and the input variable r equal to rowClampRange.
+ * Otherwise, invoke the inverse identity transform process specified in [[#inverse_identity_transform_process]] with the input variable n equal to log2W.
  * Set Residual[ i ][ j ] equal to Round2( T[ j ], rowShift ) for j = 0..(w-1).
 
 Between the row and column transforms, Residual[ i ][ j ] is set equal to `Clip3( - ( 1 << ( colClampRange - 1 ) ), ( 1 << ( colClampRange - 1 ) ) - 1, Residual[ i ][ j ] )` for i = 0..(h-1), for j = 0..(w-1).
 
 The column transforms with j = 0..(w-1) are applied as follows:
  * Set T[ i ] equal to Residual[ i ][ j ] for i = 0..(h-1).
- * If Lossless is equal to 1, invoke the Inverse WHT process as specified in [section 7.13.2.10][] with shift equal to 0.
- * Otherwise, if PlaneTxType is equal to one of DCT_DCT, DCT_ADST, DCT_FLIPADST or V_DCT, invoke the inverse DCT process as specified in [section 7.13.2.3][] with the input variable n equal to log2H and the input variable r equal to colClampRange.
- * Otherwise, if PlaneTxType is equal to one of ADST_DCT, ADST_ADST, FLIPADST_DCT, FLIPADST_FLIPADST, ADST_FLIPADST, FLIPADST_ADST, V_ADST, or V_FLIPADST, invoke the inverse ADST process as specified in [section 7.13.2.9][] with input variable n equal to log2H and the input variable r equal to colClampRange.
- * Otherwise, invoke the inverse identity transform process specified in [section 7.13.2.15][] with the input variable n equal to log2H.
+ * If Lossless is equal to 1, invoke the Inverse WHT process as specified in [[#inverse_walsh-hadamard_transform_process]] with shift equal to 0.
+ * Otherwise, if PlaneTxType is equal to one of DCT_DCT, DCT_ADST, DCT_FLIPADST or V_DCT, invoke the inverse DCT process as specified in [[#inverse_dct_process]] with the input variable n equal to log2H and the input variable r equal to colClampRange.
+ * Otherwise, if PlaneTxType is equal to one of ADST_DCT, ADST_ADST, FLIPADST_DCT, FLIPADST_FLIPADST, ADST_FLIPADST, FLIPADST_ADST, V_ADST, or V_FLIPADST, invoke the inverse ADST process as specified in [[#inverse_adst_process]] with input variable n equal to log2H and the input variable r equal to colClampRange.
+ * Otherwise, invoke the inverse identity transform process specified in [[#inverse_identity_transform_process]] with the input variable n equal to log2H.
  * Residual[ i ][ j ] is set equal to Round2( T[ i ], colShift ) for i = 0..(h-1).
 
 where Transform_Row_Shift is defined as:
@@ -4632,7 +4632,7 @@ for ( plane = 0; plane < NumPlanes; plane++ ) {
 ~~~~~
 
 When the function loop_filter_edge is called, the edge loop filter process specified
-in [section 7.14.2][] is invoked with the variables plane, pass, row, and col as inputs.
+in [[#edge_loop_filter_process]] is invoked with the variables plane, pass, row, and col as inputs.
 
 Note: The loop filter is an integral part of the decoding process, in that
 the results of loop filtering are used in the prediction of subsequent frames.
@@ -4725,21 +4725,21 @@ derived as follows:
  * Otherwise, if isBlockEdge is equal to 1 or skip is equal to 0 or isIntra is equal to 1, applyFilter is set equal to 1.
  * Otherwise applyFilter is set equal to 0.
 
-The filter size process specified in [section 7.14.3][] is invoked with the inputs
+The filter size process specified in [[#filter_size_process]] is invoked with the inputs
 txSz, prevTxSz, pass, and plane, and the output assigned to
 the variable filterSize (containing the maximum filter size that can be
 used).
 
-The adaptive filter strength process specified in [section 7.14.4][] is invoked with
+The adaptive filter strength process specified in [[#adaptive_filter_strength_process]] is invoked with
 the inputs row, col, plane, and pass, and the output assigned to the variables
 lvl, limit, blimit, and thresh.
 
-If lvl is equal to 0, the adaptive filter strength process specified in [section 7.14.4][] is invoked with
+If lvl is equal to 0, the adaptive filter strength process specified in [[#adaptive_filter_strength_process]] is invoked with
 the inputs prevRow, prevCol, plane, and pass, and the output assigned to the variables
 lvl, limit, blimit, and thresh.
 
 For the variable i taking values from 0 to MI_SIZE - 1, the following applies:
- * If applyFilter is equal to 1 and lvl is greater than zero, the sample filtering process specified in [section 7.14.6][] is invoked with the input variable x set equal to xP + dy * i, the input variable y set equal to yP + dx * i, and the variables plane, limit, blimit, thresh, dx, dy, and filterSize supplied as inputs.
+ * If applyFilter is equal to 1 and lvl is greater than zero, the sample filtering process specified in [[#sample_filtering_process]] is invoked with the input variable x set equal to xP + dy * i, the input variable y set equal to yP + dx * i, and the variables plane, limit, blimit, thresh, dx, dy, and filterSize supplied as inputs.
 
 Note: the vector (dx,dy) represents the direction of the filter, while
 (dy,dx) represents the direction of the boundary.
@@ -4791,7 +4791,7 @@ The output variable lvl is derived as follows:
  1. If delta_lf_multi is equal to 0, deltaLF is set equal to DeltaLFs[ row ][ col ][ 0 ].
  2. Otherwise (delta_lf_multi is equal to 1), deltaLF is set equal to DeltaLFs[ row ][ col ][ ( plane == 0 ) ? pass : ( plane + 1 ) ].
  
- * The adaptive filter strength selection process specified in [section 7.14.5][] is invoked, with segment, ref, modeType, deltaLF, plane, and pass as inputs, and the output being the output variable lvl.
+ * The adaptive filter strength selection process specified in [[#adaptive_filter_strength_selection_process]] is invoked, with segment, ref, modeType, deltaLF, plane, and pass as inputs, and the output being the output variable lvl.
 
 The variable shift is derived as follows:
  * If loop_filter_sharpness is greater than 4, shift is set equal to 2.
@@ -4860,7 +4860,7 @@ The inputs to this process are:
 
 The outputs of this process are modified values in the array CurrFrame.
 
-First the filter mask process specified in [section 7.14.6.2][] is invoked with the
+First the filter mask process specified in [[#filter_mask_process]] is invoked with the
 inputs x, y, plane, limit, blimit, thresh, dx, dy, and filterSize, and the
 output is assigned to the variables hevMask, filterMask, flatMask, and
 flatMask2.
@@ -4868,9 +4868,9 @@ flatMask2.
 Then the appropriate filter process is invoked with the inputs x, y, plane,
 dx, dy as follows:
  * If filterMask is equal to 0, no filter is invoked.
- * Otherwise, if filterSize is equal to 4 or flatMask is equal to 0, the narrow filter process specified in [section 7.14.6.3][] is invoked with the additional input variable hevMask.
- * Otherwise, if filterSize is equal to 8 or flatMask2 is equal to 0, the wide filter process specified in [section 7.14.6.4][] is invoked with the additional input variable log2Size set to 3.
- * Otherwise, the wide filter process specified in [section 7.14.6.4][] is invoked with the additional input variable log2Size set to 4.
+ * Otherwise, if filterSize is equal to 4 or flatMask is equal to 0, the narrow filter process specified in [[#narrow_filter_process]] is invoked with the additional input variable hevMask.
+ * Otherwise, if filterSize is equal to 8 or flatMask2 is equal to 0, the wide filter process specified in [[#wide_filter_process]] is invoked with the additional input variable log2Size set to 3.
+ * Otherwise, the wide filter process specified in [[#wide_filter_process]] is invoked with the additional input variable log2Size set to 4.
 
 
 #### Filter mask process #### {#filter_mask_process}
@@ -5114,7 +5114,7 @@ for ( r = 0; r < MiRows; r += step4 ) {
 }
 ~~~~~
 
-When the cdef_block function is called, the CDEF block process specified in [section 7.15.1][] is invoked with r, c, and idx as inputs.
+When the cdef_block function is called, the CDEF block process specified in [[#cdef_block_process]] is invoked with r, c, and idx as inputs.
 
 
 ### CDEF block process ### {#cdef_block_process}
@@ -5159,7 +5159,7 @@ The variable coeffShift is set equal to BitDepth - 8.
 
 The variable skip is set equal to ( Skips[ r ][ c ] && Skips[ r + 1 ][ c ] && Skips[ r ][ c + 1 ] && Skips[ r + 1 ][ c + 1 ] ).
 
-If skip is equal to 0, the CDEF direction process specified in [section 7.15.2][] is invoked with r and c as inputs, and the outputs assigned to variables yDir and var.
+If skip is equal to 0, the CDEF direction process specified in [[#cdef_direction_process]] is invoked with r and c as inputs, and the outputs assigned to variables yDir and var.
 
 If skip is equal to 0, the following ordered steps apply:
 
@@ -5169,14 +5169,14 @@ If skip is equal to 0, the following ordered steps apply:
  4. The variable varStr is set equal to `( var >> 6 ) ? Min( FloorLog2( var >> 6 ), 12) : 0`.
  5. The variable priStr is set equal to `( var ? ( priStr * ( 4 + varStr ) + 8 ) >> 4 : 0 )`.
  6. The variable damping is set equal to CdefDamping + coeffShift.
- 7. The CDEF filter process specified in [section 7.15.3][] is invoked with plane equal to 0, r, c, priStr, secStr, damping, and dir as input.
+ 7. The CDEF filter process specified in [[#cdef_filter_process]] is invoked with plane equal to 0, r, c, priStr, secStr, damping, and dir as input.
  8. If NumPlanes is equal to 1, the process terminates at this point (i.e. filtering is not done for the U and V planes).
  8. The variable priStr is set equal to `cdef_uv_pri_strength[ idx ] << coeffShift`.
  9. The variable secStr is set equal to `cdef_uv_sec_strength[ idx ] << coeffShift`.
  10. The variable dir is set equal to ( priStr == 0 ) ? 0 : Cdef_Uv_Dir[ subsampling_x ][ subsampling_y ][ yDir ].
  11. The variable damping is set equal to CdefDamping + coeffShift - 1.
- 12. The CDEF filter process specified in [section 7.15.3][] is invoked with plane equal to 1, r, c, priStr, secStr, damping, and dir as input.
- 13. The CDEF filter process specified in [section 7.15.3][] is invoked with plane equal to 2, r, c, priStr, secStr, damping, and dir as input.
+ 12. The CDEF filter process specified in [[#cdef_filter_process]] is invoked with plane equal to 1, r, c, priStr, secStr, damping, and dir as input.
+ 13. The CDEF filter process specified in [[#cdef_filter_process]] is invoked with plane equal to 2, r, c, priStr, secStr, damping, and dir as input.
 
 Cdef_Uv_Dir is a constant lookup table defined as:
 
@@ -5510,7 +5510,7 @@ for ( y = 0; y < FrameHeight; y += MI_SIZE ) {
 }
 ~~~~~
 
-When loop_restore_block is called, the loop restore block process in [section 7.17.1][] is invoked with plane, row, and col as inputs.
+When loop_restore_block is called, the loop restore block process in [[#loop_restore_block_process]] is invoked with plane, row, and col as inputs.
 
 ### Loop restore block process ### {#loop_restore_block_process}
 
@@ -5577,8 +5577,8 @@ if larger blocks are used - provided all contained samples belong to the same lo
 The variable rType (specifying the loop restoration type) is set equal to LrType[ plane ][ unitRow ][ unitCol ].
 
 The filter to used depends on rType as follows:
- * If rType is equal to RESTORE_WIENER, the Wiener filter process specified in [section 7.17.4][] is invoked with plane, unitRow, unitCol, x, y, w, and h as inputs.
- * Otherwise, if rType is equal to RESTORE_SGRPROJ, the self guided filter process specified in [section 7.17.2][] is invoked with plane, unitRow, unitCol, x, y, w, and h as inputs.
+ * If rType is equal to RESTORE_WIENER, the Wiener filter process specified in [[#wiener_filter_process]] is invoked with plane, unitRow, unitCol, x, y, w, and h as inputs.
+ * Otherwise, if rType is equal to RESTORE_SGRPROJ, the self guided filter process specified in [[#self_guided_filter_process]] is invoked with plane, unitRow, unitCol, x, y, w, and h as inputs.
  * Otherwise (rType is equal to RESTORE_NONE), no filtering is applied.
 
 ### Self guided filter process ### {#self_guided_filter_process}
@@ -5592,9 +5592,9 @@ The inputs to this block are:
 The arrays flt0 and flt1 are prepared by the following ordered steps:
  1. The variable set is set equal to LrSgrSet[ plane ][ unitRow ][ unitCol ].
  2. The variable pass is set equal to 0.
- 3. The box filter process specified in [section 7.17.3][] is invoked with plane, x, y, w, h, set, and pass as inputs, and the output assigned to flt0.
+ 3. The box filter process specified in [[#box_filter_process]] is invoked with plane, x, y, w, h, set, and pass as inputs, and the output assigned to flt0.
  4. The variable pass is set equal to 1.
- 5. The box filter process specified in [section 7.17.3][] is invoked with plane, x, y, w, h, set, and pass as inputs, and the output assigned to flt1.
+ 5. The box filter process specified in [[#box_filter_process]] is invoked with plane, x, y, w, h, set, and pass as inputs, and the output assigned to flt1.
 
 The restoration process is then applied for each sample as follows:
 
@@ -5677,7 +5677,7 @@ for ( i = -1; i < h + 1; i++ ) {
 Note: When pass is equal to 0, only odd rows (i.e. entries A[ i ][ j ] and B[ i ][ j ] with i odd) will be used to generate the output.
 
 
-where the call to get_source_sample specifies that the get source sample process specified in [section 7.17.6][] should be invoked
+where the call to get_source_sample specifies that the get source sample process specified in [[#get_source_sample_process]] should be invoked
 and the output assigned to variable c.
 
 After A and B are prepared, the output array F is generated as follows:
@@ -5742,11 +5742,11 @@ The sub-sample interpolation is effected via two one-dimensional convolutions.
 First a horizontal filter is used to build up a temporary array, and then this
 array is vertically filtered to obtain the final prediction.
 
-The rounding variables derivation process specified in [section 7.11.3.2][] is invoked with the input variable isCompound set equal to 0.
+The rounding variables derivation process specified in [[#rounding_variables_derivation_process]] is invoked with the input variable isCompound set equal to 0.
 
-The Wiener coefficient process specified in [section 7.17.5][] is invoked with an input of LrWiener[ plane ][ unitRow ][ unitCol ][ 0 ] and the output assigned to vfilter.
+The Wiener coefficient process specified in [[#wiener_coefficient_process]] is invoked with an input of LrWiener[ plane ][ unitRow ][ unitCol ][ 0 ] and the output assigned to vfilter.
 
-The Wiener coefficient process specified in [section 7.17.5][] is invoked with an input of LrWiener[ plane ][ unitRow ][ unitCol ][ 1 ] and the output assigned to hfilter.
+The Wiener coefficient process specified in [[#wiener_coefficient_process]] is invoked with an input of LrWiener[ plane ][ unitRow ][ unitCol ][ 1 ] and the output assigned to hfilter.
 
 Note: The horizontal filter needs to be applied before the vertical filter, but the horizontal coefficients are sent after the vertical coefficients.
 
@@ -5768,7 +5768,7 @@ The filtering is applied as follows:
     }
     ~~~~~
 
-    Where the call to get_source_sample specifies that the get source sample process specified in [section 7.17.6][] should be invoked.
+    Where the call to get_source_sample specifies that the get source sample process specified in [[#get_source_sample_process]] should be invoked.
 
     Note: The intermediate result is clipped so that ( intermediate[ r ][ c ] + offset ) fits in an unsigned variable with Min(15,BitDepth + 5) bits.
     
@@ -5864,10 +5864,10 @@ Other applications
 may set their own policy about which frames are output.
 
 
-The intermediate output preparation process specified in [section 7.18.2][] is invoked to prepare arrays OutY, OutU, and OutV, and the outputs are assigned to w, h, subX, and subY.
+The intermediate output preparation process specified in [[#intermediate_output_preparation_process]] is invoked to prepare arrays OutY, OutU, and OutV, and the outputs are assigned to w, h, subX, and subY.
 
 If film_grain_params_present is equal to 1 and apply_grain is equal to 1, then
-the film grain synthesis process specified in [section 7.18.3][] is invoked with inputs of w, h, subX, and subY.
+the film grain synthesis process specified in [[#film_grain_synthesis_process]] is invoked with inputs of w, h, subX, and subY.
 (This process modifies the output arrays OutY, OutU, OutV).
 
 Finally, the frame to be output is defined to be the arrays OutY, OutU, OutV where the bit depth for each sample is BitDepth.
@@ -5921,9 +5921,9 @@ The process modifies the arrays OutY, OutU, OutV to add film grain noise as foll
  2. The variable GrainCenter is set equal to `128 << (BitDepth - 8)`.
  3. The variable GrainMin is set equal to = -GrainCenter.
  4. The variable GrainMax is set equal to `(256 << (BitDepth - 8)) - 1 - GrainCenter`.
- 5. The generate grain process specified in [section 7.18.3.3][] is invoked.
- 6. The scaling lookup initialization process specified in [section 7.18.3.4][] is invoked.
- 7. The add noise process specified in [section 7.18.3.5][] is invoked with w, h, subX, and subY as inputs.
+ 5. The generate grain process specified in [[#generate_grain_process]] is invoked.
+ 6. The scaling lookup initialization process specified in [[#scaling_lookup_initialization_process]] is invoked.
+ 7. The add noise process specified in [[#add_noise_synthesis_process]] is invoked with w, h, subX, and subY as inputs.
 
 #### Random number process #### {#random_number_process}
 
@@ -5966,7 +5966,7 @@ for ( y = 0; y < 73; y++ ) {
 }
 ~~~~~
 
-where the function call get_random_number invokes the random number process specified in [section 7.18.3.2][].
+where the function call get_random_number invokes the random number process specified in [[#random_number_process]].
 
 Then an auto-regressive filter is applied to the white noise as follows:
 
@@ -6413,7 +6413,7 @@ Note: Although this process stores all the motion vectors into SavedMvs, only th
 
 ## Reference frame loading process ## {#reference_frame_loading_process}
 
-This process is the reverse of the reference frame update process specified in [section 7.20][]. It loads saved values for a previous reference
+This process is the reverse of the reference frame update process specified in [[#reference_frame_update_process]]. It loads saved values for a previous reference
 frame back into the current frame variables. The index of the saved reference frame to load is given by the syntax element frame_to_show_map_idx.
  * current_frame_id is set equal to RefFrameId[ frame_to_show_map_idx ].
    * UpscaledWidth is set equal to RefUpscaledWidth[ frame_to_show_map_idx ].
@@ -6435,7 +6435,7 @@ frame back into the current frame variables. The index of the saved reference fr
  * gm_params[ ref ][ j ] is set equal to SavedGmParams[ frame_to_show_map_idx ][ ref ][ j ] for ref = LAST_FRAME..ALTREF_FRAME, for j = 0..5.
  * SegmentIds[ row ][ col ] is set equal to SavedSegmentIds[ frame_to_show_map_idx ][ row ][ col ] for row = 0..MiRows-1, for col = 0..MiCols-1.
  * The function load_cdfs( frame_to_show_map_idx ) is invoked.
- * If film_grain_params_present is equal to 1, the function load_grain_params( frame_to_show_map_idx ) is invoked (see [section 6.8.20][]).
+ * If film_grain_params_present is equal to 1, the function load_grain_params( frame_to_show_map_idx ) is invoked (see [[#film_grain_params_semantics]]).
  * The function load_loop_filter_params( frame_to_show_map_idx ) is invoked (see below).
  * The function load_segmentation_params( frame_to_show_map_idx ) is invoked (see below).
 

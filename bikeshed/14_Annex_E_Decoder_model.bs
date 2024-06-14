@@ -38,7 +38,7 @@ different operating modes.
 
 
 The decoder model uses the following elements to verify bitstream conformance
-that are not part of the decoding process specified in [section 7][].
+that are not part of the decoding process specified in [[#decoding_process]].
 
 Note: The elements defined in this section do not have to be present in a
 conformant decoder implementation. These elements may be considered examples of
@@ -602,7 +602,7 @@ get_next_frame( frameNum )
 
 When the function read_frame_header() is invoked, the syntax elements and
 variables are set to the values at the conceptual point (in the decoding
-process specified in [section 7][]) when the next uncompressed header has just
+process specified in [[#decoding_process]]) when the next uncompressed header has just
 been parsed. If there are no more frame headers in the bitstream, then a value
 of 0 is returned.  Otherwise, a value of 1 is returned.
 

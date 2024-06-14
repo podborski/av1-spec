@@ -5627,14 +5627,14 @@ There are three fundamental quantizer matrix sizes: 32x32, 32x16 and 16x32. One 
 matrix is defined for each quantizer level (except level 15)
 and for each plane type (luma or chroma). All other quantizer matrix sizes
 are subsampled from these. All matrix sizes, including derived ones, are
-defined in the table Quantizer_Matrix in [section 9.5.3][]. For informative purposes the subsampling process is
-defined in [section 9.5.2][].
+defined in the table Quantizer_Matrix in [[#tables]]. For informative purposes the subsampling process is
+defined in [[#derivation_process_(informative)]].
 
 ### Derivation process (Informative) ### {#derivation_process_(informative)}
 
 Note: This subsection is provided for information only regarding the derivation of Quantizer_Matrix, and is not required
 to correctly decode AV1 bitstreams (and therefore not invoked by this specification). All required tables are defined in
-[section 9.5.3][].
+[[#tables]].
 
 
 The input to this process is a transform size txSz.

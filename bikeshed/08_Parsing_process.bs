@@ -159,7 +159,7 @@ This process decodes a pseudo-raw bit assuming equal probability for
 decoding a 0 or a 1.
 
 This process is invoked when the function read_bool( ) is called from
-the read_literal function in [section 8.2.5][].
+the read_literal function in [[#parsing_process_for_read_literal]].
 
 An array cdf of length 3 is constructed as follows:
 

@@ -39,7 +39,7 @@ environments in which losses and errors can occur, decoders may detect an error
 if the end of the parsed data is not directly followed by the correct trailing bits
 pattern or if the parsing of the OBU header and payload leads to the consumption
 of bits within the trailing bits (except for tile group data which is allowed to read
-a small distance into the trailing bits as described in [section 8.2.4][]).
+a small distance into the trailing bits as described in [[#exit_process_for_symbol_decoder]]).
 
 
 **drop_obu( )** is a function call that indicates when the decoding process should
@@ -3149,7 +3149,7 @@ while later copies of this frame header (if present) have obu_type equal to OBU_
 **TileNum** is a variable giving the index (zero-based) of the current tile.
 
 **decode_frame_wrapup** is a function call that indicates that the decode frame wrapup process
-specified in [section 7.4][] should be invoked.
+specified in [[#decode_frame_wrapup_process]] should be invoked.
 
 ### Uncompressed header semantics ### {#uncompressed_header_semantics}
 
@@ -3310,7 +3310,7 @@ Note: This restriction encourages encoders to correctly label random access poin
 (by forcing frame_type to be equal to KEY_FRAME when an intra frame is used to reset the decoding process).
 
 
-See [section 7.20][] for details of the frame update process.
+See [[#reference_frame_update_process]] for details of the frame update process.
 
 **frame_refs_short_signaling** equal to 1 indicates that only two reference frames are explicitly signaled.
 frame_refs_short_signaling equal to 0 indicates that all reference frames are explicitly signaled.
@@ -3322,7 +3322,7 @@ frame_refs_short_signaling equal to 0 indicates that all reference frames are ex
 **set_frame_refs** is a function call that indicates the conceptual point where
 the ref_frame_idx values are computed (in the case when frame_refs_short_signaling is equal to 1, these syntax elements are computed instead of being explicitly signaled).
 When this function is called, the set frame refs
-process specified in [section 7.8][] is invoked.
+process specified in [[#set_frame_refs_process]] is invoked.
 
 **ref_frame_idx[ i ]** specifies which reference frames are used by inter frames. It
 is a requirement of bitstream conformance that RefValid[ ref_frame_idx[ i ] ] is equal
@@ -3377,7 +3377,7 @@ Note: It can be useful to disable the CDF update because it means the next frame
 as soon as the frame headers of the current frame have been processed.
 
 
-**motion_field_estimation** is a function call which indicates that the motion field estimation process in [section 7.9][] should be
+**motion_field_estimation** is a function call which indicates that the motion field estimation process in [[#motion_field_estimation_process]] should be
 invoked.
 
 **OrderHints** specifies the expected output order for each reference frame.
@@ -3674,9 +3674,9 @@ When this function is invoked the following ordered steps apply:
 
   2. PrevGmParams is set equal to SavedGmParams[ prevFrame ].
 
-  3. The function load_loop_filter_params( prevFrame ) specified in [section 7.21][] is invoked.
+  3. The function load_loop_filter_params( prevFrame ) specified in [[#reference_frame_loading_process]] is invoked.
 
-  4. The function load_segmentation_params( prevFrame ) specified in [section 7.21][] is invoked.
+  4. The function load_segmentation_params( prevFrame ) specified in [[#reference_frame_loading_process]] is invoked.
 
 **load_previous_segment_ids( )** is a function call that indicates that a segmentation map from a
 previous frame may be loaded for use in decoding the current frame.
@@ -3823,7 +3823,7 @@ filtered, and the edge direction (vertical or horizontal) being filtered.
 and loop_filter_sharpness together determine when a block edge is filtered, and
 by how much the filtering can change the sample values.
 
-The loop filter process is described in [section 7.14][].
+The loop filter process is described in [[#loop_filter_process]].
 
 **loop_filter_delta_enabled** equal to 1 means that the filter level depends on
 the mode and reference frame used to predict a block. loop_filter_delta_enabled
@@ -3863,7 +3863,7 @@ previous frame.
 The residual is specified via decoded coefficients which are adjusted by one of
 four quantization parameters before the inverse transform is applied. The
 choice depends on the plane (Y or UV) and coefficient position (DC/AC
-coefficient). The Dequantization process is specified in [section 7.12][].
+coefficient). The Dequantization process is specified in [[#reconstruction_and_dequantization]].
 
 **base_q_idx** indicates the base frame qindex. This is used for Y AC
 coefficients and as the base value for the other quantizers.
@@ -4322,7 +4322,7 @@ received in order for the purposes of specifying the decode process.
 
 **frame_end_update_cdf** is a function call that indicates that the frame CDF
 arrays are set equal to the  saved CDFs. This process is described in
-[section 7.7][].
+[[#frame_end_update_cdf_process]].
 
 **tile_size_minus_1** is used to compute tileSize.
 
@@ -4334,7 +4334,7 @@ For the last tile in the tile group, tileSize is computed instead of being read 
 
 
 **decode_frame_wrapup** is a function call that indicates that the decode frame wrapup process
-specified in [section 7.4][] should be invoked.
+specified in [[#decode_frame_wrapup_process]] should be invoked.
 
 ### Decode tile semantics ### {#decode_tile_semantics}
 
@@ -5899,11 +5899,11 @@ inter prediction.
 
 **predict_inter** is a function call that indicates the conceptual point where
 inter prediction happens. When this function is called, the inter prediction
-process specified in [section 7.11.3][] is invoked.
+process specified in [[#inter_prediction_process]] is invoked.
 
 **predict_intra** is a function call that indicates the conceptual point where
 intra prediction happens. When this function is called, the intra prediction
-process specified in [section 7.11.2][] is invoked.
+process specified in [[#intra_prediction_process]] is invoked.
 
 Note: The predict_inter and predict_intra functions do not affect the syntax
 decode process.
@@ -5937,15 +5937,15 @@ or within a recursive transform tree.
 
 **reconstruct** is a function call that indicates the conceptual point where
 inverse transform and reconstruction happens. When this function is called,
-the reconstruction process specified in [section 7.12.3][] is invoked.
+the reconstruction process specified in [[#reconstruct_process]] is invoked.
 
 **predict_palette** is a function call that indicates the conceptual point where
 palette prediction happens. When this function is called, the palette prediction
-process specified in [section 7.11.4][] is invoked.
+process specified in [[#palette_prediction_process]] is invoked.
 
 **predict_chroma_from_luma** is a function call that indicates the conceptual
 point where predicting chroma from luma happens. When this function is called,
-the predict chroma from luma process specified in [section 7.11.5][] is invoked.
+the predict chroma from luma process specified in [[#predict_chroma_from_luma_process]] is invoked.
 
 **MaxLumaW** and **MaxLumaH** are needed for chroma from luma prediction and
 store the extent of luma samples that can be used for prediction.
