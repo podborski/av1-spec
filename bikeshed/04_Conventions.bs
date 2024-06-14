@@ -279,242 +279,65 @@ A value equal to 0 represents a FALSE condition in a test statement. The value T
 
 The following table lists examples of the syntax specification format. When `syntax_element` appears (with bold face font), it specifies that this [=Syntax element=] is parsed from the [=Bitstream=].
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>/* A statement can be a [=Syntax element=] with associated</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>descriptor or can be an expression used to specify its</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>existence, type, and value, as in the following</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>examples */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td><b class="syntax-element">syntax_element</b></td>
-      <td>f(1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* A group of statements enclosed in brackets is a</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>compound statement and is treated functionally as a single</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>statement. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>{</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;…</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* A “while” structure specifies that the statement is</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>to be evaluated repeatedly while the condition remains</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>true. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>while ( condition )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* A “do .. while” structure executes the statement once,</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>and then tests the condition. It repeatedly evaluates the</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>statement while the condition remains true. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>do</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>while ( condition )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* An “if .. else” structure tests the condition first. If</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>it is true, the primary statement is evaluated. Otherwise,</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>the alternative statement is evaluated. If the alternative</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>statement is unnecessary to be evaluated, the “else” and</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>corresponding alternative statement can be omitted. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>if ( condition )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;primary statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>else</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;alternative statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* A “for” structure evaluates the initial statement at the</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>beginning then tests the condition. If it is true, the primary</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>and subsequent statements are evaluated until the condition</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>becomes false. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>for ( initial statement; condition; subsequent statement )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;primary statement</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>/* The return statement in a syntax structure specifies</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>that the parsing of the syntax structure will be terminated</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>without processing any additional information after this stage.</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>When a value immediately follows a return statement, this value</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>shall also be returned as the output of this syntax structure. */</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>return x</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+/* A statement can be a syntax element with associated
+ descriptor or can be an expression used to specify its
+ existence, type, and value, as in the following
+ examples */
+
+ f(1) syntax_element;
+
+ /* A group of statements enclosed in brackets is a
+ compound statement and is treated functionally as a single
+ statement. */
+
+ {
+     statement
+     ...
+ }
+
+ /* A "while" structure specifies that the statement is
+ to be evaluated repeatedly while the condition remains
+ true. */
+
+ while ( condition )
+     statement
+
+ /* A "do .. while" structure executes the statement once,
+ and then tests the condition. It repeatedly evaluates the
+ statement while the condition remains true. */
+
+ do
+     statement
+ while ( condition )
+
+ /* An "if .. else" structure tests the condition first. If
+ it is true, the primary statement is evaluated. Otherwise,
+ the alternative statement is evaluated. If the alternative
+ statement is unnecessary to be evaluated, the "else" and
+ corresponding alternative statement can be omitted. */
+
+ if ( condition )
+     primary statement
+ else
+     alternative statement
+
+ /* A "for" structure evaluates the initial statement at the
+ beginning then tests the condition. If it is true, the primary
+ and subsequent statements are evaluated until the condition
+ becomes false. */
+
+ for ( initial statement; condition; subsequent statement )
+     primary statement
+
+ /* The return statement in a syntax structure specifies
+ that the parsing of the syntax structure will be terminated
+ without processing any additional information after this stage.
+ When a value immediately follows a return statement, this value
+ shall also be returned as the output of this syntax structure. */
+
+ return x
+```
 
 ## Functions ## {#conventions-functions}
 
@@ -544,107 +367,37 @@ Unsigned n-bit number appearing directly in the [=Bitstream=]. The bits are read
 
 Variable length unsigned number appearing directly in the [=Bitstream=]. The parsing process for this descriptor is specified below:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>uvlc() {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;leadingZeros = 0</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;while ( 1 ) {</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">done</b></td>
-      <td>f(1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( done )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;leadingZeros++</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( leadingZeros &gt;= 32 ) {</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return ( 1 &lt;&lt; 32 ) - 1</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">value</b></td>
-      <td>f(leadingZeros)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value + ( 1 &lt;&lt; leadingZeros ) - 1</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+uvlc() {
+     leadingZeros = 0;
+     while ( 1 ) {
+         f(1) done;
+         if ( done )
+             break;
+         leadingZeros++;
+     }
+     if ( leadingZeros >= 32 ) {
+         return ( 1 << 32 ) - 1;
+     }
+     f(leadingZeros) value;
+     return value + ( 1 << leadingZeros ) - 1;
+}
+```
 
 ### le(n) ### {#conventions-descriptors-len}
 
 Unsigned little-endian n-byte number appearing directly in the bitstream. The parsing process for this descriptor is specified below:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>le(n) {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;t = 0</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;for ( i = 0; i &lt; n; i++) {</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">[=Byte=]</b></td>
-      <td>f(8)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t += ( [=Byte=] &lt;&lt; ( i * 8 ) )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return t</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+le(n) {
+     t = 0;
+     for ( i = 0; i < n; i++) {
+         f(8) byte;
+         t += ( byte << ( i * 8 ) );
+     }
+     return t;
+}
+```
 
 ### leb128() ### {#conventions-descriptors-leb128}
 
@@ -658,62 +411,21 @@ A variable Leb128Bytes is set equal to the number of bytes read during this proc
 
 The parsing process for this descriptor is specified below:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>leb128() {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;value = 0</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;Leb128Bytes = 0</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;for ( i = 0; i &lt; 8; i++ ) {</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">leb128_byte</b></td>
-      <td>f(8)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value |= ( (leb128_byte &amp; 0x7f) &lt;&lt; (i*7) )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leb128Bytes += 1</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ( !(leb128_byte &amp; 0x80) ) {</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;}</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+leb128() {
+     value = 0;
+     Leb128Bytes = 0;
+     for ( i = 0; i < 8; i++ ) {
+         f(8) leb128_byte;
+         value |= ( (leb128_byte & 0x7f) << (i*7) );
+         Leb128Bytes += 1;
+         if ( !(leb128_byte & 0x80) ) {
+             break;
+         }
+     }
+     return value;
+}
+```
 
 It is a requirement of [=Bitstream=] conformance that the value returned from the leb128 parsing process is less than or equal to `(1 << 32) - 1`.
 
@@ -727,38 +439,15 @@ Note: There are multiple ways of encoding the same value depending on how many l
 
 Signed integer converted from an n bits unsigned integer in the [=Bitstream=]. (The unsigned integer corresponds to the bottom n bits of the signed integer.) The parsing process for this descriptor is specified below:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>su(n) {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">value</b></td>
-      <td>f(n)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;signMask = 1 &lt;&lt; (n - 1)</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( value &amp; signMask )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value = value - 2 * signMask</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return value</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+su(n) {
+     f(n) value;
+     signMask = 1 << (n - 1);
+     if ( value & signMask )
+         value = value - 2 * signMask;
+     return value;
+}
+```
 
 ### ns(n) ### {#conventions-descriptors-nsn}
 
@@ -805,46 +494,17 @@ This descriptor is similar to `f(CeilLog2(n))`, but reduces wastage incurred whe
 
 The parsing process for this descriptor is specified as:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>ns( n ) {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;w = FloorLog2(n) + 1</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;m = (1 &lt;&lt; w) - n</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">v</b></td>
-      <td>f(w - 1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( v &lt; m )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">extra_bit</b></td>
-      <td>f(1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return (v &lt;&lt; 1) - m + extra_bit</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+ns( n ) {
+     w = FloorLog2(n) + 1;
+     m = (1 << w) - n;
+     f(w - 1) v;
+     if ( v < m )
+         return v;
+     f(1) extra_bit;
+     return (v << 1) - m + extra_bit;
+}
+```
 
 The abbreviation ns stands for non-symmetric. This encoding is non-symmetric because the values are not all coded with the same number of bits.
 
@@ -866,43 +526,14 @@ This descriptor is the same as `ns(n)` except the underlying bits are coded arit
 
 The parsing process for this descriptor is specified as:
 
-<table class="syntax">
-  <tbody>
-    <tr>
-      <td>NS( n ) {</td>
-      <td><strong>Type</strong></td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;w = FloorLog2(n) + 1</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;m = (1 &lt;&lt; w) - n</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">v</b></td>
-      <td>L(w - 1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;if ( v &lt; m )</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return v</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">extra_bit</b></td>
-      <td>L(1)</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;return (v &lt;&lt; 1) - m + extra_bit</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td>}</td>
-      <td>&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
+```cpp
+NS( n ) {
+     w = FloorLog2(n) + 1;
+     m = (1 << w) - n;
+     L(w - 1) v;
+     if ( v < m )
+         return v;
+     L(1) extra_bit;
+     return (v << 1) - m + extra_bit;
+}
+```
