@@ -2392,10 +2392,10 @@ inter_frame_mode_info( ) {
      AboveRefFrame[ 0 ] = AvailU ? RefFrames[ MiRow-1 ][ MiCol ][ 0 ] : INTRA_FRAME
      LeftRefFrame[ 1 ] = AvailL ? RefFrames[ MiRow ][ MiCol-1 ][ 1 ] : NONE
      AboveRefFrame[ 1 ] = AvailU ? RefFrames[ MiRow-1 ][ MiCol ][ 1 ] : NONE
-     LeftIntra = LeftRefFrame[ 0 ] <\= INTRA_FRAME
-     AboveIntra = AboveRefFrame[ 0 ] <\= INTRA_FRAME
-     LeftSingle = LeftRefFrame[ 1 ] <\= INTRA_FRAME
-     AboveSingle = AboveRefFrame[ 1 ] <\= INTRA_FRAME
+     LeftIntra = LeftRefFrame[ 0 ] <= INTRA_FRAME
+     AboveIntra = AboveRefFrame[ 0 ] <= INTRA_FRAME
+     LeftSingle = LeftRefFrame[ 1 ] <= INTRA_FRAME
+     AboveSingle = AboveRefFrame[ 1 ] <= INTRA_FRAME
      skip = 0
      inter_segment_id( 1 )
      read_skip_mode( )
@@ -2443,7 +2443,7 @@ inter_segment_id( preSkip ) {
                  }
              }
              if ( segmentation_temporal_update == 1 ) {
-                  S() seg_id_predicted
+                 S() seg_id_predicted;
                  if ( seg_id_predicted )
                      segment_id = predictedSegmentId
                  else
@@ -2476,7 +2476,7 @@ read_is_inter( ) {
      } else if ( seg_feature_active ( SEG_LVL_GLOBALMV ) ) {
          is_inter = 1
      } else {
-          S() is_inter
+         S() is_inter;
      }
 }
 ```
@@ -2506,11 +2506,11 @@ get_segment_id( ) {
 intra_block_mode_info( ) {
      RefFrame[ 0 ] = INTRA_FRAME
      RefFrame[ 1 ] = NONE
-      S() y_mode
+     S() y_mode;
      YMode = y_mode
      intra_angle_info_y( )
      if ( HasChroma ) {
-          S() uv_mode
+         S() uv_mode;
          UVMode = uv_mode
          if ( UVMode == UV_CFL_PRED ) {
              read_cfl_alphas( )
@@ -2519,9 +2519,9 @@ intra_block_mode_info( ) {
      }
      PaletteSizeY = 0
      PaletteSizeUV = 0
-     if ( MiSize >\= BLOCK_8X8 &&
-          Block_Width[ MiSize ] <\= 64  &&
-          Block_Height[ MiSize ] <\= 64 &&
+     if ( MiSize >= BLOCK_8X8 &&
+          Block_Width[ MiSize ] <= 64  &&
+          Block_Height[ MiSize ] <= 64 &&
           allow_screen_content_tools )
          palette_mode_info( )
      filter_intra_mode_info( )
@@ -2539,31 +2539,31 @@ inter_block_mode_info( ) {
      find_mv_stack( isCompound )
      if ( skip_mode ) {
          YMode = NEAREST_NEARESTMV
-     \ } else if ( seg_feature_active( SEG_LVL_SKIP ) \
+     } else if ( seg_feature_active( SEG_LVL_SKIP ) ||
           seg_feature_active( SEG_LVL_GLOBALMV ) ) {
          YMode = GLOBALMV
      } else if ( isCompound ) {
-          S() compound_mode
+         S() compound_mode;
          YMode = NEAREST_NEARESTMV + compound_mode
      } else {
-          S() new_mv
+         S() new_mv;
          if ( new_mv == 0 ) {
              YMode = NEWMV
          } else {
-              S() zero_mv
+             S() zero_mv;
              if ( zero_mv == 0 ) {
                  YMode = GLOBALMV
              } else {
-                  S() ref_mv
+                 S() ref_mv;
                  YMode = (ref_mv == 0) ? NEARESTMV : NEARMV
              }
          }
      }
      RefMvIdx = 0
-     if ( YMode == NEWMV \
+     if ( YMode == NEWMV || YMode == NEW_NEWMV ) {
          for ( idx = 0; idx < 2; idx++ ) {
              if ( NumMvFound > idx + 1 ) {
-                  S() drl_mode
+                 S() drl_mode;
                  if ( drl_mode == 0 ) {
                    RefMvIdx = idx
                    break
@@ -2575,7 +2575,7 @@ inter_block_mode_info( ) {
          RefMvIdx = 1
          for ( idx = 1; idx < 3; idx++ ) {
              if ( NumMvFound > idx + 1 ) {
-                  S() drl_mode
+                 S() drl_mode;
                  if ( drl_mode == 0 ) {
                      RefMvIdx = idx
                      break
@@ -2591,7 +2591,7 @@ inter_block_mode_info( ) {
      if ( interpolation_filter == SWITCHABLE ) {
          for ( dir = 0; dir < ( enable_dual_filter ? 2 : 1 ); dir++ ) {
              if ( needs_interp_filter( ) ) {
-                  S() interp_filter[ dir ]
+                 S() interp_filter[ dir ];
              } else {
                  interp_filter[ dir ] = EIGHTTAP
              }
@@ -2606,33 +2606,31 @@ inter_block_mode_info( ) {
 ```
 
 
-The function has_nearmv is defined as:
+The function `has_nearmv` is defined as:
 
 ```cpp
 has_nearmv( ) {
-     YMode == NEAR_NEARMV return (YMode == NEARMV
-  YMode == NEW_NEARMV) YMode == NEAR_NEWMV
+    return (YMode == NEARMV || YMode == NEAR_NEARMV
+            || YMode == NEAR_NEWMV || YMode == NEW_NEARMV)
 }
-~~~~~
 ```
 
 
-The function needs_interp_filter is defined as:
+The function `needs_interp_filter` is defined as:
 
 ```cpp
 needs_interp_filter( ) {
     large = (Min(Block_Width[MiSize], Block_Height[MiSize]) >= 8)
-     motion_mode == LOCALWARP ) { if ( skip_mode
+    if ( skip_mode || motion_mode == LOCALWARP ) {
         return 0
     } else if ( large && YMode == GLOBALMV ) {
         return GmType[ RefFrame[ 0 ] ] == TRANSLATION
     } else if ( large && YMode == GLOBAL_GLOBALMV ) {
-return GmType[ RefFrame[ 0 ] ] == TRANSLATION
+        return GmType[ RefFrame[ 0 ] ] == TRANSLATION || GmType[ RefFrame[ 1 ] ] == TRANSLATION
     } else {
         return 1
     }
 }
-~~~~~
 ```
 
 
@@ -2644,10 +2642,10 @@ filter_intra_mode_info( ) {
      use_filter_intra = 0
      if ( enable_filter_intra &&
           YMode == DC_PRED && PaletteSizeY == 0 &&
-          Max( Block_Width[ MiSize ], Block_Height[ MiSize ] ) <\= 32 ) {
-          S() use_filter_intra
+          Max( Block_Width[ MiSize ], Block_Height[ MiSize ] ) <= 32 ) {
+         S() use_filter_intra;
          if ( use_filter_intra ) {
-              S() filter_intra_mode
+             S() filter_intra_mode;
          }
      }
 }
@@ -2663,7 +2661,7 @@ read_ref_frames( ) {
      } else if ( seg_feature_active( SEG_LVL_REF_FRAME ) ) {
          RefFrame[ 0 ] = FeatureData[ segment_id ][ SEG_LVL_REF_FRAME ]
          RefFrame[ 1 ] = NONE
-     \ } else if ( seg_feature_active( SEG_LVL_SKIP ) \
+     } else if ( seg_feature_active( SEG_LVL_SKIP ) ||
                  seg_feature_active( SEG_LVL_GLOBALMV ) ) {
          RefFrame[ 0 ] = LAST_FRAME
          RefFrame[ 1 ] = NONE
@@ -2671,20 +2669,20 @@ read_ref_frames( ) {
          bw4 = Num_4x4_Blocks_Wide[ MiSize ]
          bh4 = Num_4x4_Blocks_High[ MiSize ]
          if ( reference_select && ( Min( bw4, bh4 ) >= 2 ) )
-              S() comp_mode
+             S() comp_mode;
          else
              comp_mode = SINGLE_REFERENCE
          if ( comp_mode == COMPOUND_REFERENCE ) {
-              S() comp_ref_type
+             S() comp_ref_type;
              if ( comp_ref_type == UNIDIR_COMP_REFERENCE ) {
-                  S() uni_comp_ref
+                 S() uni_comp_ref;
                  if ( uni_comp_ref ) {
                      RefFrame[0] = BWDREF_FRAME
                      RefFrame[1] = ALTREF_FRAME
                  } else {
-                      S() uni_comp_ref_p1
+                     S() uni_comp_ref_p1;
                      if ( uni_comp_ref_p1 ) {
-                          S() uni_comp_ref_p2
+                         S() uni_comp_ref_p2;
                          if ( uni_comp_ref_p2 ) {
                            RefFrame[0] = LAST_FRAME
                            RefFrame[1] = GOLDEN_FRAME
@@ -2698,19 +2696,19 @@ read_ref_frames( ) {
                      }
                  }
              } else {
-                  S() comp_ref
+                 S() comp_ref;
                  if ( comp_ref == 0 ) {
-                      S() comp_ref_p1
+                     S() comp_ref_p1;
                      RefFrame[ 0 ] = comp_ref_p1 ?
                                      LAST2_FRAME : LAST_FRAME
                  } else {
-                      S() comp_ref_p2
+                     S() comp_ref_p2;
                      RefFrame[ 0 ] = comp_ref_p2 ?
                                      GOLDEN_FRAME : LAST3_FRAME
                  }
-                  S() comp_bwdref
+                 S() comp_bwdref;
                  if ( comp_bwdref == 0 ) {
-                      S() comp_bwdref_p1
+                     S() comp_bwdref_p1;
                      RefFrame[ 1 ] = comp_bwdref_p1 ?
                                       ALTREF2_FRAME : BWDREF_FRAME
                  } else {
@@ -2718,24 +2716,24 @@ read_ref_frames( ) {
                  }
              }
          } else {
-              S() single_ref_p1
+             S() single_ref_p1;
              if ( single_ref_p1 ) {
-                  S() single_ref_p2
+                 S() single_ref_p2;
                  if ( single_ref_p2 == 0 ) {
-                      S() single_ref_p6
+                     S() single_ref_p6;
                      RefFrame[ 0 ] = single_ref_p6 ?
                                       ALTREF2_FRAME : BWDREF_FRAME
                  } else {
                      RefFrame[ 0 ] = ALTREF_FRAME
                  }
              } else {
-                  S() single_ref_p3
+                 S() single_ref_p3;
                  if ( single_ref_p3 ) {
-                      S() single_ref_p5
+                     S() single_ref_p5;
                      RefFrame[ 0 ] = single_ref_p5 ?
                                       GOLDEN_FRAME : LAST3_FRAME
                  } else {
-                      S() single_ref_p4
+                     S() single_ref_p4;
                      RefFrame[ 0 ] = single_ref_p4 ?
                                       LAST2_FRAME : LAST_FRAME
                  }
@@ -2776,7 +2774,7 @@ assign_mv( isCompound ) {
              PredMv[ i ] = GlobalMvs[ i ]
          } else {
              pos = ( compMode == NEARESTMV ) ? 0 : RefMvIdx
-             if ( compMode == NEWMV && NumMvFound <\= 1 )
+             if ( compMode == NEWMV && NumMvFound <= 1 )
                  pos = 0
              PredMv[ i ] = RefStackMv[ pos ][ i ]
          }
@@ -2807,29 +2805,28 @@ read_motion_mode( isCompound ) {
          return
      }
      if ( !force_integer_mv &&
-          ( YMode == GLOBALMV \
+          ( YMode == GLOBALMV || YMode == GLOBAL_GLOBALMV ) ) {
          if ( GmType[ RefFrame[ 0 ] ] > TRANSLATION ) {
              motion_mode = SIMPLE
              return
          }
      }
-     if ( isCompound \
+     if ( isCompound || RefFrame[ 1 ] == INTRA_FRAME || !has_overlappable_candidates( ) ) {
          motion_mode = SIMPLE
          return
      }
      find_warp_samples()
-     if ( force_integer_mv \
-          !allow_warped_motion \
-          S() use_obmc
+     if ( force_integer_mv || NumSamples == 0 ||
+          !allow_warped_motion || is_scaled( RefFrame[0] ) ) {
+         S() use_obmc;
          motion_mode = use_obmc ? OBMC : SIMPLE
      } else {
-          S() motion_mode
+         S() motion_mode;
      }
 }
 ```
 
-
-where is_scaled is a function that determines whether a [=Reference frame=] uses scaling and is specified as:
+where `is_scaled` is a function that determines whether a [=Reference frame=] uses scaling and is specified as:
 
 ```cpp
 is_scaled( refFrame ) {
@@ -2837,9 +2834,8 @@ is_scaled( refFrame ) {
   xScale = ( ( RefUpscaledWidth[ refIdx ] << REF_SCALE_SHIFT ) + ( FrameWidth / 2 ) ) / FrameWidth
   yScale = ( ( RefFrameHeight[ refIdx ] << REF_SCALE_SHIFT ) + ( FrameHeight / 2 ) ) / FrameHeight
   noScale = 1 << REF_SCALE_SHIFT
-   yScale != noScale return xScale != noScale
+  return xScale != noScale || yScale != noScale
 }
-~~~~~
 ```
 
 
@@ -2849,17 +2845,17 @@ is_scaled( refFrame ) {
 ```cpp
 read_interintra_mode( isCompound ) {
      if ( !skip_mode && enable_interintra_compound && !isCompound &&
-          MiSize >\= BLOCK_8X8 && MiSize <\= BLOCK_32X32) {
-          S() interintra
+          MiSize >= BLOCK_8X8 && MiSize <= BLOCK_32X32) {
+         S() interintra;
          if ( interintra ) {
-              S() interintra_mode
+             S() interintra_mode;
              RefFrame[1] = INTRA_FRAME
              AngleDeltaY = 0
              AngleDeltaUV = 0
              use_filter_intra = 0
-              S() wedge_interintra
+             S() wedge_interintra;
              if ( wedge_interintra ) {
-                  S() wedge_index
+                 S() wedge_index;
                  wedge_sign = 0
              }
          }
@@ -2882,11 +2878,11 @@ read_compound_type( isCompound ) {
      if ( isCompound ) {
          n = Wedge_Bits[ MiSize ]
          if ( enable_masked_compound ) {
-                S() comp_group_idx
+               S() comp_group_idx;
          }
          if ( comp_group_idx == 0 ) {
              if ( enable_jnt_comp ) {
-                  S() compound_idx
+                 S() compound_idx;
                  compound_type = compound_idx ? COMPOUND_AVERAGE :
                                                 COMPOUND_DISTANCE
              } else {
@@ -2896,14 +2892,14 @@ read_compound_type( isCompound ) {
              if ( n == 0 ) {
                  compound_type = COMPOUND_DIFFWTD
              } else {
-                  S() compound_type
+                 S() compound_type;
              }
          }
          if ( compound_type == COMPOUND_WEDGE ) {
-              S() wedge_index
-              L(1) wedge_sign
+             S() wedge_index;
+             L(1) wedge_sign;
          } else if ( compound_type == COMPOUND_DIFFWTD ) {
-              L(1) mask_type
+             L(1) mask_type;
          }
      } else {
          if ( interintra ) {
@@ -2922,20 +2918,20 @@ get_mode( refList ) {
      if ( refList == 0 ) {
          if ( YMode < NEAREST_NEARESTMV )
              compMode = YMode
-         else if ( YMode == NEW_NEWMV \
+         else if ( YMode == NEW_NEWMV || YMode == NEW_NEARESTMV || YMode == NEW_NEARMV )
              compMode = NEWMV
-         else if ( YMode == NEAREST_NEARESTMV \
+         else if ( YMode == NEAREST_NEARESTMV || YMode == NEAREST_NEWMV )
              compMode = NEARESTMV
-         else if ( YMode == NEAR_NEARMV \
+         else if ( YMode == NEAR_NEARMV || YMode == NEAR_NEWMV )
              compMode = NEARMV
          else
              compMode = GLOBALMV
      } else {
-         if ( YMode == NEW_NEWMV \
+         if ( YMode == NEW_NEWMV || YMode == NEAREST_NEWMV || YMode == NEAR_NEWMV )
              compMode = NEWMV
-         else if ( YMode == NEAREST_NEARESTMV \
+         else if ( YMode == NEAREST_NEARESTMV || YMode == NEW_NEARESTMV )
              compMode = NEARESTMV
-         else if ( YMode == NEAR_NEARMV \
+         else if ( YMode == NEAR_NEARMV || YMode == NEW_NEARMV )
              compMode = NEARMV
          else
              compMode = GLOBALMV
@@ -2955,10 +2951,10 @@ read_mv( ref ) {
      } else {
          MvCtx = 0
      }
-      S() mv_joint
-     if ( mv_joint == MV_JOINT_HZVNZ \
+     S() mv_joint;
+     if ( mv_joint == MV_JOINT_HZVNZ || mv_joint == MV_JOINT_HNZVNZ )
          diffMv[ 0 ] = read_mv_component( 0 )
-     if ( mv_joint == MV_JOINT_HNZVZ \
+     if ( mv_joint == MV_JOINT_HNZVZ || mv_joint == MV_JOINT_HNZVNZ )
          diffMv[ 1 ] = read_mv_component( 1 )
      Mv[ ref ][ 0 ] = PredMv[ ref ][ 0 ] + diffMv[ 0 ]
      Mv[ ref ][ 1 ] = PredMv[ ref ][ 1 ] + diffMv[ 1 ]
@@ -2969,37 +2965,37 @@ read_mv( ref ) {
 
 ```cpp
 read_mv_component( comp ) {
-      S() mv_sign
-      S() mv_class
+     S() mv_sign;
+     S() mv_class;
      if ( mv_class == MV_CLASS_0 ) {
-          S() mv_class0_bit
+         S() mv_class0_bit;
          if ( force_integer_mv )
              mv_class0_fr = 3
          else
-              S() mv_class0_fr
+             S() mv_class0_fr;
          if ( allow_high_precision_mv )
-              S() mv_class0_hp
+             S() mv_class0_hp;
          else
              mv_class0_hp = 1
-         mag = ( ( mv_class0_bit << 3 ) \
-                 ( mv_class0_fr << 1 ) \
+         mag = ( ( mv_class0_bit << 3 ) |
+                 ( mv_class0_fr << 1 ) |
                    mv_class0_hp ) + 1
      } else {
          d = 0
          for ( i = 0; i < mv_class; i++ ) {
-              S() mv_bit
-             = mv_bit << i d \
+             S() mv_bit;
+             d |= mv_bit << i
          }
          mag = CLASS0_SIZE << ( mv_class + 2 )
          if ( force_integer_mv )
              mv_fr = 3
          else
-              S() mv_fr
+             S() mv_fr;
          if ( allow_high_precision_mv )
-              S() mv_hp
+             S() mv_hp;
          else
              mv_hp = 1
-         mag += ( ( d << 3 ) \
+         mag += ( ( d << 3 ) | ( mv_fr << 1 ) | mv_hp ) + 1
      }
      return mv_sign ? -mag : mag
 }
@@ -3025,6 +3021,7 @@ compute_prediction() {
          baseY = (MiRow >> subY) * MI_SIZE
          candRow = (MiRow >> subY) << subY
          candCol = (MiCol >> subX) << subX
+
          IsInterIntra = ( is_inter && RefFrame[ 1 ] == INTRA_FRAME )
          if ( IsInterIntra ) {
              if ( interintra_mode == II_DC_PRED ) mode = DC_PRED
@@ -3073,21 +3070,24 @@ compute_prediction() {
 }
 ```
 
-
 ### Residual syntax ### {#residual_syntax}
 
 ```cpp
 residual( ) {
      sbMask = use_128x128_superblock ? 31 : 15
+
      widthChunks = Max( 1, Block_Width[ MiSize ] >> 6 )
      heightChunks = Max( 1, Block_Height[ MiSize ] >> 6 )
-     miSizeChunk = ( widthChunks > 1 \
+
+     miSizeChunk = ( widthChunks > 1 || heightChunks > 1 ) ? BLOCK_64X64 : MiSize
+
      for ( chunkY = 0; chunkY < heightChunks; chunkY++ ) {
          for ( chunkX = 0; chunkX < widthChunks; chunkX++ ) {
              miRowChunk = MiRow + ( chunkY << 4 )
              miColChunk = MiCol + ( chunkX << 4 )
              subBlockMiRow = miRowChunk & sbMask
              subBlockMiCol = miColChunk & sbMask
+
              for ( plane = 0; plane < 1 + HasChroma * 2; plane++ ) {
                  txSz = Lossless ? TX_4X4 : get_tx_size( plane, TxSize )
                  stepX = Tx_Width[ txSz ] >> 2
@@ -3133,11 +3133,11 @@ transform_block(plane, baseX, baseY, txSz, x, y) {
      stepY = Tx_Height[ txSz ] >> MI_SIZE_LOG2
      maxX = (MiCols * MI_SIZE) >> subX
      maxY = (MiRows * MI_SIZE) >> subY
-     if ( startX >\= maxX \
+     if ( startX >= maxX || startY >= maxY ) {
          return
      }
      if ( !is_inter ) {
-         \ if ( ( ( plane == 0 ) && PaletteSizeY ) \
+         if ( ( ( plane == 0 ) && PaletteSizeY ) ||
               ( ( plane != 0 ) && PaletteSizeUV ) ) {
              predict_palette( plane, startX, startY, x, y, txSz )
          } else {
@@ -3150,8 +3150,8 @@ transform_block(plane, baseX, baseY, txSz, x, y) {
              log2W = Tx_Width_Log2[ txSz ]
              log2H = Tx_Height_Log2[ txSz ]
              predict_intra( plane, startX, startY,
-                            ( plane == 0 ? AvailL : AvailLChroma ) \
-                            ( plane == 0 ? AvailU : AvailUChroma ) \
+                            ( plane == 0 ? AvailL : AvailLChroma ) || x > 0,
+                            ( plane == 0 ? AvailU : AvailUChroma ) || y > 0,
                             BlockDecoded[ plane ]
                                         [ ( subBlockMiRow >> subY ) - 1 ]
                                         [ ( subBlockMiCol >> subX ) + stepX ],
@@ -3164,6 +3164,7 @@ transform_block(plane, baseX, baseY, txSz, x, y) {
                  predict_chroma_from_luma( plane, startX, startY, txSz )
              }
          }
+
          if ( plane == 0 ) {
              MaxLumaW = startX + stepX * 4
              MaxLumaH = startY + stepY * 4
@@ -3190,13 +3191,13 @@ transform_block(plane, baseX, baseY, txSz, x, y) {
 
 ### Transform tree syntax ### {#transform_tree_syntax}
 
-transform_tree is used to read a number of transform blocks arranged in a transform tree.
+`transform_tree` is used to read a number of transform blocks arranged in a transform tree.
 
 ```cpp
 transform_tree( startX, startY, w, h ) {
      maxX = MiCols * MI_SIZE
      maxY = MiRows * MI_SIZE
-     if ( startX >\= maxX \
+     if ( startX >= maxX || startY >= maxY ) {
          return
      }
      row = startY >> MI_SIZE_LOG2
@@ -3225,16 +3226,16 @@ transform_tree( startX, startY, w, h ) {
 ```
 
 
-where find_tx_size finds the transform size matching the given dimensions and is defined as:
+where `find_tx_size` finds the transform size matching the given dimensions and is defined as:
 
-~~~~~ c
+```c
 find_tx_size( w, h ) {
     for ( txSz = 0; txSz < TX_SIZES_ALL; txSz++ )
         if ( Tx_Width[ txSz ] == w && Tx_Height[ txSz ] == h )
             break
     return txSz
 }
-~~~~~
+```
 
 
 ### Get TX size function ### {#get_tx_size_function}
@@ -3244,7 +3245,7 @@ get_tx_size( plane, txSz ) {
      if ( plane == 0 )
          return txSz
      uvTx = Max_Tx_Size_Rect[ get_plane_residual_size( MiSize, plane ) ]
-     if ( Tx_Width[ uvTx ] == 64 \
+     if ( Tx_Width[ uvTx ] == 64 || Tx_Height[ uvTx ] == 64 ){
          if ( Tx_Width[ uvTx ] == 16 ) {
              return TX_16X32
          }
@@ -3274,7 +3275,7 @@ get_plane_residual_size( subsize, plane ) {
 
 The Subsampled_Size table is defined as:
 
-~~~~~ c
+```c
 Subsampled_Size[ BLOCK_SIZES ][ 2 ][ 2 ] = {
   { { BLOCK_4X4,    BLOCK_4X4},      {BLOCK_4X4,     BLOCK_4X4} },
   { { BLOCK_4X8,    BLOCK_4X4},      {BLOCK_INVALID, BLOCK_4X4} },
@@ -3299,7 +3300,7 @@ Subsampled_Size[ BLOCK_SIZES ][ 2 ][ 2 ] = {
   { {BLOCK_16X64,   BLOCK_16X32},    {BLOCK_INVALID, BLOCK_8X32} },
   { {BLOCK_64X16,   BLOCK_INVALID},  {BLOCK_32X16,   BLOCK_32X8} },
 }
-~~~~~
+```
 
 
 ### Coefficients syntax ### {#coefficients_syntax}
@@ -3310,19 +3311,23 @@ coeffs( plane, startX, startY, txSz ) {
      y4 = startY >> 2
      w4 = Tx_Width[ txSz ] >> 2
      h4 = Tx_Height[ txSz ] >> 2
+
      txSzCtx = ( Tx_Size_Sqr[txSz] + Tx_Size_Sqr_Up[txSz] + 1 ) >> 1
      ptype = plane > 0
-     segEob = ( txSz == TX_16X64 \
+     segEob = ( txSz == TX_16X64 || txSz == TX_64X16 ) ? 512 :
                  Min( 1024, Tx_Width[ txSz ] * Tx_Height[ txSz ] )
+
      for ( c = 0; c < segEob; c++ )
          Quant[c] = 0
      for ( i = 0; i < 64; i++ )
          for ( j = 0; j < 64; j++ )
              Dequant[ i ][ j ] = 0
+
      eob = 0
      culLevel = 0
      dcCategory = 0
-      S() all_zero
+
+     S() all_zero;
      if ( all_zero ) {
          c = 0
          if ( plane == 0 ) {
@@ -3337,58 +3342,62 @@ coeffs( plane, startX, startY, txSz ) {
              transform_type( x4, y4, txSz )
          PlaneTxType = compute_tx_type( plane, txSz, x4, y4 )
          scan = get_scan( txSz )
+
          eobMultisize = Min( Tx_Width_Log2[ txSz ], 5) + Min( Tx_Height_Log2[ txSz ], 5) - 4
          if ( eobMultisize == 0 ) {
-              S() eob_pt_16
+             S() eob_pt_16;
              eobPt = eob_pt_16 + 1
          } else if ( eobMultisize == 1 ) {
-              S() eob_pt_32
+             S() eob_pt_32;
              eobPt = eob_pt_32 + 1
          } else if ( eobMultisize == 2 ) {
-              S() eob_pt_64
+             S() eob_pt_64;
              eobPt = eob_pt_64 + 1
          } else if ( eobMultisize == 3 ) {
-              S() eob_pt_128
+             S() eob_pt_128;
              eobPt = eob_pt_128 + 1
          } else if ( eobMultisize == 4 ) {
-              S() eob_pt_256
+             S() eob_pt_256;
              eobPt = eob_pt_256 + 1
          } else if ( eobMultisize == 5 ) {
-              S() eob_pt_512
+             S() eob_pt_512;
              eobPt = eob_pt_512 + 1
          } else {
-              S() eob_pt_1024
+             S() eob_pt_1024;
              eobPt = eob_pt_1024 + 1
          }
+
          eob = ( eobPt < 2 ) ? eobPt : ( ( 1 << ( eobPt - 2 ) ) + 1 )
          eobShift = Max( -1, eobPt - 3 )
-         if ( eobShift >\= 0 ) {
-              S() eob_extra
+         if ( eobShift >= 0 ) {
+             S() eob_extra;
              if ( eob_extra ) {
                  eob += ( 1 << eobShift )
              }
+
              for ( i = 1; i < Max( 0, eobPt - 2 ); i++ ) {
                  eobShift = Max( 0, eobPt - 2 ) - 1 - i
-                  L(1) eob_extra_bit
+                 L(1) eob_extra_bit;
                  if ( eob_extra_bit ) {
                      eob += ( 1 << eobShift )
                  }
              }
          }
-         for ( c = eob - 1; c >\= 0; c--  ) {
+         for ( c = eob - 1; c >= 0; c-- ) {
              pos = scan[ c ]
              if ( c == ( eob - 1 ) ) {
-                  S() coeff_base_eob
+                 S() coeff_base_eob;
                  level = coeff_base_eob + 1
              } else {
-                  S() coeff_base
+                 S() coeff_base;
                  level = coeff_base
              }
+
              if ( level > NUM_BASE_LEVELS ) {
                  for ( idx = 0;
                        idx < COEFF_BASE_RANGE / ( BR_CDF_SIZE - 1 );
                        idx++ ) {
-                      S() coeff_br
+                     S() coeff_br;
                      level += coeff_br
                      if ( coeff_br < ( BR_CDF_SIZE - 1 ) )
                          break
@@ -3396,14 +3405,15 @@ coeffs( plane, startX, startY, txSz ) {
              }
              Quant[ pos ] = level
          }
+
          for ( c = 0; c < eob; c++ ) {
              pos = scan[ c ]
              if ( Quant[ pos ] != 0 ) {
                  if ( c == 0 ) {
-                      S() dc_sign
+                     S() dc_sign;
                      sign = dc_sign
                  } else {
-                      L(1) sign_bit
+                     L(1) sign_bit;
                      sign = sign_bit
                  }
              } else {
@@ -3414,12 +3424,12 @@ coeffs( plane, startX, startY, txSz ) {
                  length = 0
                  do {
                      length++
-                      L(1) golomb_length_bit
+                     L(1) golomb_length_bit;
                  } while ( !golomb_length_bit )
                  x = 1
-                 for ( i = length - 2; i >\= 0; i--  ) {
-                      L(1) golomb_data_bit
-                      golomb_data_bit x = ( x << 1 ) \
+                 for ( i = length - 2; i >= 0; i-- ) {
+                     L(1) golomb_data_bit;
+                     x = ( x << 1 ) | golomb_data_bit
                  }
                 Quant[ pos ] = x + COEFF_BASE_RANGE + NUM_BASE_LEVELS
              }
@@ -3433,6 +3443,7 @@ coeffs( plane, startX, startY, txSz ) {
          }
          culLevel = Min( 63, culLevel )
      }
+
      for ( i = 0; i < w4; i++ ) {
          AboveLevelContext[ plane ][ x4 + i ] = culLevel
          AboveDcContext[ plane ][ x4 + i ] = dcCategory
@@ -3441,6 +3452,7 @@ coeffs( plane, startX, startY, txSz ) {
          LeftLevelContext[ plane ][ y4 + i ] = culLevel
          LeftDcContext[ plane ][ y4 + i ] = dcCategory
      }
+
      return eob
 }
 ```
@@ -3450,12 +3462,16 @@ coeffs( plane, startX, startY, txSz ) {
 ```cpp
 compute_tx_type( plane, txSz, blockX, blockY ) {
      txSzSqrUp = Tx_Size_Sqr_Up[ txSz ]
-     if ( Lossless \
+
+     if ( Lossless || txSzSqrUp > TX_32X32 )
          return DCT_DCT
+
      txSet = get_tx_set( txSz )
+
      if ( plane == 0 ) {
          return TxTypes[ blockY ][ blockX ]
      }
+
      if ( is_inter ) {
          x4 = Max( MiCol, blockX << subsampling_x )
          y4 = Max( MiRow, blockY << subsampling_y )
@@ -3464,11 +3480,13 @@ compute_tx_type( plane, txSz, blockX, blockY ) {
              return DCT_DCT
          return txType
      }
+
      txType = Mode_To_Txfm[ UVMode ]
      if ( !is_tx_type_in_set( txSet, txType ) )
          return DCT_DCT
      return txType
  }
+
  is_tx_type_in_set( txSet, txType ) {
      return is_inter ? Tx_Type_In_Set_Inter[ txSet ][ txType ] :
                        Tx_Type_In_Set_Intra[ txSet ][ txType ]
@@ -3476,9 +3494,9 @@ compute_tx_type( plane, txSz, blockX, blockY ) {
 ```
 
 
-where the tables Tx_Type_In_Set_Inter and Tx_Type_In_Set_Intra are specified as follows:
+where the tables `Tx_Type_In_Set_Inter` and `Tx_Type_In_Set_Intra` are specified as follows:
 
-~~~~~ c
+```c
 Tx_Type_In_Set_Intra[ TX_SET_TYPES_INTRA ][ TX_TYPES ] = {
   {
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -3505,7 +3523,7 @@ Tx_Type_In_Set_Inter[ TX_SET_TYPES_INTER ][ TX_TYPES ] = {
     1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
   }
 }
-~~~~~
+```
 
 
 ### Get scan function ### {#get_scan_function}
@@ -3530,6 +3548,7 @@ get_mrow_scan( txSz ) {
          return Mrow_Scan_4x16
      return Mrow_Scan_16x4
  }
+
  get_mcol_scan( txSz ) {
      if ( txSz == TX_4X4 )
          return Mcol_Scan_4x4
@@ -3549,6 +3568,7 @@ get_mrow_scan( txSz ) {
          return Mcol_Scan_4x16
      return Mcol_Scan_16x4
  }
+
  get_default_scan( txSz ) {
      if ( txSz == TX_4X4 )
          return Default_Scan_4x4
@@ -3578,6 +3598,7 @@ get_mrow_scan( txSz ) {
          return Default_Scan_32x8
      return Default_Scan_32x32
  }
+
  get_scan( txSz ) {
      if ( txSz == TX_16X64 ) {
          return Default_Scan_16x32
@@ -3588,15 +3609,19 @@ get_mrow_scan( txSz ) {
      if ( Tx_Size_Sqr_Up[ txSz ] == TX_64X64 ) {
          return Default_Scan_32x32
      }
+
      if ( PlaneTxType == IDTX ) {
          return get_default_scan( txSz )
      }
-     \ preferRow = ( PlaneTxType == V_DCT \
-                   \ PlaneTxType == V_ADST \
+
+     preferRow = ( PlaneTxType == V_DCT ||
+                   PlaneTxType == V_ADST ||
                    PlaneTxType == V_FLIPADST )
-     \ preferCol = ( PlaneTxType == H_DCT \
-                   \ PlaneTxType == H_ADST \
+
+     preferCol = ( PlaneTxType == H_DCT ||
+                   PlaneTxType == H_ADST ||
                    PlaneTxType == H_FLIPADST )
+
      if ( preferRow ) {
          return get_mrow_scan( txSz )
      } else if ( preferCol ) {
@@ -3611,9 +3636,9 @@ get_mrow_scan( txSz ) {
 ```cpp
 intra_angle_info_y( ) {
      AngleDeltaY = 0
-     if ( MiSize >\= BLOCK_8X8 ) {
+     if ( MiSize >= BLOCK_8X8 ) {
          if ( is_directional_mode( YMode ) ) {
-              S() angle_delta_y
+             S() angle_delta_y;
              AngleDeltaY = angle_delta_y - MAX_ANGLE_DELTA
          }
      }
@@ -3625,9 +3650,9 @@ intra_angle_info_y( ) {
 ```cpp
 intra_angle_info_uv( ) {
      AngleDeltaUV = 0
-     if ( MiSize >\= BLOCK_8X8 ) {
+     if ( MiSize >= BLOCK_8X8 ) {
          if ( is_directional_mode( UVMode ) ) {
-              S() angle_delta_uv
+             S() angle_delta_uv;
              AngleDeltaUV = angle_delta_uv - MAX_ANGLE_DELTA
          }
      }
@@ -3638,7 +3663,7 @@ intra_angle_info_uv( ) {
 
 ```cpp
 is_directional_mode( mode ) {
-     if ( ( mode >\= V_PRED ) && ( mode <\= D67_PRED ) ) {
+     if ( ( mode >= V_PRED ) && ( mode <= D67_PRED ) ) {
          return 1
      }
      return 0
@@ -3649,11 +3674,11 @@ is_directional_mode( mode ) {
 
 ```cpp
 read_cfl_alphas() {
-      S() cfl_alpha_signs
+     S() cfl_alpha_signs;
      signU = (cfl_alpha_signs + 1 ) / 3
      signV = (cfl_alpha_signs + 1 ) % 3
      if ( signU != CFL_SIGN_ZERO ) {
-          S() cfl_alpha_u
+         S() cfl_alpha_u;
          CflAlphaU = 1 + cfl_alpha_u
          if ( signU == CFL_SIGN_NEG )
              CflAlphaU = -CflAlphaU
@@ -3661,13 +3686,14 @@ read_cfl_alphas() {
        CflAlphaU = 0
      }
      if ( signV != CFL_SIGN_ZERO ) {
-          S() cfl_alpha_v
+         S() cfl_alpha_v;
          CflAlphaV = 1 + cfl_alpha_v
          if ( signV == CFL_SIGN_NEG )
              CflAlphaV = -CflAlphaV
      } else {
        CflAlphaV = 0
     }
+}
 ```
 
 ### Palette mode info syntax ### {#palette_mode_info_syntax}
@@ -3676,30 +3702,30 @@ read_cfl_alphas() {
 palette_mode_info( ) {
      bsizeCtx = Mi_Width_Log2[ MiSize ] + Mi_Height_Log2[ MiSize ] - 2
      if ( YMode == DC_PRED ) {
-          S() has_palette_y
+         S() has_palette_y;
          if ( has_palette_y ) {
-              S() palette_size_y_minus_2
+             S() palette_size_y_minus_2;
              PaletteSizeY = palette_size_y_minus_2 + 2
              cacheN = get_palette_cache( 0 )
              idx = 0
              for ( i = 0; i < cacheN && idx < PaletteSizeY; i++ ) {
-                  L(1) use_palette_color_cache_y
+                 L(1) use_palette_color_cache_y;
                  if ( use_palette_color_cache_y ) {
                      palette_colors_y[ idx ] = PaletteCache[ i ]
                      idx++
                  }
              }
              if ( idx < PaletteSizeY ) {
-                  L(BitDepth) palette_colors_y[ idx ]
+                 L(BitDepth) palette_colors_y[ idx ];
                  idx++
              }
              if ( idx < PaletteSizeY ) {
                  minBits = BitDepth - 3
-                  L(2) palette_num_extra_bits_y
+                 L(2) palette_num_extra_bits_y;
                  paletteBits = minBits + palette_num_extra_bits_y
              }
              while ( idx < PaletteSizeY ) {
-                  L(paletteBits) palette_delta_y
+                 L(paletteBits) palette_delta_y;
                  palette_delta_y++
                  palette_colors_y[ idx ] =
                            Clip1( palette_colors_y[ idx - 1 ] +
@@ -3712,30 +3738,30 @@ palette_mode_info( ) {
          }
      }
      if ( HasChroma && UVMode == DC_PRED ) {
-          S() has_palette_uv
+         S() has_palette_uv;
          if ( has_palette_uv ) {
-              S() palette_size_uv_minus_2
+             S() palette_size_uv_minus_2;
              PaletteSizeUV = palette_size_uv_minus_2 + 2
              cacheN = get_palette_cache( 1 )
              idx = 0
              for ( i = 0; i < cacheN && idx < PaletteSizeUV; i++ ) {
-                  L(1) use_palette_color_cache_u
+                 L(1) use_palette_color_cache_u;
                  if ( use_palette_color_cache_u ) {
                      palette_colors_u[ idx ] = PaletteCache[ i ]
                      idx++
                  }
              }
              if ( idx < PaletteSizeUV ) {
-                  L(BitDepth) palette_colors_u[ idx ]
+                 L(BitDepth) palette_colors_u[ idx ];
                  idx++
              }
              if ( idx < PaletteSizeUV ) {
                  minBits = BitDepth - 3
-                  L(2) palette_num_extra_bits_u
+                 L(2) palette_num_extra_bits_u;
                  paletteBits = minBits + palette_num_extra_bits_u
              }
              while ( idx < PaletteSizeUV ) {
-                  L(paletteBits) palette_delta_u
+                 L(paletteBits) palette_delta_u;
                  palette_colors_u[ idx ] =
                            Clip1( palette_colors_u[ idx - 1 ] +
                                   palette_delta_u )
@@ -3744,29 +3770,30 @@ palette_mode_info( ) {
                  idx++
              }
              sort( palette_colors_u, 0, PaletteSizeUV - 1 )
-              L(1) delta_encode_palette_colors_v
+
+             L(1) delta_encode_palette_colors_v;
              if ( delta_encode_palette_colors_v ) {
                  minBits = BitDepth - 4
                  maxVal = 1 << BitDepth
-                  L(2) palette_num_extra_bits_v
+                 L(2) palette_num_extra_bits_v;
                  paletteBits = minBits + palette_num_extra_bits_v
-                  L(BitDepth) palette_colors_v[ 0 ]
+                 L(BitDepth) palette_colors_v[ 0 ];
                  for ( idx = 1; idx < PaletteSizeUV; idx++ ) {
-                      L(paletteBits) palette_delta_v
+                     L(paletteBits) palette_delta_v;
                      if ( palette_delta_v ) {
-                          L(1) palette_delta_sign_bit_v
+                         L(1) palette_delta_sign_bit_v;
                          if ( palette_delta_sign_bit_v ) {
                              palette_delta_v = -palette_delta_v
                          }
                      }
                      val = palette_colors_v[ idx - 1 ] + palette_delta_v
                      if ( val < 0 ) val += maxVal
-                     if ( val >\= maxVal ) val -= maxVal
+                     if ( val >= maxVal ) val -= maxVal
                      palette_colors_v[ idx ] = Clip1( val )
                  }
              } else {
                  for ( idx = 0; idx < PaletteSizeUV; idx++ ) {
-                      L(BitDepth) palette_colors_v[ idx ]
+                     L(BitDepth) palette_colors_v[ idx ];
                  }
              }
          }
@@ -3775,17 +3802,14 @@ palette_mode_info( ) {
 ```
 
 
-The function sort( arr, i1, i2 ) sorts a subarray of the array arr in-place into
-ascending order. The subarray to be sorted is between indices i1 and i2
-inclusive.
+The function `sort( arr, i1, i2 )` sorts a subarray of the array arr in-place into ascending order.
+The subarray to be sorted is between indices `i1` and `i2` inclusive.
 
-Note: The palette colors are generated in ascending order. The palette cache
-is also in ascending order. This means that the sort function can be replaced in
-implementations by a merge of two sorted lists.
+Note: The palette colors are generated in ascending order. The palette cache is also in ascending order.
+This means that the sort function can be replaced in implementations by a merge of two sorted lists.
 
 
-where the function get_palette_cache, which merges the above and left palettes
-to form a cache, is specified as follows:
+where the function `get_palette_cache`, which merges the above and left palettes to form a cache, is specified as follows:
 
 ```cpp
 get_palette_cache( plane ) {
@@ -3804,13 +3828,13 @@ get_palette_cache( plane ) {
          aboveC = PaletteColors[ plane ][ MiRow - 1 ][ MiCol ][ aboveIdx ]
          leftC = PaletteColors[ plane ][ MiRow ][ MiCol - 1 ][ leftIdx ]
          if ( leftC < aboveC ) {
-             if ( n == 0 \
+             if ( n == 0 || leftC != PaletteCache[ n - 1 ] ) {
                  PaletteCache[ n ] = leftC
                  n++
              }
              leftIdx++
          } else {
-             if ( n == 0 \
+             if ( n == 0 || aboveC != PaletteCache[ n - 1 ] ) {
                  PaletteCache[ n ] = aboveC
                  n++
              }
@@ -3823,7 +3847,7 @@ get_palette_cache( plane ) {
      while ( aboveIdx < aboveN ) {
          val = PaletteColors[ plane ][ MiRow - 1 ][ MiCol ][ aboveIdx ]
          aboveIdx++
-         if ( n == 0 \
+         if ( n == 0 || val != PaletteCache[ n - 1 ] ) {
              PaletteCache[ n ] = val
              n++
          }
@@ -3831,7 +3855,7 @@ get_palette_cache( plane ) {
      while ( leftIdx < leftN ) {
          val = PaletteColors[ plane ][ MiRow ][ MiCol - 1 ][ leftIdx ]
          leftIdx++
-         if ( n == 0 \
+         if ( n == 0 || val != PaletteCache[ n - 1 ] ) {
              PaletteCache[ n ] = val
              n++
          }
@@ -3841,7 +3865,7 @@ get_palette_cache( plane ) {
 ```
 
 
-Note: get_palette_cache is equivalent to sorting the available palette
+Note: `get_palette_cache` is equivalent to sorting the available palette
 colors from above and left together and removing any duplicates.
 
 
@@ -3851,10 +3875,11 @@ colors from above and left together and removing any duplicates.
 ```cpp
 transform_type( x4, y4, txSz ) {
      set = get_tx_set( txSz )
+
      if ( set > 0 &&
           ( segmentation_enabled ? get_qindex( 1, segment_id ) : base_q_idx ) > 0 ) {
          if ( is_inter ) {
-              S() inter_tx_type
+             S() inter_tx_type;
              if ( set == TX_SET_INTER_1 )
                  TxType = Tx_Type_Inter_Inv_Set1[ inter_tx_type ]
              else if ( set == TX_SET_INTER_2 )
@@ -3862,7 +3887,7 @@ transform_type( x4, y4, txSz ) {
              else
                  TxType = Tx_Type_Inter_Inv_Set3[ inter_tx_type ]
          } else {
-              S() intra_tx_type
+             S() intra_tx_type;
              if ( set == TX_SET_INTRA_1 )
                  TxType = Tx_Type_Intra_Inv_Set1[ intra_tx_type ]
              else
@@ -3882,7 +3907,7 @@ transform_type( x4, y4, txSz ) {
 
 where the inversion tables used in the function are specified as follows:
 
-~~~~~ c
+```c
 Tx_Type_Intra_Inv_Set1[ 7 ]  = { IDTX, DCT_DCT, V_DCT, H_DCT, ADST_ADST, ADST_DCT, DCT_ADST }
 Tx_Type_Intra_Inv_Set2[ 5 ]  = { IDTX, DCT_DCT, ADST_ADST, ADST_DCT, DCT_ADST }
 Tx_Type_Inter_Inv_Set1[ 16 ] = { IDTX, V_DCT, H_DCT, V_ADST, H_ADST, V_FLIPADST, H_FLIPADST,
@@ -3892,7 +3917,7 @@ Tx_Type_Inter_Inv_Set2[ 12 ] = { IDTX, V_DCT, H_DCT, DCT_DCT, ADST_DCT, DCT_ADST
                                  DCT_FLIPADST, ADST_ADST, FLIPADST_FLIPADST, ADST_FLIPADST,
                                  FLIPADST_ADST }
 Tx_Type_Inter_Inv_Set3[ 2 ]  = { IDTX, DCT_DCT }
-~~~~~
+```
 
 
 ### Get transform set function ### {#get_transform_set_function}
@@ -3904,7 +3929,7 @@ get_tx_set( txSz ) {
      if ( txSzSqrUp > TX_32X32 )
          return TX_SET_DCTONLY
      if ( is_inter ) {
-         if ( reduced_tx_set \
+         if ( reduced_tx_set || txSzSqrUp == TX_32X32 ) return TX_SET_INTER_3
          else if ( txSzSqr == TX_16X16 ) return TX_SET_INTER_2
          return TX_SET_INTER_1
      } else {
@@ -3924,15 +3949,16 @@ palette_tokens( ) {
      blockWidth = Block_Width[ MiSize ]
      onscreenHeight = Min( blockHeight, (MiRows - MiRow) * MI_SIZE )
      onscreenWidth = Min( blockWidth, (MiCols - MiCol) * MI_SIZE )
+
      if ( PaletteSizeY ) {
-          NS(PaletteSizeY) color_index_map_y
+         NS(PaletteSizeY) color_index_map_y;
          ColorMapY[0][0] = color_index_map_y
          for ( i = 1; i < onscreenHeight + onscreenWidth - 1; i++ ) {
              for ( j = Min( i, onscreenWidth - 1 );
-                       j >\= Max( 0, i - onscreenHeight + 1 ); j--  ) {
+                       j >= Max( 0, i - onscreenHeight + 1 ); j-- ) {
                  get_palette_color_context(
                      ColorMapY, ( i - j ), j, PaletteSizeY )
-                  S() palette_color_idx_y
+                 S() palette_color_idx_y;
                  ColorMapY[ i - j ][ j ] = ColorOrder[ palette_color_idx_y ]
              }
          }
@@ -3947,8 +3973,9 @@ palette_tokens( ) {
              }
          }
      }
+
      if ( PaletteSizeUV ) {
-          NS(PaletteSizeUV) color_index_map_uv
+         NS(PaletteSizeUV) color_index_map_uv;
          ColorMapUV[0][0] = color_index_map_uv
          blockHeight = blockHeight >> subsampling_y
          blockWidth = blockWidth >> subsampling_x
@@ -3962,12 +3989,13 @@ palette_tokens( ) {
              blockHeight += 2
              onscreenHeight += 2
          }
+
          for ( i = 1; i < onscreenHeight + onscreenWidth - 1; i++ ) {
              for ( j = Min( i, onscreenWidth - 1 );
-                       j >\= Max( 0, i - onscreenHeight + 1 ); j--  ) {
+                       j >= Max( 0, i - onscreenHeight + 1 ); j-- ) {
                  get_palette_color_context(
                      ColorMapUV, ( i - j ), j, PaletteSizeUV )
-                  S() palette_color_idx_uv
+                 S() palette_color_idx_uv;
                  ColorMapUV[ i - j ][ j ] = ColorOrder[ palette_color_idx_uv ]
              }
          }
@@ -4017,7 +4045,7 @@ get_palette_color_context( colorMap, r, c, n ) {
          if ( maxIdx != i ) {
              maxScore = scores[ maxIdx ]
              maxColorOrder = ColorOrder[ maxIdx ]
-             for ( k = maxIdx; k > i; k--  ) {
+             for ( k = maxIdx; k > i; k-- ) {
                  scores[ k ] = scores[ k - 1 ]
                  ColorOrder[ k ] = ColorOrder[ k - 1 ]
              }
@@ -4038,9 +4066,9 @@ is_inside determines whether a candidate position is inside the current [=Tile=]
 
 ```cpp
 is_inside( candidateR, candidateC ) {
-     return ( candidateC >\= MiColStart &&
+     return ( candidateC >= MiColStart &&
               candidateC < MiColEnd &&
-              candidateR >\= MiRowStart &&
+              candidateR >= MiRowStart &&
               candidateR < MiRowEnd )
 }
 ```
@@ -4055,9 +4083,9 @@ is_inside_filter_region( candidateR, candidateC ) {
      colEnd = MiCols
      rowStart = 0
      rowEnd = MiRows
-     return (candidateC >\= colStart &&
+     return (candidateC >= colStart &&
              candidateC < colEnd &&
-             candidateR >\= rowStart &&
+             candidateR >= rowStart &&
              candidateR < rowEnd)
 }
 ```
@@ -4102,7 +4130,7 @@ clear_cdef( r, c ) {
 
 ```cpp
 read_cdef( ) {
-     if ( skip \
+     if ( skip || CodedLossless || !enable_cdef || allow_intrabc) {
          return
      }
      cdefSize4 = Num_4x4_Blocks_Wide[ BLOCK_64X64 ]
@@ -4110,7 +4138,7 @@ read_cdef( ) {
      r = MiRow & cdefMask4
      c = MiCol & cdefMask4
      if ( cdef_idx[ r ][ c ] == -1 ) {
-          L(cdef_bits) cdef_idx[ r ][ c ]
+         L(cdef_bits) cdef_idx[ r ][ c ];
          w4 = Num_4x4_Blocks_Wide[ MiSize ]
          h4 = Num_4x4_Blocks_High[ MiSize ]
          for ( i = r; i < r + h4 ; i += cdefSize4 ) {
@@ -4165,11 +4193,11 @@ read_lr( r, c, bSize ) {
 
 where count_units_in_frame is a function specified as:
 
-~~~~~ c
+```c
 count_units_in_frame(unitSize, frameSize) {
     return Max((frameSize + (unitSize >> 1)) / unitSize, 1)
 }
-~~~~~
+```
 
 
 ### Read loop restoration unit syntax ### {#read_loop_restoration_unit_syntax}
@@ -4177,13 +4205,13 @@ count_units_in_frame(unitSize, frameSize) {
 ```cpp
 read_lr_unit(plane, unitRow, unitCol) {
      if ( FrameRestorationType[ plane ] == RESTORE_WIENER ) {
-          S() use_wiener
+         S() use_wiener;
          restoration_type = use_wiener ? RESTORE_WIENER : RESTORE_NONE
      } else if ( FrameRestorationType[ plane ] == RESTORE_SGRPROJ ) {
-          S() use_sgrproj
+         S() use_sgrproj;
          restoration_type = use_sgrproj ? RESTORE_SGRPROJ : RESTORE_NONE
      } else {
-          S() restoration_type
+         S() restoration_type;
      }
      LrType[ plane ][ unitRow ][ unitCol ] = restoration_type
      if ( restoration_type == RESTORE_WIENER ) {
@@ -4207,7 +4235,7 @@ read_lr_unit(plane, unitRow, unitCol) {
              }
          }
      } else if ( restoration_type == RESTORE_SGRPROJ ) {
-          L(SGRPROJ_PARAMS_BITS) lr_sgr_set
+         L(SGRPROJ_PARAMS_BITS) lr_sgr_set;
          LrSgrSet[ plane ][ unitRow ][ unitCol ] = lr_sgr_set
          for ( i = 0; i < 2; i++ ) {
              radius = Sgr_Params[ lr_sgr_set ][ i * 2 ]
@@ -4232,50 +4260,51 @@ read_lr_unit(plane, unitRow, unitCol) {
 ```
 
 
-where Wiener_Taps_Min, Wiener_Taps_Max, ,Wiener_Taps_K, Sgrproj_Xqd_Min, and
-Sgrproj_Xqd_Max are constant lookup tables:
+where `Wiener_Taps_Min`, `Wiener_Taps_Max`, `Wiener_Taps_K`, `Sgrproj_Xqd_Min`, and `Sgrproj_Xqd_Max` are constant lookup tables:
 
-~~~~~ c
+```c
 Wiener_Taps_Min[3] = { -5, -23, -17 }
 Wiener_Taps_Max[3] = { 10,   8,  46 }
 Wiener_Taps_K[3] = { 1, 2, 3 }
 
 Sgrproj_Xqd_Min[2] = { -96, -32 }
 Sgrproj_Xqd_Max[2] = {  31,  95 }
-~~~~~
+```
 
-Sgr_Params is a constant lookup table defined in [[#box_filter_process]] and
-decode_signed_subexp_with_ref_bool is a function specified as follows:
+`Sgr_Params` is a constant lookup table defined in [[#box_filter_process]] and
+`decode_signed_subexp_with_ref_bool` is a function specified as follows:
 
 ```cpp
 decode_signed_subexp_with_ref_bool( low, high, k, r ) {
      x = decode_unsigned_subexp_with_ref_bool(high - low, k, r - low)
      return x + low
  }
+
  decode_unsigned_subexp_with_ref_bool( mx, k, r ) {
      v = decode_subexp_bool( mx, k )
-     if ( (r << 1) <\= mx ) {
+     if ( (r << 1) <= mx ) {
          return inverse_recenter(r, v)
      } else {
          return mx - 1 - inverse_recenter(mx - 1 - r, v)
      }
  }
+
  decode_subexp_bool( numSyms, k ) {
      i = 0
      mk = 0
      while ( 1 ) {
          b2 = i ? k + i - 1 : k
          a = 1 << b2
-         if ( numSyms <\= mk + 3 * a ) {
-              NS(numSyms - mk) subexp_unif_bools
+         if ( numSyms <= mk + 3 * a ) {
+             NS(numSyms - mk) subexp_unif_bools;
              return subexp_unif_bools + mk
          } else {
-              L(1) subexp_more_bools
+             L(1) subexp_more_bools;
              if ( subexp_more_bools ) {
                 i++
                 mk += a
              } else {
-                 L(b2) subexp_bools
+                L(b2) subexp_bools;
                 return subexp_bools + mk
              }
          }
@@ -4284,10 +4313,9 @@ decode_signed_subexp_with_ref_bool( low, high, k, r ) {
 ```
 
 
-Note: The decode_signed_subexp_with_ref_bool function is the same as the
-decode_signed_subexp_with_ref function except that the bits used to represent
-the symbol are arithmetic coded instead of being read directly from the
-[=Bitstream=].
+Note: The `decode_signed_subexp_with_ref_bool` function is the same as the
+`decode_signed_subexp_with_ref` function except that the bits used to represent
+the symbol are arithmetic coded instead of being read directly from the [=Bitstream=].
 
 
 ## Tile list OBU syntax ## {#tile_list_obu_syntax}
@@ -4296,9 +4324,9 @@ the symbol are arithmetic coded instead of being read directly from the
 
 ```cpp
 tile_list_obu( ) {
-      f(8) output_frame_width_in_tiles_minus_1
-      f(8) output_frame_height_in_tiles_minus_1
-      f(16) tile_count_minus_1
+     f(8) output_frame_width_in_tiles_minus_1;
+     f(8) output_frame_height_in_tiles_minus_1;
+     f(16) tile_count_minus_1;
      for ( tile = 0; tile <= tile_count_minus_1; tile++ )
          tile_list_entry( )
 }
@@ -4309,11 +4337,11 @@ tile_list_obu( ) {
 
 ```cpp
 tile_list_entry( ) {
-      f(8) anchor_frame_idx
-      f(8) anchor_tile_row
-      f(8) anchor_tile_col
-      f(16) tile_data_size_minus_1
+     f(8) anchor_frame_idx;
+     f(8) anchor_tile_row;
+     f(8) anchor_tile_col;
+     f(16) tile_data_size_minus_1;
      N = 8 * (tile_data_size_minus_1 + 1)
-      f(N) coded_tile_data
- }
+     f(N) coded_tile_data;
+}
 ```
