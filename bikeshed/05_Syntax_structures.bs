@@ -7,7 +7,7 @@ each of the syntax elements is presented in [Section 6][].
 
 ## Low overhead bitstream format ## {#low_overhead_bitstream_format}
 
-This specification defines a low-overhead bitstream format as a sequence of the OBU syntactical elements defined in this section.
+This specification defines a low-overhead bitstream format as a sequence of the [=OBU=] syntactical elements defined in this section.
 When using this format, obu_has_size_field must be equal to 1.
 For applications requiring a format where it is easier to skip through frames or temporal units,
 a length-delimited bitstream format is defined in Annex B.
@@ -128,13 +128,13 @@ reserved_obu( ) {
 
 
 Note: Reserved OBUs do not have a defined syntax. The obu_type reserved
-values are reserved for future use. Decoders should ignore the entire OBU if
-they do not understand the obu_type. Ignoring the OBU can be done based on
-obu_size. The last byte of the valid content of the payload data for this OBU type
-is considered to be the last byte that is not equal to zero.
+values are [=Reserved=] for future use. Decoders should ignore the entire [=OBU=] if
+they do not understand the obu_type. Ignoring the [=OBU=] can be done based on
+obu_size. The last [=Byte=] of the valid content of the payload data for this [=OBU=] type
+is considered to be the last [=Byte=] that is not equal to zero.
 This rule is to prevent the dropping of valid bytes by systems that
-interpret trailing zero bytes as a continuation of the trailing bits in an OBU.
-This implies that when any payload data is present for this OBU type,
+interpret trailing zero bytes as a continuation of the trailing bits in an [=OBU=].
+This implies that when any payload data is present for this [=OBU=] type,
 at least one byte of the payload data (including the trailing bit) shall not be equal to 0.
 
 
@@ -395,17 +395,17 @@ padding_obu( ) {
 ```
 
 
-Note: obu_padding_length is not coded in the bitstream but can be computed
+Note: obu_padding_length is not coded in the [=Bitstream=] but can be computed
 based on obu_size minus the number of trailing bytes.
 In practice, though, since this is
 padding data meant to be skipped, decoders do not need to determine either
-that length nor the number of trailing bytes. They can ignore the entire OBU.
-Ignoring the OBU can be done based on obu_size.
-The last byte of the valid content of the payload data for this OBU type
+that length nor the number of trailing bytes. They can ignore the entire [=OBU=].
+Ignoring the [=OBU=] can be done based on obu_size.
+The last byte of the valid content of the payload data for this [=OBU=] type
 is considered to be the last byte that is not equal to zero.
 This rule is to prevent the dropping of valid bytes by systems that
-interpret trailing zero bytes as a continuation of the trailing bits in an OBU.
-This implies that when any payload data is present for this OBU type,
+interpret trailing zero bytes as a continuation of the trailing bits in an [=OBU=].
+This implies that when any payload data is present for this [=OBU=] type,
 at least one byte of the payload data (including the trailing bit) shall not be equal to 0.
 
 
@@ -432,14 +432,14 @@ metadata_obu( ) {
 
 Note:  The exact syntax of metadata_obu is not defined
 in this specification when metadata_type is equal to
-a value reserved for future use or a user private value.
-Decoders should ignore the entire OBU if they do not understand the metadata_type.
-The last byte of the valid content of the data is
-considered to be the last byte that is not equal to zero. This rule is to
+a value [=Reserved=] for future use or a user private value.
+Decoders should ignore the entire [=OBU=] if they do not understand the metadata_type.
+The last [=Byte=] of the valid content of the data is
+considered to be the last [=Byte=] that is not equal to zero. This rule is to
 prevent the dropping of valid bytes by systems that interpret trailing zero
-bytes as a padding continuation of the trailing bits in an OBU.
-This implies that when any payload data is present for this OBU type,
-at least one byte of the payload data (including the trailing bit) shall not be equal to 0.
+bytes as a padding continuation of the trailing bits in an [=OBU=].
+This implies that when any payload data is present for this [=OBU=] type,
+at least one [=Byte=] of the payload data (including the trailing bit) shall not be equal to 0.
 
 
 
@@ -459,13 +459,13 @@ metadata_itut_t35( ) {
 Note:  The exact syntax of itu_t_t35_payload_bytes is not defined
 in this specification. External
 specifications can define the syntax.
-Decoders should ignore the entire OBU if they do not understand it.
-The last byte of the valid content of the data is
-considered to be the last byte that is not equal to zero. This rule is to
+Decoders should ignore the entire [=OBU=] if they do not understand it.
+The last [=Byte=] of the valid content of the data is
+considered to be the last [=Byte=] that is not equal to zero. This rule is to
 prevent the dropping of valid bytes by systems that interpret trailing zero
-bytes as a padding continuation of the trailing bits in an OBU.
-This implies that when any payload data is present for this OBU type,
-at least one byte of the payload data (including the trailing bit) shall not be equal to 0.
+bytes as a padding continuation of the trailing bits in an [=OBU=].
+This implies that when any payload data is present for this [=OBU=] type,
+at least one [=Byte=] of the payload data (including the trailing bit) shall not be equal to 0.
 
 
 
@@ -2299,8 +2299,7 @@ read_tx_size( allowSelect ) {
 ```
 
 
-The Max_Tx_Depth table specifies the maximum transform depth
-for each block size:
+The Max_Tx_Depth table specifies the maximum transform depth for each block size:
 
 ~~~~~ c
 Max_Tx_Depth[ BLOCK_SIZES ] = {
@@ -2413,7 +2412,7 @@ inter_frame_mode_info( ) {
 
 ### Inter segment ID syntax ### {#inter_segment_id_syntax}
 
-This is called before (preSkip equal to 1) and after (preSkip equal to 0) the skip syntax element has been read.
+This is called before (preSkip equal to 1) and after (preSkip equal to 0) the skip [=Syntax element=] has been read.
 
 ```cpp
 inter_segment_id( preSkip ) {
@@ -2477,7 +2476,7 @@ read_is_inter( ) {
 ### Get segment ID function ### {#get_segment_id_function}
 
 The predicted segment id is the smallest value found in the on-screen region
-of the segmentation map covered by the current block.
+of the [=Segmentation map=] covered by the current [=Block=].
 
 ```cpp
 get_segment_id( ) {
@@ -2822,8 +2821,7 @@ read_motion_mode( isCompound ) {
 ```
 
 
-where is_scaled is a function that determines whether a
-reference frame uses scaling and is specified as:
+where is_scaled is a function that determines whether a [=Reference frame=] uses scaling and is specified as:
 
 ```cpp
 is_scaled( refFrame ) {
@@ -3253,8 +3251,8 @@ get_tx_size( plane, txSz ) {
 
 ### Get plane residual size function ### {#get_plane_residual_size_function}
 
-The get_plane_residual_size returns the size of a residual block for the
-specified plane. (The residual block will always have width and height at least
+The get_plane_residual_size returns the size of a [=Residual=] [=Block=] for the
+specified plane. (The [=Residual=] [=Block=] will always have width and height at least
 equal to 4.)
 
 ```cpp
@@ -4028,7 +4026,7 @@ get_palette_color_context( colorMap, r, c, n ) {
 
 ### Is inside function ### {#is_inside_function}
 
-is_inside determines whether a candidate position is inside the current tile.
+is_inside determines whether a candidate position is inside the current [=Tile=].
 
 ```cpp
 is_inside( candidateR, candidateC ) {
@@ -4041,7 +4039,7 @@ is_inside( candidateR, candidateC ) {
 
 ### Is inside filter region function ### {#is_inside_filter_region_function}
 
-is_inside_filter_region determines whether a candidate position is inside the region that is being used for CDEF filtering.
+is_inside_filter_region determines whether a candidate position is inside the region that is being used for [=CDEF=] filtering.
 
 ```cpp
 is_inside_filter_region( candidateR, candidateC ) {
@@ -4281,7 +4279,7 @@ decode_signed_subexp_with_ref_bool( low, high, k, r ) {
 Note: The decode_signed_subexp_with_ref_bool function is the same as the
 decode_signed_subexp_with_ref function except that the bits used to represent
 the symbol are arithmetic coded instead of being read directly from the
-bitstream.
+[=Bitstream=].
 
 
 ## Tile list OBU syntax ## {#tile_list_obu_syntax}
@@ -4310,5 +4308,4 @@ tile_list_entry( ) {
      N = 8 * (tile_data_size_minus_1 + 1)
       f(N) coded_tile_data
  }
-
 ```

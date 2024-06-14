@@ -4,7 +4,7 @@
 
 The mathematical operators and their precedence rules used to describe this Specification are similar to those used in the C programming language. However, the operation of integer division with truncation is specifically defined.
 
-In addition, a length 2 array used to hold a motion vector (indicated by the variable name ending with the letters Mv or Mvs) can be accessed using either array notation (e.g. `Mv[ 0 ]` and `Mv[ 1 ]`), or by just the name (e.g., `Mv`). The only operations defined when using the name are assignment and equality/inequality testing. Assignment of an array is represented using the notation `A = B` and is specified to mean the same as doing both the individual assignments `A[ 0 ] = B[ 0 ]` and `A[ 1 ] = B[ 1 ]`. Equality testing of 2 motion vectors is represented using the notation `A == B` and is specified to mean the same as (`A[ 0 ] == B[ 0 ] && A[ 1 ] == B[ 1 ]`). Inequality testing is defined as `A != B` and is specified to mean the same as (`A[ 0 ] != B[ 0 ] || A[ 1 ] != B[ 1 ]`).
+In addition, a length 2 array used to hold a [=Motion vector=] (indicated by the variable name ending with the letters Mv or Mvs) can be accessed using either array notation (e.g. `Mv[ 0 ]` and `Mv[ 1 ]`), or by just the name (e.g., `Mv`). The only operations defined when using the name are assignment and equality/inequality testing. Assignment of an array is represented using the notation `A = B` and is specified to mean the same as doing both the individual assignments `A[ 0 ] = B[ 0 ]` and `A[ 1 ] = B[ 1 ]`. Equality testing of 2 motion vectors is represented using the notation `A == B` and is specified to mean the same as (`A[ 0 ] == B[ 0 ] && A[ 1 ] == B[ 1 ]`). Inequality testing is defined as `A != B` and is specified to mean the same as (`A[ 0 ] != B[ 0 ] || A[ 1 ] != B[ 1 ]`).
 
 When a variable is said to be representable by a signed integer with `x` bits, it means that the variable is greater than or equal to `-(1 << (x-1))`, and that the variable is less than or equal to `(1 << (x-1))-1`.
 
@@ -263,21 +263,21 @@ CeilLog2( x ) {
 
 ## Method of describing bitstream syntax ## {#conventions-bitstream-syntax}
 
-The description style of the syntax is similar to the C programming language. Syntax elements in the bitstream are represented in bold type. Each syntax element is described by its name (using only lower case letters with underscore characters) and a descriptor for its method of coded representation. The decoding process behaves according to the value of the syntax element and to the values of previously decoded syntax elements. When a value of a syntax element is used in the syntax tables or the text, it appears in regular (i.e. not bold) type. If the value of a syntax element is being computed (e.g. being written with a default value instead of being coded in the bitstream), it also appears in regular type (e.g. tile_size_minus_1).
+The description style of the syntax is similar to the C programming language. Syntax elements in the [=Bitstream=] are represented in bold type. Each [=Syntax element=] is described by its name (using only lower case letters with underscore characters) and a descriptor for its method of coded representation. The [=Decoding process=] behaves according to the value of the [=Syntax element=] and to the values of previously decoded syntax elements. When a value of a [=Syntax element=] is used in the syntax tables or the text, it appears in regular (i.e. not bold) type. If the value of a [=Syntax element=] is being computed (e.g. being written with a default value instead of being coded in the [=Bitstream=]), it also appears in regular type (e.g. tile_size_minus_1).
 
-In some cases the syntax tables may use the values of other variables derived from syntax elements values. Such variables appear in the syntax tables, or text, named by a mixture of lower case and upper case letter and without any underscore characters. Variables starting with an upper case letter are derived for the decoding of the current syntax structure and all depending syntax structures. These variables may be used in the decoding process for later syntax structures. Variables starting with a lower case letter are only used within the process from which they are derived. (Single character variables are allowed.)
+In some cases the syntax tables may use the values of other variables derived from syntax elements values. Such variables appear in the syntax tables, or text, named by a mixture of lower case and upper case letter and without any underscore characters. Variables starting with an upper case letter are derived for the decoding of the current syntax structure and all depending syntax structures. These variables may be used in the [=Decoding process=] for later syntax structures. Variables starting with a lower case letter are only used within the process from which they are derived. (Single character variables are allowed.)
 
 Constant values appear in all upper case letters with underscore characters (e.g. MI_SIZE).
 
 Constant lookup tables appear as words (with the first letter of each word in upper case, and remaining letters in lower case) separated with underscore characters (e.g. Block_Width[…]).
 
-Hexadecimal notation, indicated by prefixing the hexadecimal number by `0x`, may be used when the number of bits is an integer multiple of 4. For example, `0x1a` represents a bit string `0001 1010`.
+Hexadecimal notation, indicated by prefixing the hexadecimal number by `0x`, may be used when the number of bits is an integer multiple of 4. For example, `0x1a` represents a [=Bit string=] `0001 1010`.
 
-Binary notation is indicated by prefixing the binary number by `0b`. For example, `0b00011010` represents a bit string `0001 1010`. Binary numbers may include underscore characters to enhance readability. If present, the underscore characters appear every 4 binary digits starting from the LSB. For example, `0b11010` may also be written as `0b1_1010`.
+Binary notation is indicated by prefixing the binary number by `0b`. For example, `0b00011010` represents a [=Bit string=] `0001 1010`. Binary numbers may include underscore characters to enhance readability. If present, the underscore characters appear every 4 binary digits starting from the LSB. For example, `0b11010` may also be written as `0b1_1010`.
 
 A value equal to 0 represents a FALSE condition in a test statement. The value TRUE is represented by any value not equal to 0.
 
-The following table lists examples of the syntax specification format. When `syntax_element` appears (with bold face font), it specifies that this syntax element is parsed from the bitstream.
+The following table lists examples of the syntax specification format. When `syntax_element` appears (with bold face font), it specifies that this [=Syntax element=] is parsed from the [=Bitstream=].
 
 <table class="syntax">
   <tbody>
@@ -286,7 +286,7 @@ The following table lists examples of the syntax specification format. When `syn
       <td><strong>Type</strong></td>
     </tr>
     <tr>
-      <td>/* A statement can be a syntax element with associated</td>
+      <td>/* A statement can be a [=Syntax element=] with associated</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -518,9 +518,9 @@ The following table lists examples of the syntax specification format. When `syn
 
 ## Functions ## {#conventions-functions}
 
-Bitstream functions used for syntax description are specified in this section.
+[=Bitstream=] functions used for syntax description are specified in this section.
 
-Other functions are included in the syntax tables. The convention is that a section is called syntax if it causes syntax elements to be read from the bitstream, either directly or indirectly through subprocesses. The remaining sections are called functions.
+Other functions are included in the syntax tables. The convention is that a section is called syntax if it causes syntax elements to be read from the [=Bitstream=], either directly or indirectly through subprocesses. The remaining sections are called functions.
 
 The specification of these functions makes use of a bitstream position indicator. This bitstream position indicator locates the position of the bit that is going to be read next.
 
@@ -534,15 +534,15 @@ The specification of these functions makes use of a bitstream position indicator
 
 ### General ### {#conventions-descriptors-general}
 
-The following descriptors specify the parsing of syntax elements. Lower case descriptors specify syntax elements that are represented by an integer number of bits in the bitstream; upper case descriptors specify syntax elements that are represented by arithmetic coding.
+The following descriptors specify the parsing of syntax elements. Lower case descriptors specify syntax elements that are represented by an integer number of bits in the [=Bitstream=]; upper case descriptors specify syntax elements that are represented by arithmetic coding.
 
 ### f(n) ### {#conventions-descriptors-fn}
 
-Unsigned n-bit number appearing directly in the bitstream. The bits are read from high to low order.  The parsing process specified in section 8.1 (TBD) is invoked and the syntax element is set equal to the return value.
+Unsigned n-bit number appearing directly in the [=Bitstream=]. The bits are read from high to low order.  The parsing process specified in section 8.1 (TBD) is invoked and the [=Syntax element=] is set equal to the return value.
 
 ### uvlc() ### {#conventions-descriptors-uvlc}
 
-Variable length unsigned number appearing directly in the bitstream. The parsing process for this descriptor is specified below:
+Variable length unsigned number appearing directly in the [=Bitstream=]. The parsing process for this descriptor is specified below:
 
 <table class="syntax">
   <tbody>
@@ -624,11 +624,11 @@ Unsigned little-endian n-byte number appearing directly in the bitstream. The pa
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">byte</b></td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="syntax-element">[=Byte=]</b></td>
       <td>f(8)</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t += ( byte &lt;&lt; ( i * 8 ) )</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t += ( [=Byte=] &lt;&lt; ( i * 8 ) )</td>
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -715,17 +715,17 @@ The parsing process for this descriptor is specified below:
   </tbody>
 </table>
 
-It is a requirement of bitstream conformance that the value returned from the leb128 parsing process is less than or equal to `(1 << 32) - 1`.
+It is a requirement of [=Bitstream=] conformance that the value returned from the leb128 parsing process is less than or equal to `(1 << 32) - 1`.
 
-`leb128_byte` contains 8 bits read from the bitstream. The bottom 7 bits are used to compute the variable value. The most significant bit is used to indicate that there are more bytes to be read.
+`leb128_byte` contains 8 bits read from the [=Bitstream=]. The bottom 7 bits are used to compute the variable value. The most significant bit is used to indicate that there are more bytes to be read.
 
-It is a requirement of bitstream conformance that the most significant bit of leb128_byte is equal to 0 if i is equal to 7. (This ensures that this syntax descriptor never uses more than 8 bytes.)
+It is a requirement of [=Bitstream=] conformance that the most significant bit of leb128_byte is equal to 0 if i is equal to 7. (This ensures that this syntax descriptor never uses more than 8 bytes.)
 
-Note: There are multiple ways of encoding the same value depending on how many leading zero bits are encoded. There is no requirement that this syntax descriptor uses the most compressed representation. This can be useful for encoder implementations by allowing a fixed amount of space to be filled in later when the value becomes known.
+Note: There are multiple ways of encoding the same value depending on how many leading zero bits are encoded. There is no requirement that this syntax descriptor uses the most compressed representation. This can be useful for [=Encoder=] implementations by allowing a fixed amount of space to be filled in later when the value becomes known.
 
 ### su(n) ### {#conventions-descriptors-sun}
 
-Signed integer converted from an n bits unsigned integer in the bitstream. (The unsigned integer corresponds to the bottom n bits of the signed integer.) The parsing process for this descriptor is specified below:
+Signed integer converted from an n bits unsigned integer in the [=Bitstream=]. (The unsigned integer corresponds to the bottom n bits of the signed integer.) The parsing process for this descriptor is specified below:
 
 <table class="syntax">
   <tbody>
@@ -850,13 +850,13 @@ The abbreviation ns stands for non-symmetric. This encoding is non-symmetric bec
 
 ### L(n) ### {#conventions-descriptors-ln}
 
-Unsigned arithmetic encoded n-bit number encoded as n flags (a “literal”). The flags are read from high to low order. The syntax element is set equal to the return value of `read_literal( n )` (see section 8.2.5 (TBD) for a specification of this process).
+Unsigned arithmetic encoded n-bit number encoded as n flags (a “literal”). The flags are read from high to low order. The [=Syntax element=] is set equal to the return value of `read_literal( n )` (see section 8.2.5 (TBD) for a specification of this process).
 
 ### S() ### {#conventions-descriptors-s}
 
 An arithmetic encoded symbol coded from a small alphabet of at most 16 entries.
 
-The symbol is decoded based on a context sensitive CDF (see section 8.3 (TBD) for the specification of this process).
+The symbol is decoded based on a context sensitive [=CDF=] (see section 8.3 (TBD) for the specification of this process).
 
 ### NS(n) ### {#conventions-descriptors-nsn2}
 

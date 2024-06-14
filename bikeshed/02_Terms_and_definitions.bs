@@ -8,7 +8,7 @@ Any transform coefficient whose frequency indices are non-zero in at least one d
 
 <dfn>Altref</dfn>
 
-(Alternative reference frame) A frame that can be used in inter coding.
+(Alternative reference frame) A frame that can be used in [=Inter coding=].
 
 <dfn>Base layer</dfn>
 
@@ -86,7 +86,7 @@ The process in which transform coefficients are obtained by scaling the quantize
 
 <dfn>Encoder</dfn>
 
-One embodiment of the encoding process.
+One embodiment of the [=Encoding process=].
 
 <dfn>Encoding process</dfn>
 
@@ -110,7 +110,7 @@ A set of probabilities used in the decoding process.
 
 <dfn>Golden frame</dfn>
 
-A frame that can be used in inter coding. Typically the golden frame is encoded with higher quality and is used as a reference for multiple inter frames.
+A frame that can be used in [=Inter coding=]. Typically the golden frame is encoded with higher quality and is used as a reference for multiple inter frames.
 
 <dfn>Inter coding</dfn>
 
@@ -122,7 +122,7 @@ A frame compressed by referencing previously decoded frames and which may use in
 
 <dfn>Inter prediction</dfn>
 
-The process of deriving the prediction value for the current frame using previously decoded frames.
+The process of deriving the [=Prediction value=] for the current frame using previously decoded frames.
 
 <dfn>Intra coding</dfn>
 
@@ -134,7 +134,7 @@ A frame compressed using only intra prediction which can be independently decode
 
 <dfn>Intra prediction</dfn>
 
-The process of deriving the prediction value for the current sample using previously decoded sample values in the same decoded frame.
+The process of deriving the [=Prediction value=] for the current sample using previously decoded sample values in the same decoded frame.
 
 <dfn>Inverse transform</dfn>
 
@@ -212,7 +212,7 @@ Maps a two dimensional rectangular raster into a one dimensional raster, in whic
 
 <dfn>Reconstruction</dfn>
 
-Obtaining the addition of the decoded residual and the corresponding prediction values.
+Obtaining the addition of the decoded residual and the corresponding [=Prediction value=]s.
 
 <dfn>Reference</dfn>
 
@@ -228,7 +228,7 @@ A special syntax element value which may be used to extend this part in the futu
 
 <dfn>Residual</dfn>
 
-The differences between the reconstructed samples and the corresponding prediction values.
+The differences between the reconstructed samples and the corresponding [=Prediction value=]s.
 
 <dfn>Sample</dfn>
 
@@ -252,7 +252,7 @@ The top level of the block quadtree within a tile. All superblocks within a fram
 
 <dfn>Switch Frame</dfn>
 
-An inter frame that can be used as a point to switch between sequences. Switch frames overwrite all the reference frames without forcing the use of intra coding.  The intention is to allow a streaming use case where videos can be encoded in small chunks (say of 1 second duration), each starting with a switch frame.  If the available bandwidth drops, the server can start sending chunks from a lower bitrate encoding instead. When this happens the inter prediction uses the existing higher quality reference frames to decode the switch frame.  This approach allows a bitrate switch without the cost of a full key frame.
+An inter frame that can be used as a point to switch between sequences. Switch frames overwrite all the reference frames without forcing the use of [=Intra coding=].  The intention is to allow a streaming use case where videos can be encoded in small chunks (say of 1 second duration), each starting with a switch frame.  If the available bandwidth drops, the server can start sending chunks from a lower bitrate encoding instead. When this happens the inter prediction uses the existing higher quality reference frames to decode the switch frame.  This approach allows a bitrate switch without the cost of a full key frame.
 
 <dfn>Syntax element</dfn>
 

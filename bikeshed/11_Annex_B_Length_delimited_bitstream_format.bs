@@ -118,21 +118,21 @@ enables skipping through temporal units and frames more easily.
 ## Length delimited bitstream semantics ## {#length_delimited_bitstream_semantics}
 
 **more_data_in_bitstream()** is a system-dependent method of determining whether
-the end of the bitstream has been reached.  It returns 1 when there is more data
-to be read, or 0 when the end of the bitstream has been reached.
+the end of the [=Bitstream=] has been reached.  It returns 1 when there is more data
+to be read, or 0 when the end of the [=Bitstream=] has been reached.
 
-**temporal_unit_size** specifies the length in bytes of the next temporal unit.
+**temporal_unit_size** specifies the length in bytes of the next [=Temporal unit=].
 
 **frame_unit_size** specifies the length in bytes of the next frame unit.
 
-**obu_length** specifies the length in bytes of the next OBU.
+**obu_length** specifies the length in bytes of the next [=OBU=].
 
-Note: It is allowed for the OBU to set obu_has_size_field equal to 1 to indicate
-that the obu_size syntax element is present.  In this case, the decoding process
+Note: It is allowed for the [=OBU=] to set obu_has_size_field equal to 1 to indicate
+that the obu_size [=Syntax element=] is present.  In this case, the [=Decoding process=]
 assumes that obu_size and obu_length are set consistently.
 If obu_size and obu_length are both present, but inconsistent, then the packed bitstream
 is deemed invalid.
 
-The first OBU in the first frame_unit of each temporal_unit must be a temporal delimiter OBU (and this is the only place temporal delimiter OBUs can appear).
+The first [=OBU=] in the first frame_unit of each temporal_unit must be a [=Temporal delimiter OBU=] (and this is the only place temporal delimiter OBUs can appear).
 
-All the frame header and tile group OBUs required for decoding a single frame must be within the same frame_unit (and a frame_unit must not contain frame headers for more than one frame).
+All the frame header and tile group OBUs required for decoding a single [=Frame=] must be within the same frame_unit (and a frame_unit must not contain frame headers for more than one [=Frame=]).
