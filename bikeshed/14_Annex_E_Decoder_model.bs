@@ -224,9 +224,9 @@ peak bitrate. The first bit of DFG i is expected to arrive by the latest time
 that would guarantee timely reception of the entire DFG by the time when the
 decodable frame in the DFG i is due to be decoded:
 
-~~~~~ c
+```c
 FirstBitArrival[ i ]  = max ( LastBitArrival[ i - 1 ], LatestArrivalTime[ i ] ),
-~~~~~
+```
 
 where LatestArrivalTime[ i ] is the latest time when the first bit of DFG i must
 arrive in the smoothing buffer to ensure that the complete DFG is available at
@@ -234,9 +234,9 @@ the scheduled removal time, ScheduledRemoval [ i ], in units of seconds, unless
 the new set of decoding model parameters is received. In its turn, the latest
 time the DFG data should start being received is determined as follows:
 
-~~~~~ c
+```c
 LatestArrivalTime[ i ]  = ScheduledRemoval[ i ]  -  ( encoder_buffer_delay  + decoder_buffer_delay ) ÷ 90 000
-~~~~~
+```
 
 ### End of DFG bits arrival ### {#end_of_dfg_bits_arrival}
 
@@ -244,9 +244,9 @@ LatestArrivalTime[ i ]  = ScheduledRemoval[ i ]  -  ( encoder_buffer_delay  + de
 For the bits that belong to the DFG i, the time of arrival of the last bit of
 the DFG i is determined as follows:
 
-~~~~~ c
+```c
 LastBitArrival[ i ] = FirstBitArrival[ i ] + CodedBits[ i ] ÷ BitRate
-~~~~~
+```
 
 ### Scheduled removal times ### {#scheduled_removal_times}
 
@@ -261,15 +261,15 @@ availability and the decoding schedule mode.
 
 When the decoder model operates in the decoding schedule mode
 
-~~~~~ c
+```c
 ScheduledRemoval[ i ] = ScheduledRemovalTiming[ i ]
-~~~~~
+```
 
 When the decoder model operates in the resource availability mode
 
-~~~~~ c
+```c
 ScheduledRemoval[ i ] = ScheduledRemovalResource[ i ]
-~~~~~
+```
 
 Derivation of ScheduledRemovalTiming[ i ] in the decoding schedule mode is
 described in [[#removal_times_in_decoding_schedule_mode]], and derivation of ScheduledRemovalResource[ i ]
@@ -284,11 +284,11 @@ buffer_removal_time[ i ], signaled for the frame of the DFG with
 show_existing_frame flag equal to 0, relative to the moment of time when the
 first DFG is removed from the smoothing buffer, decoder_buffer_delay:
 
-~~~~~ c
+```c
 ScheduledRemovalTiming[ 0 ] = decoder_buffer_delay ÷ 90 000
 
 ScheduledRemovalTiming[ i ] = ScheduledRemovalTiming[ PrevRap ] + buffer_removal_time[ i ] * DecCT
-~~~~~
+```
 
 When j is not equal to 0 and frame j is associated with a random access point,
 PrevRap is the index associated with the previous random access point.
@@ -310,9 +310,9 @@ If low_delay_mode_flag[ op ] is equal to 0 the decoder operates in Strict
 Arrival Mode, and DFG is removed from the smoothing buffer at the scheduled
 time, that is:
 
-~~~~~ c
+```c
 Removal[ i ] = ScheduledRemovalTiming[ i ]
-~~~~~
+```
 
 Otherwise, low_delay_mode_flag[ op ] is equal to 1 and the decoder operates in
 Low-Delay Mode, where the DFG data may not be available in the smoothing buffer
@@ -321,17 +321,17 @@ LastBitArrival[ i ]. In that case the removal of the DFG is deferred until the
 first decode clock tick after the complete DFG is present in the smoothing
 buffer, that is:
 
-~~~~~ c
+```c
 Removal[ i ] = ceil ( LastBitArrival[ i ] ÷ DecCT ) * DecCT
-~~~~~
+```
 
 If the entire DFG is available in the smoothing buffer at the scheduled removal
 time, i.e. ScheduledRemovalTiming[ i ] >= LastBitArrival[ i ], then it is
 removed at the scheduled time, that is:
 
-~~~~~ c
+```c
 Removal[ i ]  =  ScheduledRemovalTiming[ i ]
-~~~~~
+```
 
 ### Removal times in resource availability mode ### {#removal_times_in_resource_availability_mode}
 
@@ -356,7 +356,7 @@ The following function, time_next_buffer_is_free, is used by the decode process
 to determine the Removal[ i ] time  for the next DFG and generate the value of
 ScheduledRemovalResource[ i ].
 
-~~~~~ c
+```c
 time_next_buffer_is_free ( i, time ) {
     if ( i == 0 ) {
         time = decoder_buffer_delay ÷ 90000
@@ -377,7 +377,7 @@ time_next_buffer_is_free ( i, time ) {
     ScheduledRemovalResource[ i ] = bufFreeTime
     return bufFreeTime
 }
-~~~~~
+```
 
 ### Frame decode timing ### {#frame_decode_timing}
 
@@ -390,7 +390,7 @@ definition of the level assigned to the operating point that the frame belongs.
 The time that it takes the decoder to decode a frame according to the decoder
 model is estimated by using the function time_to_decode_frame( ) as follows.
 
-~~~~~ c
+```c
 time_to_decode_frame( ) {
     if ( show_existing_frame == 1 ) {
         lumaSamples = 0
@@ -407,7 +407,7 @@ time_to_decode_frame( ) {
     }
     return  lumaSamples ÷ MaxDecodeRate
 }
-~~~~~
+```
 
 If the spatial_layer_dimensions_present_flag syntax element is not present in
 the coded video sequence, it is taken to be equal to 0.
@@ -420,18 +420,18 @@ the operating point the decoder has chosen to decode.
 
 Initial presentation delay is determined as follows:
 
-~~~~~ c
+```c
 InitialPresentationDelay =  Removal [ initial_display_delay_minus_1 ] + TimeToDecode [ initial_display_delay_minus_1 ]
-~~~~~
+```
 
 When equal_picture_interval is equal to 0, the decoder operates in variable
 frame rate mode, the frame presentation time is defined as follows:
 
-~~~~~ c
+```c
 PresentationTime[ 0 ] = InitialPresentationDelay
 
 PresentationTime[ j ] = PresentationTime[ PrevPresent ] + frame_presentation_time[ j ] * DispCT
-~~~~~
+```
 
 When j is not equal to 0 and frame j is associated with a key frame random access point, a
 key frame recovery point or a frame following a delayed random access point and
@@ -448,11 +448,11 @@ delayed random access point.
 When equal_picture_interval is equal to 1, the decoder operates in the constant
 frame rate mode, and the frame presentation time is defined as follows:
 
-~~~~~ c
+```c
 PresentationTime[ 0 ] = InitialPresentationDelay
 
 PresentationTime[ j ] = PresentationTime[ j - 1 ] + ( num_ticks_per_picture_minus_1 + 1 ) * DispCT
-~~~~~
+```
 
 where PresentationTime[ j - 1 ] refers to the previous frame in presentation
 order.
@@ -460,9 +460,9 @@ order.
 The presentation interval, i.e. the time interval between the display of
 consecutive frames j and j + 1 in presentation order, is defined as follows:
 
-~~~~~ c
+```c
 PresentationInterval[ j ] = PresentationTime[ j + 1 ] - PresentationTime[ j ]
-~~~~~
+```
 
 ## Decoder model ## {#decoder_model}
 
@@ -476,30 +476,30 @@ model process.
 The free_buffer function clears the variables for a particular index in the
 BufferPool.
 
-~~~~~ c
+```c
 free_buffer( idx ) {
     DecoderRefCount[ idx ] = 0
     PlayerRefCount[ idx ] = 0
     PresentationTimes[ idx ] =  -1
 }
-~~~~~
+```
 
 The initialize_buffer_pool function resets the BufferPool and the VBI.
 
-~~~~~ c
+```c
 initialize_buffer_pool( ) {
     for ( i = 0; i < BUFFER_POOL_MAX_SIZE; i++ )
         free_buffer( i )
     for ( i = 0; i < 8; i++ )
         VBI[ i ] = -1
 }
-~~~~~
+```
 
 The get_free_buffer function searches for an un-assigned frame in the
 BufferPool. (The decoder needs an un-assigned frame buffer from the BufferPool
 for each frame that it decodes.)
 
-~~~~~ c
+```c
 get_free_buffer( ) {
     for ( i = 0; i < BUFFER_POOL_MAX_SIZE; i++ ) {
         if ( DecoderRefCount[ i ] == 0 &&
@@ -508,7 +508,7 @@ get_free_buffer( ) {
     }
     return -1
 }
-~~~~~
+```
 
 Once decoded, frames may update one or more of the VBI index slots, as defined
 by refresh_frame_flags. Each time a VBI index slot is updated the decoder
@@ -519,7 +519,7 @@ for the frame buffer being displaced must be decremented by 1.
 The update_ref_buffers function updates the VBI and reference counts when the
 reference frames are updated.
 
-~~~~~ c
+```c
 update_ref_buffers ( idx, refresh_frame_flags ) {
     for ( i = 0; i < 8; i++ ) {
         if ( refresh_frame_flags & ( 1 << i ) ) {
@@ -530,7 +530,7 @@ update_ref_buffers ( idx, refresh_frame_flags ) {
         }
     }
 }
-~~~~~
+```
 
 In decoding schedule mode the decoder only starts to decode a frame at the time
 designated by a Removal time associated with that frame, and expects a free
@@ -544,7 +544,7 @@ time when such a buffer will become available.
 The function start_decode_at_removal_time returns buffers to the BufferPool when
 they are no longer required for decode or display.
 
-~~~~~ c
+```c
 start_decode_at_removal_time( removal ) {
     for ( i = 0; i < BUFFER_POOL_MAX_SIZE; i++ ) {
         if ( PlayerRefCount[ i ] > 0) {
@@ -557,7 +557,7 @@ start_decode_at_removal_time( removal ) {
     }
     return removal
 }
-~~~~~
+```
 
 The decoder needs to know the number of decoded frames in the BufferPool in
 order to determine the presentation delay for the first frame. A buffer is
@@ -567,7 +567,7 @@ is equal to 0.
 The function frames_in_buffer_pool returns the number of assigned frames in the
 BufferPool.
 
-~~~~~ c
+```c
 frames_in_buffer_pool( ) {
     framesInPool = 0
     for ( i = 0; i < BUFFER_POOL_MAX_SIZE; i++ )
@@ -575,14 +575,14 @@ frames_in_buffer_pool( ) {
             framesInPool++
     return framesInPool
 }
-~~~~~
+```
 
 The function get_next_frame switches to decoding the next frame in decoding
 order for the operating point. Variable DfgNum increments with each frame that
 needs decoding and corresponds to the DFG index. Variable ShownFrameNum
 increments with each shown frame read from the bitstream.
 
-~~~~~ c
+```c
 get_next_frame( frameNum )
 {
     if ( read_frame_header( ) ) {
@@ -598,7 +598,7 @@ get_next_frame( frameNum )
         return -1
     }
 }
-~~~~~
+```
 
 When the function read_frame_header() is invoked, the syntax elements and
 variables are set to the values at the conceptual point (in the decoding
@@ -617,7 +617,7 @@ when they are supposed to be. Non-conformance is signaled by a call to the
 function bitstream_non_conformant; the various error codes are tabulated
 below.
 
-~~~~~ c
+```c
 decode_process ( ) {
     initialize_buffer_pool( )
     time = 0
@@ -661,7 +661,7 @@ decode_process ( ) {
         }
     }
 }
-~~~~~
+```
 
 where UsingResourceAvailabilityMode is a variable that is set to 1 when using
 resource availability mode, or 0 when using decoding schedule mode.
@@ -744,17 +744,17 @@ specified in the following sections.
 
 For frame i, where i > 0, TimeDelta[ i ] is defined as follows:
 
-~~~~~ c
+```c
 TimeDelta[ i ] = ( ScheduledRemoval[ i ] - LastBitArrival[ i -1 ] ) * 90 000
-~~~~~
+```
 
 For the video sequence that includes one or more random access points, for
 each key frame, where the decoder_buffer_delay is signaled, the following
 expression shall hold.
 
-~~~~~ c
+```c
 decoder_buffer_delay <= ceil( TimeDelta[ i ] )
-~~~~~
+```
 
 ### Smoothing buffer overflow ### {#smoothing_buffer_overflow}
 
@@ -770,9 +770,9 @@ Smoothing buffer underflow is defined as the state where a complete DFG is not
 present in the smoothing buffer at the scheduled removal time,
 ScheduledRemoval [ i ]:
 
-~~~~~ c
+```c
 ScheduledRemoval[ i ] < LastBitArrival[ i ]
-~~~~~
+```
 
 When the low_delay_mode_flag[ op ] is equal to 0, the smoothing buffer shall
 never underflow.
@@ -783,9 +783,9 @@ never underflow.
 There must be enough time between a DFG being removed from the smoothing buffer,
 Removal[ i ], and the scheduled removal of the next DFG, ScheduledRemoval[ i + 1 ]:
 
-~~~~~ c
+```c
 ScheduledRemoval[ i + 1] - Removal[ i ]  >= Max( TimeToDecode[ i ], 1 ÷ MaxNumFrameHeadersPerSec ),
-~~~~~
+```
 
 where MaxNumFrameHeadersPerSec is defined in the level constraints.
 
@@ -795,11 +795,11 @@ where MaxNumFrameHeadersPerSec is defined in the level constraints.
 The difference between presentation times for consecutive shown frames, shall
 satisfy the following constraint:
 
-~~~~~ c
+```c
 MinFrameTime = MaxTotalDecodedSampleRate ÷ ( MaxNumFrameHeadersSec * MaxTotalDisplaySampleRate )
 
 PresentationInterval[ j ]  >= Max( LumaPels ÷ MaxTotalDisplaySampleRate, MinFrameTime )
-~~~~~
+```
 
 Where MaxTotalDecodedSampleRate, MaxNumFrameHeadersPerSec, and
 MaxTotalDisplaySampleRate are defined in the level constraints.
@@ -810,9 +810,9 @@ MaxTotalDisplaySampleRate are defined in the level constraints.
 It is a requirement of the bitstream conformance that each frame shall be
 fully decoded at, or before, the time that it is scheduled for presentation:
 
-~~~~~ c
+```c
 Removal[ i ] + TimeToDecode[ i ] <= PresentationTime[ i ]
-~~~~~
+```
 
 ### Level imposed constraints ### {#level_imposed_constraints}
 
