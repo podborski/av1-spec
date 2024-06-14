@@ -17,3 +17,4 @@ Markup Shorthands: markdown yes
 Local Boilerplate: footer yes
 </pre>
 
+<link rel="stylesheet" href="css/custom.css">
