@@ -3315,7 +3315,7 @@ See [[#reference_frame_update_process]] for details of the frame update process.
 **frame_refs_short_signaling** equal to 1 indicates that only two reference frames are explicitly signaled.
 frame_refs_short_signaling equal to 0 indicates that all reference frames are explicitly signaled.
 
-**last_frame_idx** specifies the reference frame to use for LAST_FRAME.
+<dfn>last_frame_idx</dfn> specifies the reference frame to use for LAST_FRAME.
 
 **gold_frame_idx** specifies the reference frame to use for GOLDEN_FRAME.
 
