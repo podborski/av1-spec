@@ -2,8 +2,8 @@
 
 ## Overview ## {#annex_b_overview}
 
-[Section 5][] defines the syntax for OBUs.
-[Section 5.2][] defines the low-overhead bitstream format.
+[[#syntax_structures]] defines the syntax for OBUs.
+[[#low_overhead_bitstream_format]] defines the low-overhead bitstream format.
 This annex defines a length-delimited format for packing OBUs into a format that
 enables skipping through temporal units and frames more easily.
 

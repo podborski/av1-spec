@@ -64,6 +64,9 @@ with open('index.bs', 'r') as bs_file:
     bs_file_content = bs_file.read()
 toc = parse_headings(bs_file_content)
 
+print(f'Dump TOC. TOC has {len(toc)} entries')
+for section, id in toc.items():
+    print(section, id)
 
 # Process each file
 for bs_file in BS_FILES:

@@ -3,7 +3,7 @@
 ## General ## {#annex_e_general}
 
 The decoder model is used to verify that a bitstream can be decoded within the
-constraints imposed by one of the coding levels defined in [section A.3][]. The
+constraints imposed by one of the coding levels defined in [[#levels]]. The
 decoder model is also used to verify conformance for a decoder that claims
 conformance to a certain coding level.
 
@@ -23,16 +23,16 @@ The decoder model defines two modes of operation. A conformant bitstream shall
 satisfy constraints imposed by one of these two modes of the decoder model
 depending on which mode is applicable.
 
-[Section E.2][] defines additional concepts used by the decoder model.
+[[#decoder_model_definitions]] defines additional concepts used by the decoder model.
 
-[Section E.3][] defines the operating modes.
+[[#operating_modes]] defines the operating modes.
 
-[Section E.4][] specifies how the frame timings can be computed in the
+[[#frame_timing_definitions]] specifies how the frame timings can be computed in the
 different operating modes.
 
-[Section E.5][] specifies the decoder model process.
+[[#decoder_model]] specifies the decoder model process.
 
-[Section E.6][] specifies the conformance requirements.
+[[#bitstream_conformance]] specifies the conformance requirements.
 
 ## Decoder model definitions ## {#decoder_model_definitions}
 
@@ -149,7 +149,7 @@ of a bitstream.
 To verify that a bitstream can be decoded by a decoder under the constraints of
 a particular level it is assumed that the decoder performs the decoding
 operations at maximum speed (the minimum time interval) specified for that level
-in [section A.3][].
+in [[#levels]].
 
 To use Resource Availability mode, the following parameters should be set in the
 encoded video bitstream:
@@ -272,8 +272,8 @@ ScheduledRemoval[ i ] = ScheduledRemovalResource[ i ]
 ~~~~~
 
 Derivation of ScheduledRemovalTiming[ i ] in the decoding schedule mode is
-described in [section E.4.4][], and derivation of ScheduledRemovalResource[ i ]
-in the resource availability mode is described in [section E.4.5][].
+described in [[#removal_times_in_decoding_schedule_mode]], and derivation of ScheduledRemovalResource[ i ]
+in the resource availability mode is described in [[#removal_times_in_resource_availability_mode]].
 
 ### Removal times in decoding schedule mode ### {#removal_times_in_decoding_schedule_mode}
 
@@ -350,7 +350,7 @@ available. A frame buffer is defined as being available if it is no longer being
 used and its content can be overwritten.
 
 Removal times in the resource availability mode are produced by the decode
-process in [section E.5.2][]
+process in [[#decoder_model_process]]
 
 The following function, time_next_buffer_is_free, is used by the decode process
 to determine the Removal[ i ] time  for the next DFG and generate the value of

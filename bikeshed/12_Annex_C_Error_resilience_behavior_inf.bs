@@ -9,13 +9,13 @@ It is recommended that decoders should support these starting points.
 
 The intention is to allow decoders to start even when the decoded output may be corrupted.
 
-A property of a bitstream is defined in [section C.2][].
+A property of a bitstream is defined in [[#definition_of_processable_frames]].
 
-The recommendations are expressed in [section C.3][].
+The recommendations are expressed in [[#recommendation_for_processable_frames]].
 
-The consequences for encoders are specified in [section C.4][].
+The consequences for encoders are specified in [[#encoder_consequences_of_processable_frames]].
 
-The consequences for decoders are specified in [section C.5][].
+The consequences for decoders are specified in [[#decoder_consequences_of_processable_frames]].
 
 ## Definition of processable frames ## {#definition_of_processable_frames}
 
