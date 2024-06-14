@@ -459,7 +459,7 @@ ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">1</td>
       <td style="text-align: center">CP_BT_709</td>
-      <td>BT.709</td>
+      <td>[[ITU-R-BT.709]]</td>
     </tr>
     <tr>
       <td style="text-align: center">2</td>
@@ -479,7 +479,7 @@ ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">6</td>
       <td style="text-align: center">CP_BT_601</td>
-      <td>BT.601</td>
+      <td>[[ITU-R-BT.601]]</td>
     </tr>
     <tr>
       <td style="text-align: center">7</td>
@@ -539,7 +539,7 @@ section of ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">1</td>
       <td style="text-align: center">TC_BT_709</td>
-      <td>BT.709</td>
+      <td>[[ITU-R-BT.709]]</td>
     </tr>
     <tr>
       <td style="text-align: center">2</td>
@@ -564,7 +564,7 @@ section of ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">6</td>
       <td style="text-align: center">TC_BT_601</td>
-      <td>BT.601</td>
+      <td>[[ITU-R-BT.601]]</td>
     </tr>
     <tr>
       <td style="text-align: center">7</td>
@@ -604,12 +604,12 @@ section of ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">14</td>
       <td style="text-align: center">TC_BT_2020_10_BIT</td>
-      <td>BT.2020 10-bit systems</td>
+      <td>BT.2020 10-bit systems [[Rec.2020]]</td>
     </tr>
     <tr>
       <td style="text-align: center">15</td>
       <td style="text-align: center">TC_BT_2020_12_BIT</td>
-      <td>BT.2020 12-bit systems</td>
+      <td>BT.2020 12-bit systems [[Rec.2020]]</td>
     </tr>
     <tr>
       <td style="text-align: center">16</td>
@@ -650,7 +650,7 @@ ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">1</td>
       <td style="text-align: center">MC_BT_709</td>
-      <td>BT.709</td>
+      <td>[[ITU-R-BT.709]]</td>
     </tr>
     <tr>
       <td style="text-align: center">2</td>
@@ -675,7 +675,7 @@ ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">6</td>
       <td style="text-align: center">MC_BT_601</td>
-      <td>BT.601</td>
+      <td>[[ITU-R-BT.601]]</td>
     </tr>
     <tr>
       <td style="text-align: center">7</td>
@@ -695,7 +695,7 @@ ISO/IEC 23091-4/ITU-T H.273.
     <tr>
       <td style="text-align: center">10</td>
       <td style="text-align: center">MC_BT_2020_CL</td>
-      <td>BT.2020 constant luminance</td>
+      <td>BT.2020 constant luminance [[Rec.2020]]</td>
     </tr>
     <tr>
       <td style="text-align: center">11</td>
