@@ -31,7 +31,7 @@ The following table defines the mapping from the [=Syntax element=] (which takes
 <table class="table table-sm table-bordered">
     <thead>
       <tr>
-        <th>Value of seq_level_idx</th>
+        <th>Value of `seq_level_idx`</th>
         <th>[=Level=]</th>
       </tr>
     </thead>
