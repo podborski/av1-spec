@@ -75,24 +75,24 @@ open_bitstream_unit( sz ) {
 ### OBU header syntax ### {#obu_header_syntax}
 
 ```cpp
-obu_header() {
-     f(1) obu_forbidden_bit;
-     f(4) obu_type;
-     f(1) obu_extension_flag;
-     f(1) obu_has_size_field;
-     f(1) obu_reserved_1bit;
+class OBUHeader() {
+     bit(1) obu_forbidden_bit;
+     unsigned int(4) obu_type;
+     bit(1) obu_extension_flag;
+     bit(1) obu_has_size_field;
+     bit(1) obu_reserved_1bit;
      if ( obu_extension_flag == 1 )
-         obu_extension_header()
+         OBUExtensionHeader obu_extension_header;
 }
 ```
 
 ### OBU extension header syntax ### {#obu_extension_header_syntax}
 
 ```cpp
-obu_extension_header() {
-     f(3) temporal_id;
-     f(2) spatial_id;
-     f(3) extension_header_reserved_3bits;
+class OBUExtensionHeader() {
+     unsigned int(3) temporal_id;
+     unsigned int(2) spatial_id;
+     unsigned int(3) extension_header_reserved_3bits;
 }
 ```
 
